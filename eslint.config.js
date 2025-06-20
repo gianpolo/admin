@@ -18,7 +18,13 @@ export default [
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
+
     },
+    extends: [
+      js.configs.recommended,
+      'plugin:react-hooks/recommended',
+      'plugin:react-refresh/recommended',
+    ],
     rules: {
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
