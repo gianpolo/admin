@@ -10,7 +10,7 @@ export default function SelfSchedulingConfigurations() {
   const { list, status, error } = useSelector((state) => state.configurations);
 
   useEffect(() => {
-    dispatch(fetchConfigurations({ pageSize: 10, pageNumber: 1 }));
+    dispatch(fetchConfigurations({ pageSize: 10, pageNumber: 1, cityId:1 }));
   }, [dispatch]);
 
   return (

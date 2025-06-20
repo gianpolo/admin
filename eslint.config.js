@@ -15,6 +15,9 @@ export default [
         ecmaFeatures: { jsx: true },
       },
     },
+    globals: {
+      ...globals.node,
+    },
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
