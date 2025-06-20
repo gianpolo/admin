@@ -15,7 +15,6 @@ const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5
 export default function CreateSelfSchedulingConfiguration() {
   const [cities, setCities] = useState([]);
   const [cityId, setCityId] = useState("");
-  const [cityName, setCityName] = useState("");
   const [description, setDescription] = useState("");
   const [schedStart, setSchedStart] = useState("");
   const [schedEnd, setSchedEnd] = useState("");
@@ -37,7 +36,7 @@ export default function CreateSelfSchedulingConfiguration() {
         });
         if (res.ok) {
           const data = await res.json();
-          setCities(data || []);
+          setCities(data.cities || []);
         }
       } catch (err) {
         console.error(err);
@@ -48,7 +47,7 @@ export default function CreateSelfSchedulingConfiguration() {
 
   useEffect(() => {
     async function loadData() {
-      if (!cityId || !schedStart || !schedEnd || !tourStart || !tourEnd) return;
+      if (!cityId) return;
       try {
         const token = getToken();
         const city = cities.find((c) => c.id === parseInt(cityId));
@@ -74,7 +73,7 @@ export default function CreateSelfSchedulingConfiguration() {
       }
     }
     loadData();
-  }, [cityId, schedStart, schedEnd, tourStart, tourEnd, cities]);
+  }, [cityId, cities]);
 
   const validate = () => {
     const today = new Date().toISOString().slice(0, 10);
@@ -141,8 +140,6 @@ export default function CreateSelfSchedulingConfiguration() {
             placeholder="Select city"
             onChange={(val) => {
               setCityId(val);
-              const c = cities.find((ci) => ci.id === parseInt(val));
-              setCityName(c?.name || "");
             }}
           />
         </div>
@@ -150,31 +147,33 @@ export default function CreateSelfSchedulingConfiguration() {
           <Label htmlFor="desc">Description</Label>
           <InputField id="desc" value={description} onChange={(e) => setDescription(e.target.value)} />
         </div>
-        <div>
-          <DatePicker
-            id="schedule-range"
-            mode="range"
-            label="Scheduling Window"
-            placeholder="Select date range"
-            onChange={(selectedDates, dateStr) => {
-              const [start, end] = dateStr.split(" to ");
-              setSchedStart(start || "");
-              setSchedEnd(end || "");
-            }}
-          />
-        </div>
-        <div>
-          <DatePicker
-            id="tours-range"
-            mode="range"
-            label="Tours Period"
-            placeholder="Select date range"
-            onChange={(selectedDates, dateStr) => {
-              const [start, end] = dateStr.split(" to ");
-              setTourStart(start || "");
-              setTourEnd(end || "");
-            }}
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <DatePicker
+              id="schedule-range"
+              mode="range"
+              label="Scheduling Window"
+              placeholder="Select date range"
+              onChange={(selectedDates, dateStr) => {
+                const [start, end] = dateStr.split(" to ");
+                setSchedStart(start || "");
+                setSchedEnd(end || "");
+              }}
+            />
+          </div>
+          <div>
+            <DatePicker
+              id="tours-range"
+              mode="range"
+              label="Tours Period"
+              placeholder="Select date range"
+              onChange={(selectedDates, dateStr) => {
+                const [start, end] = dateStr.split(" to ");
+                setTourStart(start || "");
+                setTourEnd(end || "");
+              }}
+            />
+          </div>
         </div>
         <div>
           <MultiSelect
