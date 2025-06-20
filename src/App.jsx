@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import NotFound from "./pages/OtherPage/NotFound";
 import SelfSchedulingConfigurations from "./pages/SelfSchedulingConfigurations.jsx";
+import CreateSelfSchedulingConfiguration from "./pages/CreateSelfSchedulingConfiguration.jsx";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
@@ -14,6 +15,7 @@ export default function App() {
           <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
             <Route index path="/" element={<Home />}/>
             <Route path="/self-scheduling-configurations" element={<SelfSchedulingConfigurations />}/>
+            <Route path="/self-scheduling-configurations/new" element={<CreateSelfSchedulingConfiguration />}/>
           </Route>
 
           {/* Fallback Route */}

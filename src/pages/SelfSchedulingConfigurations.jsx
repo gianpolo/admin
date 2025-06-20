@@ -17,6 +17,9 @@ export default function SelfSchedulingConfigurations() {
     <>
       <PageMeta title="Self Scheduling Configurations" description="List of Self Scheduling Configurations" />
       <PageBreadcrumb pageTitle="Self Scheduling Configurations" />
+      <div className="mb-4">
+        <a href="/self-scheduling-configurations/new" className="inline-flex items-center rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600">Add New</a>
+      </div>
       {status === "loading" && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
