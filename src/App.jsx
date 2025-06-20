@@ -18,13 +18,14 @@ import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import RequireAuth from "./components/auth/RequireAuth.jsx";
 export default function App() {
     return (<>
       <Router>
         <ScrollToTop />
         <Routes>
           {/* Dashboard Layout */}
-          <Route element={<AppLayout />}>
+          <Route element={<RequireAuth><AppLayout /></RequireAuth>}>
             <Route index path="/" element={<Home />}/>
 
             {/* Others Page */}
