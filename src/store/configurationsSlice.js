@@ -11,7 +11,7 @@ export const fetchConfigurations = createAsyncThunk(
       const token = getToken();
       const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
       const response = await fetch(
-        `${backend_url}/configuration?${params.toString()}`,
+        `${backend_url}/configurations?${params.toString()}`,
         {
           headers: {
             "Authorization": `Bearer ${token}`

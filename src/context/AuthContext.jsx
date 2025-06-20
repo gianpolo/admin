@@ -7,13 +7,9 @@ export const AuthProvider = ({ children }) => {
 
   const signIn = async (username, password) => {
     const body = new URLSearchParams();
-    body.append("grant_type", "password");
-    body.append("scope", "openid roles api_read_scope api_write_scope");
-    body.append("client_id", import.meta.env.REACT_APP_CLIENT_ID);
-    body.append("client_secret", import.meta.env.REACT_APP_CLIENT_SECRET);
-    body.append("username", username);
+    body.append("userName", username);
     body.append("password", password);
-    const url = `${import.meta.env.REACT_APP_IDENTITY_SERVER_URL}/identity/connect/token`;
+    const url = `http://localhost:5005/api/v1/auth/signin`;
     const res = await fetch(url, {
       method: "POST",
       headers: {
@@ -25,9 +21,10 @@ export const AuthProvider = ({ children }) => {
       throw new Error("Failed to sign in");
     }
     const data = await res.json();
-    if (data.access_token) {
-      localStorage.setItem("token", data.access_token);
-      setToken(data.access_token);
+    console.log(data);
+    if (data) {
+      localStorage.setItem("token", data.accessToken);
+      setToken(data.accessToken);
     }
   };
 
