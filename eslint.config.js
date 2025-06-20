@@ -15,19 +15,17 @@ export default [
         ecmaFeatures: { jsx: true },
       },
     },
+    globals: {
+      ...globals.node,
+    },
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
-
     },
-    extends: [
-      js.configs.recommended,
-      'plugin:react-hooks/recommended',
-      'plugin:react-refresh/recommended',
-    ],
     rules: {
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
+      ...reactRefresh.configs.recommended.rules,
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },

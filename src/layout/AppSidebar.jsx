@@ -28,7 +28,10 @@ const navItems = [
     {
         name: "Tables",
         icon: <TableIcon />,
-        subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
+        subItems: [
+            { name: "Basic Tables", path: "/basic-tables", pro: false },
+            { name: "Self Scheduling Configurations", path: "/self-scheduling-configurations", pro: false },
+        ],
     },
     {
         name: "Pages",
