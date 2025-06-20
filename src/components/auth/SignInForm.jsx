@@ -1,14 +1,21 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useState } from "react";
 import { ChevronLeftIcon } from "../../icons";
 import Button from "../ui/button/Button";
+import Input from "../form/input/InputField";
+import Label from "../form/Label";
 import { useAuth } from "../../context/AuthContext.jsx";
 export default function SignInForm() {
     const auth = useAuth();
+    const navigate = useNavigate();
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await auth.signinRedirect();
+            await auth.signIn(username, password);
+            navigate("/");
         }
         catch (err) {
             console.error(err);
@@ -32,12 +39,18 @@ export default function SignInForm() {
             </p>
           </div>
           <div>
-            <form onSubmit={handleSubmit}>
-              <div className="space-y-6">
-                <Button className="w-full" size="sm" type="submit">
-                  Sign in
-                </Button>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <Label htmlFor="username">Username</Label>
+                <Input id="username" value={username} onChange={(e) => setUsername(e.target.value)} />
               </div>
+              <div>
+                <Label htmlFor="password">Password</Label>
+                <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+              </div>
+              <Button className="w-full" size="sm" type="submit">
+                Sign in
+              </Button>
             </form>
           </div>
         </div>
