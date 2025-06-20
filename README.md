@@ -16,7 +16,7 @@ TailAdmin provides essential UI components and layouts for building feature-rich
 control panels. It's built on:
 
 - React 19
-- TypeScript
+- JavaScript
 - Tailwind CSS
 
 ### Quick Links
