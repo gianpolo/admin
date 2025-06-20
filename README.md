@@ -66,7 +66,7 @@ git clone https://github.com/TailAdmin/free-react-tailwind-admin-dashboard.git
 
    > Use the `--legacy-peer-deps` flag, if you face issues while installing.
 
-2. Start the development server:
+2. Start the development server (runs at https://localhost:4000):
    ```bash
    npm run dev
    # or
