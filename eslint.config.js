@@ -10,13 +10,10 @@ export default [
     languageOptions: {
       ecmaVersion: 2020,
       sourceType: 'module',
-      globals: globals.browser,
+      globals: { ...globals.browser, ...globals.node },
       parserOptions: {
         ecmaFeatures: { jsx: true },
       },
-    },
-    globals: {
-      ...globals.node,
     },
     plugins: {
       'react-hooks': reactHooks,
