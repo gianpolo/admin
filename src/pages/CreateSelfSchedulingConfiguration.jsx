@@ -37,7 +37,7 @@ export default function CreateSelfSchedulingConfiguration() {
         });
         if (res.ok) {
           const data = await res.json();
-          setCities(data.cities || []);
+          setCities(data || []);
         }
       } catch (err) {
         console.error(err);
