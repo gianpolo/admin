@@ -5,7 +5,7 @@ import Form from "../components/form/Form";
 import Label from "../components/form/Label";
 import Select from "../components/form/Select";
 import InputField from "../components/form/input/InputField";
-import DateRangePicker from "../components/form/DateRangePicker.jsx";
+import DateRangePicker from "../components/form/DateRangePicker";
 import MultiSelect from "../components/form/MultiSelect";
 import Button from "../components/ui/button/Button";
 

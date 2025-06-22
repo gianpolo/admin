@@ -21,8 +21,6 @@
     "@reduxjs/toolkit": "^2.2.2",
     "apexcharts": "^4.1.0",
     "clsx": "^2.1.1",
-    "flatpickr": "^4.6.13",
-    "react-tailwindcss-datepicker": "^5.1.0",
     "react": "^19.0.0",
     "react-apexcharts": "^1.7.0",
     "react-dnd": "^16.0.1",
@@ -32,6 +30,7 @@
     "react-helmet-async": "^2.0.5",
     "react-redux": "^9.1.2",
     "react-router": "^7.1.5",
+    "react-tailwindcss-datepicker": "^2.0.0",
     "swiper": "^11.2.3",
     "tailwind-merge": "^3.0.1"
   },
