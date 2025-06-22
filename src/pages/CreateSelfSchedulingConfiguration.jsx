@@ -5,7 +5,7 @@ import Form from "../components/form/Form";
 import Label from "../components/form/Label";
 import Select from "../components/form/Select";
 import InputField from "../components/form/input/InputField";
-import DatePicker from "../components/form/date-picker.jsx";
+import DateRangePicker from "../components/form/DateRangePicker.jsx";
 import MultiSelect from "../components/form/MultiSelect";
 import Button from "../components/ui/button/Button";
 
@@ -16,16 +16,17 @@ export default function CreateSelfSchedulingConfiguration() {
   const [cities, setCities] = useState([]);
   const [cityId, setCityId] = useState("");
   const [description, setDescription] = useState("");
-  const [schedStart, setSchedStart] = useState("");
-  const [schedEnd, setSchedEnd] = useState("");
-  const [tourStart, setTourStart] = useState("");
-  const [tourEnd, setTourEnd] = useState("");
+  const [schedulingRange, setSchedulingRange] = useState({ startDate: null, endDate: null });
+  const [toursRange, setToursRange] = useState({ startDate: null, endDate: null });
   const [experiences, setExperiences] = useState([]);
   const [selectedExperienceIds, setSelectedExperienceIds] = useState([]);
   const [guides, setGuides] = useState([]);
   const [selectedGuideIds, setSelectedGuideIds] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const minDate = new Date();
+  minDate.setDate(minDate.getDate() + 1);
+  minDate.setHours(0, 0, 0, 0);
 
   useEffect(() => {
     async function loadCities() {
@@ -76,19 +77,35 @@ export default function CreateSelfSchedulingConfiguration() {
   }, [cityId, cities]);
 
   const validate = () => {
-    const today = new Date().toISOString().slice(0, 10);
-    if (!cityId || !description || !schedStart || !schedEnd || !tourStart || !tourEnd) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (
+      !cityId ||
+      !description ||
+      !schedulingRange.startDate ||
+      !schedulingRange.endDate ||
+      !toursRange.startDate ||
+      !toursRange.endDate
+    ) {
       setError("All fields are required");
       return false;
     }
-    if (schedStart <= today || schedEnd <= today) {
+
+    const schedStartDate = new Date(schedulingRange.startDate);
+    const schedEndDate = new Date(schedulingRange.endDate);
+    const tourStartDate = new Date(toursRange.startDate);
+
+    if (schedStartDate <= today || schedEndDate <= today) {
       setError("Scheduling window must be in the future");
       return false;
     }
-    if (tourStart <= schedEnd) {
+
+    if (tourStartDate <= schedEndDate) {
       setError("Tours period must be after scheduling window");
       return false;
     }
+
     setError("");
     return true;
   };
@@ -99,10 +116,10 @@ export default function CreateSelfSchedulingConfiguration() {
       const payload = {
         cityId: parseInt(cityId),
         description,
-        schedulingWindowStart: schedStart,
-        schedulingWindowEnd: schedEnd,
-        toursPeriodStart: tourStart,
-        toursPeriodEnd: tourEnd,
+        schedulingWindowStart: schedulingRange.startDate?.toISOString().split("T")[0],
+        schedulingWindowEnd: schedulingRange.endDate?.toISOString().split("T")[0],
+        toursPeriodStart: toursRange.startDate?.toISOString().split("T")[0],
+        toursPeriodEnd: toursRange.endDate?.toISOString().split("T")[0],
         experienceIds: selectedExperienceIds.map((id) => parseInt(id)),
         guideIds: selectedGuideIds.map((id) => parseInt(id)),
       };
@@ -149,28 +166,23 @@ export default function CreateSelfSchedulingConfiguration() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <DatePicker
-              id="schedule-range"
-              mode="range"
+            <DateRangePicker
               label="Scheduling Window"
-              placeholder="Select date range"
-              onChange={(selectedDates, dateStr) => {
-                const [start, end] = dateStr.split(" to ");
-                setSchedStart(start || "");
-                setSchedEnd(end || "");
+              value={schedulingRange}
+              minDate={minDate}
+              maxDate={toursRange.startDate ? (() => { const d = new Date(toursRange.startDate); d.setDate(d.getDate() - 1); return d; })() : undefined}
+              onChange={(val) => {
+                setSchedulingRange(val);
               }}
             />
           </div>
           <div>
-            <DatePicker
-              id="tours-range"
-              mode="range"
+            <DateRangePicker
               label="Tours Period"
-              placeholder="Select date range"
-              onChange={(selectedDates, dateStr) => {
-                const [start, end] = dateStr.split(" to ");
-                setTourStart(start || "");
-                setTourEnd(end || "");
+              value={toursRange}
+              minDate={schedulingRange.endDate ? (() => { const d = new Date(schedulingRange.endDate); d.setDate(d.getDate() + 1); return d; })() : minDate}
+              onChange={(val) => {
+                setToursRange(val);
               }}
             />
           </div>
