@@ -57,7 +57,7 @@ export default function SelfSchedulingConfigurations() {
                 <TableRow
                   key={cfg.id}
                   className={`cursor-pointer hover:bg-gray-50 ${cfg.isRunning ? "border-l-4 border-green-500" : ""}`}
-                  onClick={() => navigate(`/self-scheduling-configurations/${cfg.id}`)}
+                  handleClick={() => { console.log("Row clicked"); navigate(`/self-scheduling-configurations/${cfg.id}`) }}
                 >
                   <TableCell className="px-5 py-4 text-start">{cfg.id}</TableCell>
                   <TableCell className="px-5 py-4 text-start">{cfg.cityId}</TableCell>
@@ -71,10 +71,12 @@ export default function SelfSchedulingConfigurations() {
                   <TableCell className="px-5 py-4 text-start">
                     {cfg.isRunning ? (
                       <button
-                        onClick={() =>
+                        onClick={(event) => {
+                          event.stopPropagation();
                           dispatch(
                             closeConfiguration({ id: cfg.id })
                           )
+                        }
                         }
                         className="text-red-600"
                       >
@@ -82,10 +84,12 @@ export default function SelfSchedulingConfigurations() {
                       </button>
                     ) : (
                       <button
-                        onClick={() =>
+                        onClick={(event) => {
+                          event.stopPropagation();
                           dispatch(
                             openConfiguration({ id: cfg.id })
                           )
+                        }
                         }
                         className="text-green-600"
                       >
