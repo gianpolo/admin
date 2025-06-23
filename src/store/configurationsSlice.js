@@ -102,5 +102,4 @@ const configurationsSlice = createSlice({
 });
 const getToken = () => localStorage.getItem("token") || "";
 export default configurationsSlice.reducer;
-export { openConfiguration, closeConfiguration };
 
