@@ -4,6 +4,7 @@ import PageBreadcrumb from "../components/common/PageBreadCrumb";
 import PageMeta from "../components/common/PageMeta";
 import Button from "../components/ui/button/Button";
 import useGoBack from "../hooks/useGoBack";
+import { PlayIcon, StopIcon } from "../icons";
 
 const getToken = () => localStorage.getItem("token") || "";
 const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
@@ -53,9 +54,37 @@ export default function SelfSchedulingConfigurationDetails() {
     <>
       <PageMeta title="Configuration Details" description="Configuration information" />
       <PageBreadcrumb pageTitle="Configuration Details" />
-      <div className="mb-4">
+      <div className="mb-4 flex items-center justify-between">
         <Button variant="outline" onClick={goBack}>Back</Button>
+        {config && (
+          config.isRunning ? (
+            <Button
+              variant="outline"
+              className="text-red-600"
+              startIcon={<StopIcon className="size-4" />}
+              onClick={() => handleAction("close")}
+            >
+              Close
+            </Button>
+          ) : (
+            <Button
+              variant="outline"
+              className="text-green-600"
+              startIcon={<PlayIcon className="size-4" />}
+              onClick={() => handleAction("open")}
+            >
+              Open
+            </Button>
+          )
+        )}
       </div>
+      {config && (
+        <p className="mb-4 text-sm text-gray-500">
+          {config.isRunning
+            ? "This configuration is running"
+            : "This configuration is not running"}
+        </p>
+      )}
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
       {config && (
@@ -66,10 +95,6 @@ export default function SelfSchedulingConfigurationDetails() {
           <p><strong>Experiences:</strong> {config.experienceIds && config.experienceIds.join(", ")}</p>
           <p><strong>Guides:</strong> {config.guideIds && config.guideIds.join(", ")}</p>
           <p><strong>Status:</strong> {config.isRunning ? "Running" : "Closed"}</p>
-          <div className="flex gap-2">
-            <Button onClick={() => handleAction("open")}>Open</Button>
-            <Button variant="outline" onClick={() => handleAction("close")}>Close</Button>
-          </div>
         </div>
       )}
     </>
