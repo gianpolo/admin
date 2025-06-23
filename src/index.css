@@ -1,10 +1,9 @@
+ 
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap")
 layer(base);
 
-@import "tailwindcss";
-
+@import "tailwindcss";   
 @custom-variant dark (&:is(.dark *));
-
 @theme {
   --font-*: initial;
   --font-outfit: Outfit, sans-serif;
@@ -290,7 +289,7 @@ layer(base);
     -webkit-appearance: none;
   }
 }
-
+ .opacity-1 { opacity: 100%; }
 .tableCheckbox:checked ~ span span {
   @apply opacity-100;
 }
