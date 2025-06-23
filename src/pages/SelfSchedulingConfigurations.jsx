@@ -17,10 +17,15 @@ import {
 } from "../components/ui/table";
 import { PlayIcon, StopIcon } from "../icons";
 
+const formatPeriod = (start, end) =>
+  `${(start || "").replace(/-/g, "/")} to ${(end || "").replace(/-/g, "/")}`;
+
 export default function SelfSchedulingConfigurations() {
   const dispatch = useDispatch();
-  const { list, status, error } = useSelector((state) => state.configurations);
   const navigate = useNavigate();
+  const { list, status, error, actionStatus } = useSelector(
+    (state) => state.configurations
+  );
 
   useEffect(() => {
     dispatch(fetchConfigurations({ pageSize: 10, pageNumber: 1, cityId: 1 }));
@@ -40,61 +45,124 @@ export default function SelfSchedulingConfigurations() {
           <Table>
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
               <TableRow>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">ID</TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">City</TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Description</TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Tours Start</TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Tours End</TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Schedule Start</TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Schedule End</TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Experiences</TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Guides</TableCell>
-                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Actions</TableCell>
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
+                  ID / Description
+                </TableCell>
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
+                  Scheduling Window
+                </TableCell>
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
+                  Tours Period
+                </TableCell>
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
+                  City
+                </TableCell>
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
+                  Experiences
+                </TableCell>
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
+                  Guides
+                </TableCell>
+                <TableCell
+                  isHeader
+                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                >
+                  Actions
+                </TableCell>
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-              {list.map((cfg) => (
-                <TableRow
-                  key={cfg.id}
-                  className={`cursor-pointer hover:bg-gray-50 ${cfg.isRunning ? "border-l-4 border-green-500" : ""}`}
-                  handleClick={() => { console.log("Row clicked"); navigate(`/self-scheduling-configurations/${cfg.id}`) }}
-                >
-                  <TableCell className="px-5 py-4 text-start">{cfg.id}</TableCell>
-                  <TableCell className="px-5 py-4 text-start">{cfg.cityId}</TableCell>
-                  <TableCell className="px-5 py-4 text-start">{cfg.description}</TableCell>
-                  <TableCell className="px-5 py-4 text-start">{cfg.toursPeriodStart}</TableCell>
-                  <TableCell className="px-5 py-4 text-start">{cfg.toursPeriodEnd}</TableCell>
-                  <TableCell className="px-5 py-4 text-start">{cfg.schedulingWindowStart}</TableCell>
-                  <TableCell className="px-5 py-4 text-start">{cfg.schedulingWindowEnd}</TableCell>
-                  <TableCell className="px-5 py-4 text-start">{cfg.experienceIds && cfg.experienceIds.join(", ")}</TableCell>
-                  <TableCell className="px-5 py-4 text-start">{cfg.guideIds && cfg.guideIds.join(", ")}</TableCell>
-                  <TableCell className="px-5 py-4 text-start">
-                    {cfg.isRunning ? (
-                      <button
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          dispatch(
-                            closeConfiguration({ id: cfg.id })
-                          )
-                        }
-                        }
-                        className="text-red-600"
-                      >
-                        <StopIcon className="inline-block" />
-                      </button>
-                    ) : (
-                      <button
-                        onClick={(event) => {
-                          event.stopPropagation();
-                          dispatch(
-                            openConfiguration({ id: cfg.id })
-                          )
-                        }
-                        }
-                        className="text-green-600"
-                      >
-                        <PlayIcon className="inline-block" />
-                      </button>
+              {list.map((cfg) => {
+                const loading = actionStatus[cfg.id] === "loading";
+                return (
+                  <TableRow
+                    key={cfg.id}
+                    className={`cursor-pointer ${cfg.isRunning ? "border-l-4 border-green-500" : "bg-gray-50"}`}
+                    onClick={() => navigate(`/self-scheduling-configurations/${cfg.id}`)}
+                  >
+                    <TableCell className="px-5 py-4 text-start">
+                      <div className="leading-snug">
+                        <div className="text-sm font-normal text-gray-500">{cfg.id}</div>
+                        <div className="text-brand-600 truncate">{cfg.description}</div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="px-5 py-4 text-start">
+                      {formatPeriod(cfg.schedulingWindowStart, cfg.schedulingWindowEnd)}
+                    </TableCell>
+                    <TableCell className="px-5 py-4 text-start">
+                      {formatPeriod(cfg.toursPeriodStart, cfg.toursPeriodEnd)}
+                    </TableCell>
+                    <TableCell className="px-5 py-4 text-start">{cfg.cityId}</TableCell>
+                    <TableCell className="px-5 py-4 text-start">
+                      {cfg.experienceIds && cfg.experienceIds.join(", ")}
+                    </TableCell>
+                    <TableCell className="px-5 py-4 text-start">
+                      {cfg.guideIds && cfg.guideIds.join(", ")}
+                    </TableCell>
+                    <TableCell className="px-5 py-4 text-start" onClick={(e) => e.stopPropagation()}>
+                      {loading ? (
+                        <svg
+                          className="inline-block h-4 w-4 animate-spin text-gray-500"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                          ></path>
+                        </svg>
+                      ) : cfg.isRunning ? (
+                        <button
+                          onClick={() =>
+                            dispatch(closeConfiguration({ id: cfg.id }))
+                          }
+                          className="text-red-600"
+                        >
+                          <StopIcon className="inline-block" />
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() =>
+                            dispatch(openConfiguration({ id: cfg.id }))
+                          }
+                          className="text-green-600"
+                        >
+                          <PlayIcon className="inline-block" />
+                        </button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+
                     )}
                   </TableCell>
                 </TableRow>
