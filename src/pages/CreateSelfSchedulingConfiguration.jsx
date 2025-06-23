@@ -13,8 +13,15 @@ import Label from "../components/form/Label";
 import Select from "../components/form/Select";
 import InputField from "../components/form/input/InputField";
 import MyDateRangePicker from "../components/form/DateRangePicker";
-import MultiSelect from "../components/form/MultiSelect";
 import Button from "../components/ui/button/Button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "../components/ui/table";
+import Checkbox from "../components/form/input/Checkbox";
 
 export default function CreateSelfSchedulingConfiguration() {
   const dispatch = useDispatch();
@@ -34,6 +41,39 @@ export default function CreateSelfSchedulingConfiguration() {
   minDate.setDate(minDate.getDate() + 1);
   minDate.setHours(0, 0, 0, 0);
 
+  const fetchGuidesForExperiences = (expIds) => {
+    if (!cityId) return;
+    dispatch(
+      fetchGuides({
+        cityId: parseInt(cityId),
+        experienceIds: expIds.map((id) => parseInt(id)),
+        allocationPeriod: {
+          start: toursRange.startDate
+            ? toursRange.startDate.toISOString().split("T")[0]
+            : undefined,
+          end: toursRange.endDate
+            ? toursRange.endDate.toISOString().split("T")[0]
+            : undefined,
+        },
+      })
+    );
+  };
+
+  const handleExperienceCheck = (id, checked) => {
+    const newIds = checked
+      ? [...selectedExperienceIds, id]
+      : selectedExperienceIds.filter((eid) => eid !== id);
+    setSelectedExperienceIds(newIds);
+    fetchGuidesForExperiences(newIds);
+  };
+
+  const handleGuideCheck = (id, checked) => {
+    const newIds = checked
+      ? [...selectedGuideIds, id]
+      : selectedGuideIds.filter((gid) => gid !== id);
+    setSelectedGuideIds(newIds);
+  };
+
   useEffect(() => {
     dispatch(fetchCities());
   }, [dispatch]);
@@ -43,7 +83,6 @@ export default function CreateSelfSchedulingConfiguration() {
     const city = cities.find((c) => c.id === parseInt(cityId));
     const cityNameParam = city?.name || "";
     dispatch(fetchExperiences({ cityName: cityNameParam }));
-    dispatch(fetchGuides({ cityId }));
   }, [dispatch, cityId, cities]);
 
   const validate = () => {
@@ -150,20 +189,60 @@ export default function CreateSelfSchedulingConfiguration() {
           </div>
         </div>
         <div>
-          <MultiSelect
-            label="Experiences"
-            options={experiences.map((e) => ({ value: e.id, text: e.name }))}
-            onChange={(vals) => setSelectedExperienceIds(vals)}
-            defaultSelected={selectedExperienceIds}
-          />
+          <Label>Experiences</Label>
+          <div className="max-w-full overflow-x-auto border rounded-md border-gray-200 dark:border-gray-700">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableCell isHeader className="px-3 py-2"></TableCell>
+                  <TableCell isHeader className="px-3 py-2">Name</TableCell>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {experiences.map((e) => (
+                  <TableRow key={e.id} className="border-t border-gray-200 dark:border-gray-700">
+                    <TableCell className="px-3 py-2">
+                      <Checkbox
+                        checked={selectedExperienceIds.includes(e.id)}
+                        onChange={(chk) => handleExperienceCheck(e.id, chk)}
+                      />
+                    </TableCell>
+                    <TableCell className="px-3 py-2 text-sm text-gray-800 dark:text-gray-200">
+                      {e.name}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
         <div>
-          <MultiSelect
-            label="Guides"
-            options={guides.map((g) => ({ value: g.guide.id, text: g.guide.name }))}
-            onChange={(vals) => setSelectedGuideIds(vals)}
-            defaultSelected={selectedGuideIds}
-          />
+          <Label>Guides</Label>
+          <div className="max-w-full overflow-x-auto border rounded-md border-gray-200 dark:border-gray-700">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableCell isHeader className="px-3 py-2"></TableCell>
+                  <TableCell isHeader className="px-3 py-2">Name</TableCell>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {guides.map((g) => (
+                  <TableRow key={g.guide.id} className="border-t border-gray-200 dark:border-gray-700">
+                    <TableCell className="px-3 py-2">
+                      <Checkbox
+                        checked={selectedGuideIds.includes(g.guide.id)}
+                        onChange={(chk) => handleGuideCheck(g.guide.id, chk)}
+                      />
+                    </TableCell>
+                    <TableCell className="px-3 py-2 text-sm text-gray-800 dark:text-gray-200">
+                      {g.guide.name}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
         <div>
           <Button type="submit" className="bg-brand-500 text-white hover:bg-brand-600" >Create</Button>

@@ -37,12 +37,29 @@ export const fetchExperiences = createAsyncThunk(
 
 export const fetchGuides = createAsyncThunk(
   "configForm/fetchGuides",
-  async ({ cityId }, { rejectWithValue }) => {
+  async (
+    {
+      cityId,
+      experienceIds = [],
+      allocationPeriod,
+      pageSize = 20,
+      pageNumber = 1,
+    },
+    { rejectWithValue }
+  ) => {
     try {
-      const res = await fetch(
-        `${backend_url}/guides?cityId=${cityId}&pageSize=20&pageNumber=1`,
-        { headers: { Authorization: `Bearer ${getToken()}` } }
-      );
+      const params = new URLSearchParams();
+      if (pageSize) params.append("pageSize", pageSize);
+      if (pageNumber) params.append("pageNumber", pageNumber);
+      if (cityId !== undefined) params.append("cityId", cityId);
+      experienceIds.forEach((id) => params.append("experienceIds", id));
+      if (allocationPeriod?.start && allocationPeriod?.end) {
+        params.append("allocationPeriod.start", allocationPeriod.start);
+        params.append("allocationPeriod.end", allocationPeriod.end);
+      }
+      const res = await fetch(`${backend_url}/guides?${params.toString()}`, {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
       if (!res.ok) throw new Error("Failed to fetch guides");
       const data = await res.json();
       return data.items || [];
