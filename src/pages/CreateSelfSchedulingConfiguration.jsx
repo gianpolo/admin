@@ -140,7 +140,7 @@ export default function CreateSelfSchedulingConfiguration() {
       setError("Failed to create configuration");
     }
   };
-   
+
   return (
     <>
       <PageMeta title="Add Self Scheduling Configuration" description="Create new configuration" />
@@ -188,60 +188,80 @@ export default function CreateSelfSchedulingConfiguration() {
             />
           </div>
         </div>
-        <div>
-          <Label>Experiences</Label>
-          <div className="max-w-full overflow-x-auto border rounded-md border-gray-200 dark:border-gray-700">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableCell isHeader className="px-3 py-2"></TableCell>
-                  <TableCell isHeader className="px-3 py-2">Name</TableCell>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {experiences.map((e) => (
-                  <TableRow key={e.id} className="border-t border-gray-200 dark:border-gray-700">
-                    <TableCell className="px-3 py-2">
-                      <Checkbox
-                        checked={selectedExperienceIds.includes(e.id)}
-                        onChange={(chk) => handleExperienceCheck(e.id, chk)}
-                      />
-                    </TableCell>
-                    <TableCell className="px-3 py-2 text-sm text-gray-800 dark:text-gray-200">
-                      {e.name}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] mt-6">
+            <div className="max-w-full overflow-x-auto">
+              <Table>
+                <TableHeader className="border-b border-gray-100 dark:border-white/[0.05] text-xs">
+                  <TableRow>
+                    <TableCell isHeader className="px-3 py-2"></TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-6 py-3 whitespace-nowrap"
+                    >
+                      <div className="flex items-center">
+                        <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400"> Name / ID</p>
+                      </div>
                     </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-xs">
+                  {experiences.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="px-6 py-3 whitespace-nowrap">
+                        <Checkbox
+                          checked={selectedExperienceIds.includes(item.id)}
+                          onChange={(chk) => handleExperienceCheck(item.id, chk)}
+                        /></TableCell>
+                      <TableCell className="px-6 py-3 whitespace-nowrap">
+                        <div className="leading-snug">
+                          <div className="dark:text-white font-medium truncate">{item.name}</div>
+                          <div className="text-theme-xs text-gray-400 dark:text-gray-400">{item.id}</div>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
-        </div>
-        <div>
-          <Label>Guides</Label>
-          <div className="max-w-full overflow-x-auto border rounded-md border-gray-200 dark:border-gray-700">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableCell isHeader className="px-3 py-2"></TableCell>
-                  <TableCell isHeader className="px-3 py-2">Name</TableCell>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {guides.map((g) => (
-                  <TableRow key={g.guide.id} className="border-t border-gray-200 dark:border-gray-700">
-                    <TableCell className="px-3 py-2">
-                      <Checkbox
-                        checked={selectedGuideIds.includes(g.guide.id)}
-                        onChange={(chk) => handleGuideCheck(g.guide.id, chk)}
-                      />
-                    </TableCell>
-                    <TableCell className="px-3 py-2 text-sm text-gray-800 dark:text-gray-200">
-                      {g.guide.name}
+
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] mt-6">
+            <div className="max-w-full overflow-x-auto">
+              <Table>
+                <TableHeader className="border-b border-gray-100 dark:border-white/[0.05] text-xs">
+                  <TableRow>
+                    <TableCell isHeader className="px-3 py-2"></TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-6 py-3 whitespace-nowrap"
+                    >
+                      <div className="flex items-center">
+                        <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400"> Name / ID</p>
+                      </div>
                     </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-xs">
+                  {guides.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="px-6 py-3 whitespace-nowrap">
+                        <Checkbox
+                          checked={selectedGuideIds.includes(item.id)}
+                          onChange={(chk) => handleGuideCheck(item.id, chk)}
+                        /></TableCell>
+                      <TableCell className="px-6 py-3 whitespace-nowrap">
+                        <div className="leading-snug">
+                          <div className="dark:text-white font-medium truncate">{item.name}</div>
+                          <div className="text-theme-xs text-gray-400 dark:text-gray-400">{item.id}</div>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
         </div>
         <div>

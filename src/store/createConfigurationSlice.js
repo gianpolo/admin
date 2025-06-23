@@ -28,7 +28,7 @@ export const fetchExperiences = createAsyncThunk(
       );
       if (!res.ok) throw new Error("Failed to fetch experiences");
       const data = await res.json();
-      return data.items || [];
+      return data || [];
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -62,7 +62,7 @@ export const fetchGuides = createAsyncThunk(
       });
       if (!res.ok) throw new Error("Failed to fetch guides");
       const data = await res.json();
-      return data.items || [];
+      return data || [];
     } catch (err) {
       return rejectWithValue(err.message);
     }
