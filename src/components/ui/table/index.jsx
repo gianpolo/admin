@@ -12,7 +12,6 @@ const TableBody = ({ children, className }) => {
 };
 // TableRow Component
 const TableRow = ({ children, className, handleClick }) => {
-    console.log(handleClick);
     return <tr onClick={handleClick} className={className}>{children}</tr>;
 };
 // TableCell Component

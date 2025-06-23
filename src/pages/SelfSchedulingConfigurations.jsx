@@ -15,7 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
-import { PlayIcon, StopIcon } from "../icons";
+import { PlayIcon, StopIconCircle } from "../icons";
 
 
 export default function SelfSchedulingConfigurations() {
@@ -69,19 +69,19 @@ export default function SelfSchedulingConfigurations() {
                   isHeader
                   className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                 >
-                  City
+                  City Id
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                 >
-                  Experiences
+                  Experiences Count
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                 >
-                  Guides
+                  Guides Count
                 </TableCell>
                 <TableCell
                   isHeader
@@ -97,33 +97,35 @@ export default function SelfSchedulingConfigurations() {
                 return (
                   <TableRow
                     key={cfg.id}
-                    className={`cursor-pointer ${cfg.isRunning ? "border-l-4 border-green-500" : "bg-gray-50"}`}
+                    className={`cursor-pointer ${cfg.isRunning ? " dark:bg-brand-500/12" : ""}`}
                     handleClick={() => navigate(`/self-scheduling-configurations/${cfg.id}`)}
                   >
-                    <TableCell className="px-5 py-4 text-start">
+                    <TableCell className="px-5 py-4 sm:px-6">
                       <div className="leading-snug">
-                        <div className="text-sm font-normal text-gray-500">{cfg.id}</div>
-                        <div className="text-brand-600 truncate">{cfg.description}</div>
+                        <div className={`text-sm font-normal ${cfg.isRunning ? "text-gray-400" : "dark:text-gray-400"}`}>{cfg.id}</div>
+                        <div className="text-white truncate">{cfg.description}</div>
                       </div>
                     </TableCell>
-                    <TableCell className="px-5 py-4 text-start">
-                      {formatPeriod(cfg.schedulingWindowStart, cfg.schedulingWindowEnd)}
+                    <TableCell className="px-5 py-4 sm:px-6">
+                      <p className="text-gray-500 text-theme-sm dark:text-gray-400" >{formatPeriod(cfg.schedulingWindowStart, cfg.schedulingWindowEnd)}</p>
                     </TableCell>
-                    <TableCell className="px-5 py-4 text-start">
-                      {formatPeriod(cfg.toursPeriodStart, cfg.toursPeriodEnd)}
+                    <TableCell className="px-5 py-4 sm:px-6">
+                      <p className="text-gray-500 text-theme-sm dark:text-gray-400" > {formatPeriod(cfg.toursPeriodStart, cfg.toursPeriodEnd)}</p>
                     </TableCell>
-                    <TableCell className="px-5 py-4 text-start">{cfg.cityId}</TableCell>
-                    <TableCell className="px-5 py-4 text-start">
-                      {cfg.experienceIds && cfg.experienceIds.join(", ")}
+                    <TableCell className="px-5 py-4">
+                      <p className="text-gray-500 text-theme-sm dark:text-gray-400">{cfg.cityId}</p>
                     </TableCell>
-                    <TableCell className="px-5 py-4 text-start">
-                      {cfg.guideIds && cfg.guideIds.join(", ")}
+                    <TableCell className="px-5 py-3 text-left sm:px-6">
+                      <p className="text-gray-500 text-theme-sm dark:text-gray-400">{cfg.experienceIds && cfg.experienceIds.length}</p>
+                    </TableCell>
+                    <TableCell className="px-5 py-4 text-start  dark:text-gray-400">
+                      {cfg.guideIds && cfg.guideIds.length}
                     </TableCell>
 
                     <TableCell className="px-5 py-4 text-start" onClick={(e) => e.stopPropagation()}>
                       {loading ? (
                         <svg
-                          className="inline-block h-4 w-4 animate-spin text-gray-500"
+                          className="inline-block h-4 w-4 animate-spin text-gray-500 text-lg"
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
                           viewBox="0 0 24 24"
@@ -150,21 +152,18 @@ export default function SelfSchedulingConfigurations() {
                             dispatch(closeConfiguration({ id: cfg.id }))
                           }
                           }
-
-
-                          className="text-red-600"
+                          className="text-red-600 text-lg hover:text-2xl"
                         >
-                          <StopIcon className="inline-block" />
+                          <StopIconCircle className="inline-block" />
                         </button>
                       ) : (
                         <button
-
                           onClick={(event) => {
                             event.stopPropagation();
                             dispatch(openConfiguration({ id: cfg.id }))
                           }
                           }
-                          className="text-green-600"
+                          className="text-green-600 text-lg hover:text-2xl"
                         >
                           <PlayIcon className="inline-block" />
                         </button>
