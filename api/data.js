@@ -37,5 +37,5 @@ export let items = [
 ];
 
 export const users = [
-  { userName: 'admin', password: 'password', accessToken: 'mock-token' }
+  { userName: 'admin', password: 'admin', accessToken: 'mock-token' }
 ];
