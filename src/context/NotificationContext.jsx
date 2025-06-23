@@ -1,43 +1,68 @@
 import { createContext, useContext, useEffect, useRef } from "react";
-import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import { HubConnectionBuilder, LogLevel, HttpTransportType } from "@microsoft/signalr";
 import { useAuth } from "./AuthContext.jsx";
-
-const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
-const hubUrl = backend_url.replace(/\/api\/v1\/?$/, "") + "/hubs/notifications";
-
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://localhost:31782";
+const hubUrl = backendUrl.replace(/\/api\/v1\/?$/, "") + "/hubs/notifications";
 const NotificationContext = createContext(undefined);
 
 export const NotificationProvider = ({ children }) => {
   const { token } = useAuth();
   const connectionRef = useRef(null);
-
   useEffect(() => {
     if (!token) return;
 
     const connection = new HubConnectionBuilder()
-      .withUrl(hubUrl, { accessTokenFactory: () => token })
+      .withUrl(hubUrl, {
+        accessTokenFactory: () => token,
+        withCredentials: false,
+        skipNegotiation: true,
+        transport: HttpTransportType.WebSockets,
+      })
       .withAutomaticReconnect()
-      .configureLogging(LogLevel.Warning)
+      .configureLogging(LogLevel.Information)
       .build();
 
     connectionRef.current = connection;
-    connection.start().catch((err) => console.error("SignalR start error", err));
+
+    let cancelled = false;
+
+    const connect = async () => {
+      try {
+        await connection.start();
+        if (!cancelled) {
+          console.log("✅ SignalR connection started");
+        } else {
+          console.warn("🟡 Connection started after cancellation. Stopping...");
+          await connection.stop(); // cleanup if unmounted during start
+        }
+      } catch (err) {
+        if (!cancelled) {
+          console.error("❌ SignalR start error", err);
+        }
+      }
+    };
+
+    connect();
 
     return () => {
-      connection.stop();
+      cancelled = true;
+      if (connection.state === "Connected" || connection.state === "Connecting") {
+        connection.stop().catch(() => { });
+      }
     };
   }, [token]);
 
+
+
+
+
+
   const onAvailableSlotsUpdated = (handler) => {
-    if (connectionRef.current) {
-      connectionRef.current.on("AvailableSlotsUpdated", handler);
-    }
+    connectionRef.current?.on("AvailableSlotsUpdated", handler);
   };
 
   const offAvailableSlotsUpdated = (handler) => {
-    if (connectionRef.current) {
-      connectionRef.current.off("AvailableSlotsUpdated", handler);
-    }
+    connectionRef.current?.off("AvailableSlotsUpdated", handler);
   };
 
   return (
