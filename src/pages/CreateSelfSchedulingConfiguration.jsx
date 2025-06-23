@@ -1,4 +1,11 @@
 import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchCities,
+  fetchExperiences,
+  fetchGuides,
+  createConfiguration as createConfigurationThunk,
+} from "../store/createConfigurationSlice.js";
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
 import PageMeta from "../components/common/PageMeta";
 import Form from "../components/form/Form";
@@ -9,18 +16,17 @@ import MyDateRangePicker from "../components/form/DateRangePicker";
 import MultiSelect from "../components/form/MultiSelect";
 import Button from "../components/ui/button/Button";
 
-const getToken = () => localStorage.getItem("token") || "";
-const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
-
 export default function CreateSelfSchedulingConfiguration() {
-  const [cities, setCities] = useState([]);
+  const dispatch = useDispatch();
+  const { cities, experiences, guides, createStatus, createError } = useSelector(
+    (state) => state.configForm
+  );
+
   const [cityId, setCityId] = useState("");
   const [description, setDescription] = useState("");
   const [schedulingRange, setSchedulingRange] = useState({ startDate: null, endDate: null });
   const [toursRange, setToursRange] = useState({ startDate: null, endDate: null });
-  const [experiences, setExperiences] = useState([]);
   const [selectedExperienceIds, setSelectedExperienceIds] = useState([]);
-  const [guides, setGuides] = useState([]);
   const [selectedGuideIds, setSelectedGuideIds] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -29,52 +35,16 @@ export default function CreateSelfSchedulingConfiguration() {
   minDate.setHours(0, 0, 0, 0);
 
   useEffect(() => {
-    async function loadCities() {
-      try {
-        const token = getToken();
-        const res = await fetch(`${backend_url}/cities`, {
-          headers: { "Authorization": `Bearer ${token}` },
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setCities(data || []);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    }
-    loadCities();
-  }, []);
+    dispatch(fetchCities());
+  }, [dispatch]);
 
   useEffect(() => {
-    async function loadData() {
-      if (!cityId) return;
-      try {
-        const token = getToken();
-        const city = cities.find((c) => c.id === parseInt(cityId));
-        const cityNameParam = city?.name || "";
-        const expRes = await fetch(
-          `${backend_url}/tours?cityName=${encodeURIComponent(cityNameParam)}&pageSize=20&pageNumber=1`,
-          { headers: { "Authorization": `Bearer ${token}` } }
-        );
-        if (expRes.ok) {
-          const expData = await expRes.json();
-          setExperiences(expData.items || []);
-        }
-        const guideRes = await fetch(
-          `${backend_url}/guides?cityId=${cityId}&pageSize=20&pageNumber=1`,
-          { headers: { "Authorization": `Bearer ${token}` } }
-        );
-        if (guideRes.ok) {
-          const guideData = await guideRes.json();
-          setGuides(guideData.items || []);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    }
-    loadData();
-  }, [cityId, cities]);
+    if (!cityId) return;
+    const city = cities.find((c) => c.id === parseInt(cityId));
+    const cityNameParam = city?.name || "";
+    dispatch(fetchExperiences({ cityName: cityNameParam }));
+    dispatch(fetchGuides({ cityId }));
+  }, [dispatch, cityId, cities]);
 
   const validate = () => {
     const today = new Date();
@@ -112,34 +82,23 @@ export default function CreateSelfSchedulingConfiguration() {
 
   const handleSubmit = async () => {
     if (!validate()) return;
-    try {
-      const payload = {
-        cityId: parseInt(cityId),
-        description,
-        schedulingWindowStart: schedulingRange.startDate?.toISOString().split("T")[0],
-        schedulingWindowEnd: schedulingRange.endDate?.toISOString().split("T")[0],
-        toursPeriodStart: toursRange.startDate?.toISOString().split("T")[0],
-        toursPeriodEnd: toursRange.endDate?.toISOString().split("T")[0],
-        experienceIds: selectedExperienceIds.map((id) => parseInt(id)),
-        guideIds: selectedGuideIds.map((id) => parseInt(id)),
-      };
-      const token = getToken();
-      const res = await fetch(`${backend_url}/configuration`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-      if (res.ok) {
-        setSuccess(true);
-      } else {
-        const t = await res.text();
-        setError(t || "Failed to create configuration");
-      }
-    } catch (err) {
-      setError(err.message);
+    const payload = {
+      cityId: parseInt(cityId),
+      description,
+      schedulingWindowStart: schedulingRange.startDate?.toISOString().split("T")[0],
+      schedulingWindowEnd: schedulingRange.endDate?.toISOString().split("T")[0],
+      toursPeriodStart: toursRange.startDate?.toISOString().split("T")[0],
+      toursPeriodEnd: toursRange.endDate?.toISOString().split("T")[0],
+      experienceIds: selectedExperienceIds.map((id) => parseInt(id)),
+      guideIds: selectedGuideIds.map((id) => parseInt(id)),
+    };
+    const res = await dispatch(createConfigurationThunk(payload));
+    if (createConfigurationThunk.fulfilled.match(res)) {
+      setSuccess(true);
+    } else if (res.payload) {
+      setError(res.payload);
+    } else {
+      setError("Failed to create configuration");
     }
   };
    
@@ -148,6 +107,7 @@ export default function CreateSelfSchedulingConfiguration() {
       <PageMeta title="Add Self Scheduling Configuration" description="Create new configuration" />
       <PageBreadcrumb pageTitle="Add Self Scheduling Configuration" />
       {error && <p className="text-red-500 mb-3">{error}</p>}
+      {createError && <p className="text-red-500 mb-3">{createError}</p>}
       {success && <p className="text-green-500 mb-3">Configuration created</p>}
       <Form onSubmit={handleSubmit} className="space-y-6">
         <div>
