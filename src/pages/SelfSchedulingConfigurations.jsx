@@ -1,16 +1,29 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
 import PageMeta from "../components/common/PageMeta";
-import { fetchConfigurations } from "../store/configurationsSlice";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "../components/ui/table";
+import {
+  fetchConfigurations,
+  openConfiguration,
+  closeConfiguration,
+} from "../store/configurationsSlice";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "../components/ui/table";
+import { PlayIcon, StopIcon } from "../icons";
 
 export default function SelfSchedulingConfigurations() {
   const dispatch = useDispatch();
   const { list, status, error } = useSelector((state) => state.configurations);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(fetchConfigurations({ pageSize: 10, pageNumber: 1, cityId:1 }));
+    dispatch(fetchConfigurations({ pageSize: 10, pageNumber: 1, cityId: 1 }));
   }, [dispatch]);
 
   return (
@@ -36,11 +49,16 @@ export default function SelfSchedulingConfigurations() {
                 <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Schedule End</TableCell>
                 <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Experiences</TableCell>
                 <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Guides</TableCell>
+                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Actions</TableCell>
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
               {list.map((cfg) => (
-                <TableRow key={cfg.id}>
+                <TableRow
+                  key={cfg.id}
+                  className={`cursor-pointer hover:bg-gray-50 ${cfg.isRunning ? "border-l-4 border-green-500" : ""}`}
+                  onClick={() => navigate(`/self-scheduling-configurations/${cfg.id}`)}
+                >
                   <TableCell className="px-5 py-4 text-start">{cfg.id}</TableCell>
                   <TableCell className="px-5 py-4 text-start">{cfg.cityId}</TableCell>
                   <TableCell className="px-5 py-4 text-start">{cfg.description}</TableCell>
@@ -50,6 +68,31 @@ export default function SelfSchedulingConfigurations() {
                   <TableCell className="px-5 py-4 text-start">{cfg.schedulingWindowEnd}</TableCell>
                   <TableCell className="px-5 py-4 text-start">{cfg.experienceIds && cfg.experienceIds.join(", ")}</TableCell>
                   <TableCell className="px-5 py-4 text-start">{cfg.guideIds && cfg.guideIds.join(", ")}</TableCell>
+                  <TableCell className="px-5 py-4 text-start">
+                    {cfg.isRunning ? (
+                      <button
+                        onClick={() =>
+                          dispatch(
+                            closeConfiguration({ id: cfg.id })
+                          )
+                        }
+                        className="text-red-600"
+                      >
+                        <StopIcon className="inline-block" />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() =>
+                          dispatch(
+                            openConfiguration({ id: cfg.id })
+                          )
+                        }
+                        className="text-green-600"
+                      >
+                        <PlayIcon className="inline-block" />
+                      </button>
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

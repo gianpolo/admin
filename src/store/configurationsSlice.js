@@ -28,6 +28,49 @@ export const fetchConfigurations = createAsyncThunk(
   }
 );
 
+export const openConfiguration = createAsyncThunk(
+  "configurations/openConfiguration",
+  async ({ id }, { rejectWithValue }) => {
+    try {
+      const token = getToken();
+      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+      const url = `${backend_url}/configurations/${id}/open`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        throw new Error("Failed to open configuration");
+      }
+      return { id };
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const closeConfiguration = createAsyncThunk(
+  "configurations/closeConfiguration",
+  async ({ id }, { rejectWithValue }) => {
+    try {
+      const token = getToken();
+      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+      const url = `${backend_url}/configurations/${id}/close`;
+    
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        throw new Error("Failed to close configuration");
+      }
+      return { id };
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 const configurationsSlice = createSlice({
   name: "configurations",
   initialState: {
@@ -49,8 +92,17 @@ const configurationsSlice = createSlice({
       .addCase(fetchConfigurations.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
+      })
+      .addCase(openConfiguration.fulfilled, (state, action) => {
+        const cfg = state.list.find((c) => c.id === action.payload.id);
+        if (cfg) cfg.isRunning = true;
+      })
+      .addCase(closeConfiguration.fulfilled, (state, action) => {
+        const cfg = state.list.find((c) => c.id === action.payload.id);
+        if (cfg) cfg.isRunning = false;
       });
   },
 });
 const getToken = () => localStorage.getItem("token") || "";
 export default configurationsSlice.reducer;
+
