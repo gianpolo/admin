@@ -19,6 +19,7 @@ export default function SelfSchedulingConfigurationDetails() {
   const [items, setItems] = useState([]);
   const [itemsLoading, setItemsLoading] = useState(true);
   const [itemsError, setItemsError] = useState("");
+  const [simMessage, setSimMessage] = useState("");
 
   useEffect(() => {
     async function load() {
@@ -73,6 +74,26 @@ export default function SelfSchedulingConfigurationDetails() {
     }
   };
 
+  const handleSimulation = async () => {
+    if (!config) return;
+    setSimMessage("");
+    try {
+      const body = (config.guideIds || []).map((guideId) => ({
+        guideId,
+        guideName: `Guide ${guideId}`,
+      }));
+      const res = await fetch("http://localhost:5006/virtualguides", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) throw new Error("Simulation failed");
+      setSimMessage("Simulation started");
+    } catch (err) {
+      setSimMessage(err.message);
+    }
+  };
+
   const headerInfo = () => {
     if (!config) return "";
     const today = new Date();
@@ -103,14 +124,17 @@ export default function SelfSchedulingConfigurationDetails() {
         <Button variant="outline" onClick={goBack}>Back</Button>
         {config && (
           config.isRunning ? (
-            <Button
-              variant="outline"
-              className="text-red-600"
-              startIcon={<StopIcon className="size-4" />}
-              onClick={() => handleAction("close")}
-            >
-              Close
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={handleSimulation}>Simulate</Button>
+              <Button
+                variant="outline"
+                className="text-red-600"
+                startIcon={<StopIcon className="size-4" />}
+                onClick={() => handleAction("close")}
+              >
+                Close
+              </Button>
+            </div>
           ) : (
             <Button
               variant="outline"
@@ -123,6 +147,9 @@ export default function SelfSchedulingConfigurationDetails() {
           )
         )}
       </div>
+      {simMessage && (
+        <p className="mb-4 text-sm text-blue-500">{simMessage}</p>
+      )}
       {config && (
         <p className="mb-4 text-sm text-gray-500">
           {config.isRunning
