@@ -199,7 +199,7 @@ export default function SelfSchedulingConfigurationDetails() {
                     <TableCell
                       isHeader
                       className="px-6 py-3 whitespace-nowrap"
-                    > <div class="flex items-center">
+                    > <div className="flex items-center">
                         <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">  {headerInfo()}</p>
                       </div>
                     </TableCell>
@@ -208,31 +208,31 @@ export default function SelfSchedulingConfigurationDetails() {
                     <TableCell
                       isHeader
                       className="px-6 py-3 whitespace-nowrap"
-                    ><div class="flex items-center">
+                    ><div className="flex items-center">
                         <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400"> Name / ID</p>
                       </div></TableCell>
                     <TableCell
                       isHeader
                       className="px-6 py-3 whitespace-nowrap"
-                    ><div class="flex items-center">
+                    ><div className="flex items-center">
                         <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400"> Tour Date</p>
                       </div></TableCell>
                     <TableCell
                       isHeader
                       className="px-6 py-3 whitespace-nowrap"
-                    ><div class="flex items-center">
+                    ><div className="flex items-center">
                         <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Initial Availability</p>
                       </div> </TableCell>
                     <TableCell
                       isHeader
                       className="px-6 py-3 whitespace-nowrap"
-                    ><div class="flex items-center">
+                    ><div className="flex items-center">
                         <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Reserved Slots</p>
                       </div> </TableCell>
                     <TableCell
                       isHeader
                       className="px-6 py-3 whitespace-nowrap"
-                    ><div class="flex items-center">
+                    ><div className="flex items-center">
                         <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Confirmed Slots</p>
                       </div> </TableCell>
                   </TableRow>
@@ -247,12 +247,12 @@ export default function SelfSchedulingConfigurationDetails() {
                         </div>
                       </TableCell>
                       <TableCell className="px-6 py-3 whitespace-nowrap">
-                        <div class="flex items-center">
+                        <div className="flex items-center">
                           <p className="text-gray-500 text-theme-sm dark:text-gray-400" > {item.tourDate}</p>
                         </div>
                       </TableCell>
                       <TableCell className="px-6 py-3 whitespace-nowrap">
-                        <div class="flex items-center">
+                        <div className="flex items-center">
                           <p className="text-gray-500 text-theme-sm dark:text-gray-400" >{item.availableSlots}</p>
                         </div>
                       </TableCell>
