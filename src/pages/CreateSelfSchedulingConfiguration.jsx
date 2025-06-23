@@ -14,6 +14,7 @@ import Select from "../components/form/Select";
 import InputField from "../components/form/input/InputField";
 import MyDateRangePicker from "../components/form/DateRangePicker";
 import Button from "../components/ui/button/Button";
+import SelectableListModal from "../components/common/SelectableListModal";
 import {
   Table,
   TableBody,
@@ -188,8 +189,63 @@ export default function CreateSelfSchedulingConfiguration() {
             />
           </div>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <SelectableListModal
+              title="Experiences"
+              items={experiences}
+              selected={selectedExperienceIds}
+              onChange={setSelectedExperienceIds}
+              renderRow={(item) =>
+                <TableCell className="px-6 py-3 whitespace-nowrap">
+                  <div className="leading-snug">
+                    <div className="dark:text-white font-medium truncate">{item.name}</div>
+                    <div className="text-theme-xs text-gray-400 dark:text-gray-400">{item.id}</div>
+                  </div>
+                </TableCell>
+              }
+              renderHeader={() => (
+                <TableRow>
+                  <TableCell
+                    isHeader
+                    className="px-6 py-3 whitespace-nowrap"
+                  > <div className="flex items-center">
+                      <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Name / ID</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+            />
+          </div>
+          <div>
+            <SelectableListModal
+              title="Guides"
+              items={guides}
+              selected={selectedGuideIds}
+              onChange={setSelectedGuideIds}
+              renderRow={(item) =>
+                <TableCell className="px-6 py-3 whitespace-nowrap">
+                  <div className="leading-snug">
+                    <div className="dark:text-white font-medium truncate">{item.name}</div>
+                    <div className="text-theme-xs text-gray-400 dark:text-gray-400">{item.id}</div>
+                  </div>
+                </TableCell>
+              }
+              renderHeader={() => (
+                <TableRow>
+                  <TableCell
+                    isHeader
+                    className="px-6 py-3 whitespace-nowrap"
+                  > <div className="flex items-center">
+                      <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Name / ID</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+            />
+          </div>
+        </div>
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] mt-6">
             <div className="max-w-full overflow-x-auto">
               <Table>
@@ -263,7 +319,7 @@ export default function CreateSelfSchedulingConfiguration() {
               </Table>
             </div>
           </div>
-        </div>
+        </div> */}
         <div>
           <Button type="submit" className="bg-brand-500 text-white hover:bg-brand-600" >Create</Button>
         </div>

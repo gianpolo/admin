@@ -197,7 +197,7 @@ export default function SelfSchedulingConfigurationDetails() {
                 </TableHeader>
                 <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-xs">
                   {sortedItems.map((item) => (
-                    <TableRow key={item.id}>
+                    <TableRow key={item.id} handleClick={() => { }}>
                       <TableCell className="px-6 py-3 whitespace-nowrap">
                         <div className="leading-snug">
                           <div className="dark:text-white font-medium truncate">{item.name}</div>
