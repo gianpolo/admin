@@ -11,7 +11,7 @@ export default function SelfSchedulingConfigurations() {
   const { list, status, error } = useSelector((state) => state.configurations);
 
   useEffect(() => {
-    dispatch(fetchConfigurations({ pageSize: 10, pageNumber: 1, cityId:1 }));
+    dispatch(fetchConfigurations({ pageSize: 10, pageNumber: 1, cityId: 1 }));
   }, [dispatch]);
 
   return (
@@ -60,7 +60,7 @@ export default function SelfSchedulingConfigurations() {
                       <button
                         onClick={() =>
                           dispatch(
-                            closeConfiguration({ id: cfg.id, endDate: cfg.schedulingWindowEnd })
+                            closeConfiguration({ id: cfg.id })
                           )
                         }
                         className="text-red-600"
@@ -71,7 +71,7 @@ export default function SelfSchedulingConfigurations() {
                       <button
                         onClick={() =>
                           dispatch(
-                            openConfiguration({ id: cfg.id, startDate: cfg.schedulingWindowStart })
+                            openConfiguration({ id: cfg.id })
                           )
                         }
                         className="text-green-600"

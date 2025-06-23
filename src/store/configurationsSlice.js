@@ -30,10 +30,11 @@ export const fetchConfigurations = createAsyncThunk(
 
 export const openConfiguration = createAsyncThunk(
   "configurations/openConfiguration",
-  async ({ id, startDate }, { rejectWithValue }) => {
+  async ({ id }, { rejectWithValue }) => {
     try {
       const token = getToken();
-      const url = `http://localhost:5005/configurations/open?date=${encodeURIComponent(startDate)}`;
+      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+      const url = `${backend_url}/configurations/${id}/open`;
       const res = await fetch(url, {
         method: "POST",
         headers: { "Authorization": `Bearer ${token}` },
@@ -50,10 +51,12 @@ export const openConfiguration = createAsyncThunk(
 
 export const closeConfiguration = createAsyncThunk(
   "configurations/closeConfiguration",
-  async ({ id, endDate }, { rejectWithValue }) => {
+  async ({ id }, { rejectWithValue }) => {
     try {
       const token = getToken();
-      const url = `http://localhost:5005/configurations/close?date=${encodeURIComponent(endDate)}`;
+      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+      const url = `${backend_url}/configurations/${id}/close`;
+    
       const res = await fetch(url, {
         method: "POST",
         headers: { "Authorization": `Bearer ${token}` },
