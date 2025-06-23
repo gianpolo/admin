@@ -6,6 +6,7 @@ import Button from "../components/ui/button/Button";
 import useGoBack from "../hooks/useGoBack";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "../components/ui/table";
 import { PlayIcon, StopIcon } from "../icons";
+import { useNotifications } from "../context/NotificationContext.jsx";
 
 const getToken = () => localStorage.getItem("token") || "";
 const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
@@ -19,6 +20,7 @@ export default function SelfSchedulingConfigurationDetails() {
   const [items, setItems] = useState([]);
   const [itemsLoading, setItemsLoading] = useState(true);
   const [itemsError, setItemsError] = useState("");
+  const { onAvailableSlotsUpdated, offAvailableSlotsUpdated } = useNotifications();
 
   useEffect(() => {
     async function load() {
@@ -57,6 +59,18 @@ export default function SelfSchedulingConfigurationDetails() {
     }
     loadItems();
   }, [id]);
+
+  useEffect(() => {
+    const handler = ({ itemId, availableSlots }) => {
+      setItems((prev) =>
+        prev.map((it) =>
+          it.id === itemId ? { ...it, availableSlots } : it
+        )
+      );
+    };
+    onAvailableSlotsUpdated(handler);
+    return () => offAvailableSlotsUpdated(handler);
+  }, [onAvailableSlotsUpdated, offAvailableSlotsUpdated]);
 
   const handleAction = async (action) => {
     try {
