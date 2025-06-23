@@ -13,8 +13,15 @@ import Label from "../components/form/Label";
 import Select from "../components/form/Select";
 import InputField from "../components/form/input/InputField";
 import MyDateRangePicker from "../components/form/DateRangePicker";
-import MultiSelect from "../components/form/MultiSelect";
 import Button from "../components/ui/button/Button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "../components/ui/table";
+import Checkbox from "../components/form/input/Checkbox";
 
 export default function CreateSelfSchedulingConfiguration() {
   const dispatch = useDispatch();
@@ -34,6 +41,39 @@ export default function CreateSelfSchedulingConfiguration() {
   minDate.setDate(minDate.getDate() + 1);
   minDate.setHours(0, 0, 0, 0);
 
+  const fetchGuidesForExperiences = (expIds) => {
+    if (!cityId) return;
+    dispatch(
+      fetchGuides({
+        cityId: parseInt(cityId),
+        experienceIds: expIds.map((id) => parseInt(id)),
+        allocationPeriod: {
+          start: toursRange.startDate
+            ? toursRange.startDate.toISOString().split("T")[0]
+            : undefined,
+          end: toursRange.endDate
+            ? toursRange.endDate.toISOString().split("T")[0]
+            : undefined,
+        },
+      })
+    );
+  };
+
+  const handleExperienceCheck = (id, checked) => {
+    const newIds = checked
+      ? [...selectedExperienceIds, id]
+      : selectedExperienceIds.filter((eid) => eid !== id);
+    setSelectedExperienceIds(newIds);
+    fetchGuidesForExperiences(newIds);
+  };
+
+  const handleGuideCheck = (id, checked) => {
+    const newIds = checked
+      ? [...selectedGuideIds, id]
+      : selectedGuideIds.filter((gid) => gid !== id);
+    setSelectedGuideIds(newIds);
+  };
+
   useEffect(() => {
     dispatch(fetchCities());
   }, [dispatch]);
@@ -43,7 +83,6 @@ export default function CreateSelfSchedulingConfiguration() {
     const city = cities.find((c) => c.id === parseInt(cityId));
     const cityNameParam = city?.name || "";
     dispatch(fetchExperiences({ cityName: cityNameParam }));
-    dispatch(fetchGuides({ cityId }));
   }, [dispatch, cityId, cities]);
 
   const validate = () => {
@@ -101,7 +140,7 @@ export default function CreateSelfSchedulingConfiguration() {
       setError("Failed to create configuration");
     }
   };
-   
+
   return (
     <>
       <PageMeta title="Add Self Scheduling Configuration" description="Create new configuration" />
@@ -149,21 +188,81 @@ export default function CreateSelfSchedulingConfiguration() {
             />
           </div>
         </div>
-        <div>
-          <MultiSelect
-            label="Experiences"
-            options={experiences.map((e) => ({ value: e.id, text: e.name }))}
-            onChange={(vals) => setSelectedExperienceIds(vals)}
-            defaultSelected={selectedExperienceIds}
-          />
-        </div>
-        <div>
-          <MultiSelect
-            label="Guides"
-            options={guides.map((g) => ({ value: g.guide.id, text: g.guide.name }))}
-            onChange={(vals) => setSelectedGuideIds(vals)}
-            defaultSelected={selectedGuideIds}
-          />
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] mt-6">
+            <div className="max-w-full overflow-x-auto">
+              <Table>
+                <TableHeader className="border-b border-gray-100 dark:border-white/[0.05] text-xs">
+                  <TableRow>
+                    <TableCell isHeader className="px-3 py-2"></TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-6 py-3 whitespace-nowrap"
+                    >
+                      <div className="flex items-center">
+                        <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400"> Name / ID</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-xs">
+                  {experiences.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="px-6 py-3 whitespace-nowrap">
+                        <Checkbox
+                          checked={selectedExperienceIds.includes(item.id)}
+                          onChange={(chk) => handleExperienceCheck(item.id, chk)}
+                        /></TableCell>
+                      <TableCell className="px-6 py-3 whitespace-nowrap">
+                        <div className="leading-snug">
+                          <div className="dark:text-white font-medium truncate">{item.name}</div>
+                          <div className="text-theme-xs text-gray-400 dark:text-gray-400">{item.id}</div>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] mt-6">
+            <div className="max-w-full overflow-x-auto">
+              <Table>
+                <TableHeader className="border-b border-gray-100 dark:border-white/[0.05] text-xs">
+                  <TableRow>
+                    <TableCell isHeader className="px-3 py-2"></TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-6 py-3 whitespace-nowrap"
+                    >
+                      <div className="flex items-center">
+                        <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400"> Name / ID</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-xs">
+                  {guides.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="px-6 py-3 whitespace-nowrap">
+                        <Checkbox
+                          checked={selectedGuideIds.includes(item.id)}
+                          onChange={(chk) => handleGuideCheck(item.id, chk)}
+                        /></TableCell>
+                      <TableCell className="px-6 py-3 whitespace-nowrap">
+                        <div className="leading-snug">
+                          <div className="dark:text-white font-medium truncate">{item.name}</div>
+                          <div className="text-theme-xs text-gray-400 dark:text-gray-400">{item.id}</div>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
         </div>
         <div>
           <Button type="submit" className="bg-brand-500 text-white hover:bg-brand-600" >Create</Button>
