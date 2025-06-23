@@ -77,6 +77,7 @@ const configurationsSlice = createSlice({
     list: [],
     status: "idle",
     error: null,
+    actionStatus: {},
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -93,13 +94,27 @@ const configurationsSlice = createSlice({
         state.status = "failed";
         state.error = action.payload;
       })
+      .addCase(openConfiguration.pending, (state, action) => {
+        state.actionStatus[action.meta.arg.id] = "loading";
+      })
       .addCase(openConfiguration.fulfilled, (state, action) => {
         const cfg = state.list.find((c) => c.id === action.payload.id);
         if (cfg) cfg.isRunning = true;
+        state.actionStatus[action.payload.id] = "idle";
+      })
+      .addCase(openConfiguration.rejected, (state, action) => {
+        state.actionStatus[action.meta.arg.id] = "idle";
+      })
+      .addCase(closeConfiguration.pending, (state, action) => {
+        state.actionStatus[action.meta.arg.id] = "loading";
       })
       .addCase(closeConfiguration.fulfilled, (state, action) => {
         const cfg = state.list.find((c) => c.id === action.payload.id);
         if (cfg) cfg.isRunning = false;
+        state.actionStatus[action.payload.id] = "idle";
+      })
+      .addCase(closeConfiguration.rejected, (state, action) => {
+        state.actionStatus[action.meta.arg.id] = "idle";
       });
   },
 });
