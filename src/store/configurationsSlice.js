@@ -28,6 +28,46 @@ export const fetchConfigurations = createAsyncThunk(
   }
 );
 
+export const openConfiguration = createAsyncThunk(
+  "configurations/openConfiguration",
+  async ({ id, startDate }, { rejectWithValue }) => {
+    try {
+      const token = getToken();
+      const url = `http://localhost:5005/configurations/open?date=${encodeURIComponent(startDate)}`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        throw new Error("Failed to open configuration");
+      }
+      return { id };
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const closeConfiguration = createAsyncThunk(
+  "configurations/closeConfiguration",
+  async ({ id, endDate }, { rejectWithValue }) => {
+    try {
+      const token = getToken();
+      const url = `http://localhost:5005/configurations/close?date=${encodeURIComponent(endDate)}`;
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        throw new Error("Failed to close configuration");
+      }
+      return { id };
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 const configurationsSlice = createSlice({
   name: "configurations",
   initialState: {
@@ -49,8 +89,18 @@ const configurationsSlice = createSlice({
       .addCase(fetchConfigurations.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
+      })
+      .addCase(openConfiguration.fulfilled, (state, action) => {
+        const cfg = state.list.find((c) => c.id === action.payload.id);
+        if (cfg) cfg.isRunning = true;
+      })
+      .addCase(closeConfiguration.fulfilled, (state, action) => {
+        const cfg = state.list.find((c) => c.id === action.payload.id);
+        if (cfg) cfg.isRunning = false;
       });
   },
 });
 const getToken = () => localStorage.getItem("token") || "";
 export default configurationsSlice.reducer;
+export { openConfiguration, closeConfiguration };
+
