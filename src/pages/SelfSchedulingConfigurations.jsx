@@ -96,7 +96,7 @@ export default function SelfSchedulingConfigurations() {
                   <TableRow
                     key={cfg.id}
                     className={`cursor-pointer ${cfg.isRunning ? "border-l-4 border-green-500" : "bg-gray-50"}`}
-                    onClick={() => navigate(`/self-scheduling-configurations/${cfg.id}`)}
+                    handleClick={() => navigate(`/self-scheduling-configurations/${cfg.id}`)}
                   >
                     <TableCell className="px-5 py-4 text-start">
                       <div className="leading-snug">
@@ -141,8 +141,10 @@ export default function SelfSchedulingConfigurations() {
                         </svg>
                       ) : cfg.isRunning ? (
                         <button
-                          onClick={() =>
+                          onClick={(event) => {
+                            event.stopPropagation();
                             dispatch(closeConfiguration({ id: cfg.id }))
+                          }
                           }
                           className="text-red-600"
                         >
@@ -150,8 +152,10 @@ export default function SelfSchedulingConfigurations() {
                         </button>
                       ) : (
                         <button
-                          onClick={() =>
+                          onClick={(event) => {
+                            event.stopPropagation();
                             dispatch(openConfiguration({ id: cfg.id }))
+                          }
                           }
                           className="text-green-600"
                         >
@@ -162,11 +166,6 @@ export default function SelfSchedulingConfigurations() {
                   </TableRow>
                 );
               })}
-
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
             </TableBody>
           </Table>
         </div>
