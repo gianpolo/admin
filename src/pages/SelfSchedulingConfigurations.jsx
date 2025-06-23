@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
 import PageMeta from "../components/common/PageMeta";
 import {
@@ -16,11 +17,14 @@ import {
 } from "../components/ui/table";
 import { PlayIcon, StopIcon } from "../icons";
 
-const formatPeriod = (start, end) =>
-  `${(start || '').replace(/-/g, '/')} to ${(end || '').replace(/-/g, '/')}`;
 
 export default function SelfSchedulingConfigurations() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const formatPeriod = (start, end) =>
+    `${(start || '').replace(/-/g, '/')} to ${(end || '').replace(/-/g, '/')}`;
+
+
   const { list, status, error, actionStatus } = useSelector(
     (state) => state.configurations
   );
@@ -93,7 +97,8 @@ export default function SelfSchedulingConfigurations() {
                 return (
                   <TableRow
                     key={cfg.id}
-                    className={`${cfg.isRunning ? "border-l-4 border-green-500" : "bg-gray-50"}`}
+                    className={`cursor-pointer ${cfg.isRunning ? "border-l-4 border-green-500" : "bg-gray-50"}`}
+                    handleClick={() => navigate(`/self-scheduling-configurations/${cfg.id}`)}
                   >
                     <TableCell className="px-5 py-4 text-start">
                       <div className="leading-snug">
@@ -114,7 +119,8 @@ export default function SelfSchedulingConfigurations() {
                     <TableCell className="px-5 py-4 text-start">
                       {cfg.guideIds && cfg.guideIds.join(", ")}
                     </TableCell>
-                    <TableCell className="px-5 py-4 text-start">
+
+                    <TableCell className="px-5 py-4 text-start" onClick={(e) => e.stopPropagation()}>
                       {loading ? (
                         <svg
                           className="inline-block h-4 w-4 animate-spin text-gray-500"
@@ -138,17 +144,25 @@ export default function SelfSchedulingConfigurations() {
                         </svg>
                       ) : cfg.isRunning ? (
                         <button
-                          onClick={() =>
+
+                          onClick={(event) => {
+                            event.stopPropagation();
                             dispatch(closeConfiguration({ id: cfg.id }))
                           }
+                          }
+
+
                           className="text-red-600"
                         >
                           <StopIcon className="inline-block" />
                         </button>
                       ) : (
                         <button
-                          onClick={() =>
+
+                          onClick={(event) => {
+                            event.stopPropagation();
                             dispatch(openConfiguration({ id: cfg.id }))
+                          }
                           }
                           className="text-green-600"
                         >
