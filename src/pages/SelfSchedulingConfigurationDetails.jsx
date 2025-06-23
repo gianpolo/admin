@@ -185,7 +185,7 @@ export default function SelfSchedulingConfigurationDetails() {
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
       {config && <ConfigurationInfoCard config={config} />}
- 
+
 
       {itemsLoading && <p>Loading items...</p>}
       {itemsError && <p className="text-red-500">{itemsError}</p>}
@@ -198,44 +198,64 @@ export default function SelfSchedulingConfigurationDetails() {
                   <TableRow>
                     <TableCell
                       isHeader
-                      colSpan={3}
-                      className="px-5 py-2 font-medium text-gray-500 text-start"
-                    >
-                      {headerInfo()}
+                      className="px-6 py-3 whitespace-nowrap"
+                    > <div class="flex items-center">
+                        <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">  {headerInfo()}</p>
+                      </div>
                     </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell
                       isHeader
-                      className="px-5 py-2 font-medium text-gray-500 text-start"
-                    >
-                      ID / Name
-                    </TableCell>
+                      className="px-6 py-3 whitespace-nowrap"
+                    ><div class="flex items-center">
+                        <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400"> Name / ID</p>
+                      </div></TableCell>
                     <TableCell
                       isHeader
-                      className="px-5 py-2 font-medium text-gray-500 text-start"
-                    >
-                      Tour Date
-                    </TableCell>
+                      className="px-6 py-3 whitespace-nowrap"
+                    ><div class="flex items-center">
+                        <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400"> Tour Date</p>
+                      </div></TableCell>
                     <TableCell
                       isHeader
-                      className="px-5 py-2 font-medium text-gray-500 text-start"
-                    >
-                      Available Slots
-                    </TableCell>
+                      className="px-6 py-3 whitespace-nowrap"
+                    ><div class="flex items-center">
+                        <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Initial Availability</p>
+                      </div> </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-6 py-3 whitespace-nowrap"
+                    ><div class="flex items-center">
+                        <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Reserved Slots</p>
+                      </div> </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-6 py-3 whitespace-nowrap"
+                    ><div class="flex items-center">
+                        <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Confirmed Slots</p>
+                      </div> </TableCell>
                   </TableRow>
                 </TableHeader>
                 <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-xs">
                   {items.map((item) => (
                     <TableRow key={item.id}>
-                      <TableCell className="px-5 py-2 text-start">
+                      <TableCell className="px-6 py-3 whitespace-nowrap">
                         <div className="leading-snug">
-                          <div className="font-normal text-gray-500">{item.id}</div>
-                          <div className="text-brand-600 truncate">{item.name}</div>
+                          <div className="dark:text-white font-medium truncate">{item.name}</div>
+                          <div className="text-theme-xs text-gray-400 dark:text-gray-400">{item.id}</div>
                         </div>
                       </TableCell>
-                      <TableCell className="px-5 py-2 text-start">{item.tourDate}</TableCell>
-                      <TableCell className="px-5 py-2 text-start">{item.availableSlots}</TableCell>
+                      <TableCell className="px-6 py-3 whitespace-nowrap">
+                        <div class="flex items-center">
+                          <p className="text-gray-500 text-theme-sm dark:text-gray-400" > {item.tourDate}</p>
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-6 py-3 whitespace-nowrap">
+                        <div class="flex items-center">
+                          <p className="text-gray-500 text-theme-sm dark:text-gray-400" >{item.availableSlots}</p>
+                        </div>
+                      </TableCell>
                     </TableRow>
                   ))}
                   {items.length === 0 && (

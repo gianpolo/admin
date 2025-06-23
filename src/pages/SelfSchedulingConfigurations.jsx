@@ -49,45 +49,53 @@ export default function SelfSchedulingConfigurations() {
               <TableRow>
                 <TableCell
                   isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  ID / Description
+                  className="px-6 py-3 whitespace-nowrap"
+                ><div class="flex items-center">
+                    <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Description / ID</p> </div>
                 </TableCell>
                 <TableCell
                   isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Scheduling Window
+                  className="px-6 py-3 whitespace-nowrap"
+                > <div class="flex items-center">
+                    <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Scheduling Window</p>
+                  </div>
                 </TableCell>
                 <TableCell
                   isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                  className="px-6 py-3 whitespace-nowrap"
                 >
-                  Tours Period
+                  <div class="flex items-center">
+                    <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Tours Period</p>
+                  </div>
+
                 </TableCell>
                 <TableCell
                   isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  City Id
+                  className="px-6 py-3 whitespace-nowrap"
+                > <div class="flex items-center">
+                    <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">City ID</p> </div>
+
                 </TableCell>
                 <TableCell
                   isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Experiences Count
+                  className="px-6 py-3 whitespace-nowrap"
+                > <div class="flex items-center">
+                    <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Experiences Count</p>
+                  </div>
                 </TableCell>
                 <TableCell
                   isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Guides Count
+                  className="px-6 py-3 whitespace-nowrap"
+                > <div class="flex items-center">
+                    <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400"> Guides Count</p>
+                  </div>
                 </TableCell>
                 <TableCell
                   isHeader
-                  className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
-                >
-                  Actions
+                  className="px-6 py-3 whitespace-nowrap"
+                ><div class="flex items-center">
+                    <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">Actions</p> </div>
+
                 </TableCell>
               </TableRow>
             </TableHeader>
@@ -100,29 +108,28 @@ export default function SelfSchedulingConfigurations() {
                     className={`cursor-pointer ${cfg.isRunning ? " dark:bg-brand-500/12" : ""}`}
                     handleClick={() => navigate(`/self-scheduling-configurations/${cfg.id}`)}
                   >
-                    <TableCell className="px-5 py-4 sm:px-6">
+                    <TableCell className="px-6 py-3 whitespace-nowrap">
                       <div className="leading-snug">
-                        <div className={`text-sm font-normal ${cfg.isRunning ? "text-gray-400" : "dark:text-gray-400"}`}>{cfg.id}</div>
-                        <div className="text-white truncate">{cfg.description}</div>
+                        <div className="dark:text-white font-medium truncate">{cfg.description}</div>
+                        <div className={`text-theme-xs   ${cfg.isRunning ? "text-gray-400" : "dark:text-gray-400"}`}>{cfg.id}</div>
                       </div>
                     </TableCell>
-                    <TableCell className="px-5 py-4 sm:px-6">
+                    <TableCell className="px-6 py-3 whitespace-nowrap"><div class="flex items-center">
                       <p className="text-gray-500 text-theme-sm dark:text-gray-400" >{formatPeriod(cfg.schedulingWindowStart, cfg.schedulingWindowEnd)}</p>
-                    </TableCell>
-                    <TableCell className="px-5 py-4 sm:px-6">
+                    </div></TableCell>
+                    <TableCell className="px-6 py-3 whitespace-nowrap"><div class="flex items-center">
                       <p className="text-gray-500 text-theme-sm dark:text-gray-400" > {formatPeriod(cfg.toursPeriodStart, cfg.toursPeriodEnd)}</p>
-                    </TableCell>
-                    <TableCell className="px-5 py-4">
+                    </div></TableCell>
+                    <TableCell className="px-6 py-3 whitespace-nowrap"><div class="flex items-center">
                       <p className="text-gray-500 text-theme-sm dark:text-gray-400">{cfg.cityId}</p>
-                    </TableCell>
-                    <TableCell className="px-5 py-3 text-left sm:px-6">
+                    </div></TableCell>
+                    <TableCell className="px-6 py-3 whitespace-nowrap"><div class="flex items-center">
                       <p className="text-gray-500 text-theme-sm dark:text-gray-400">{cfg.experienceIds && cfg.experienceIds.length}</p>
-                    </TableCell>
-                    <TableCell className="px-5 py-4 text-start  dark:text-gray-400">
-                      {cfg.guideIds && cfg.guideIds.length}
-                    </TableCell>
-
-                    <TableCell className="px-5 py-4 text-start" onClick={(e) => e.stopPropagation()}>
+                    </div></TableCell>
+                    <TableCell className="px-6 py-3 whitespace-nowrap"><div class="flex items-center">
+                      <p className="text-gray-500 text-theme-sm dark:text-gray-400">{cfg.guideIds && cfg.guideIds.length}</p>
+                    </div></TableCell>
+                    <TableCell className="px-6 py-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                       {loading ? (
                         <svg
                           className="inline-block h-4 w-4 animate-spin text-gray-500 text-lg"
@@ -175,7 +182,7 @@ export default function SelfSchedulingConfigurations() {
             </TableBody>
           </Table>
         </div>
-      </div>
+      </div >
     </>
   );
 }
