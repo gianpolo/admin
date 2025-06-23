@@ -5,7 +5,7 @@ import Form from "../components/form/Form";
 import Label from "../components/form/Label";
 import Select from "../components/form/Select";
 import InputField from "../components/form/input/InputField";
-import DateRangePicker from "../components/form/DateRangePicker";
+import MyDateRangePicker from "../components/form/DateRangePicker";
 import MultiSelect from "../components/form/MultiSelect";
 import Button from "../components/ui/button/Button";
 
@@ -142,7 +142,7 @@ export default function CreateSelfSchedulingConfiguration() {
       setError(err.message);
     }
   };
-
+   
   return (
     <>
       <PageMeta title="Add Self Scheduling Configuration" description="Create new configuration" />
@@ -166,7 +166,8 @@ export default function CreateSelfSchedulingConfiguration() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <DateRangePicker
+            <MyDateRangePicker
+              id="schedulingRange"
               label="Scheduling Window"
               value={schedulingRange}
               minDate={minDate}
@@ -177,7 +178,8 @@ export default function CreateSelfSchedulingConfiguration() {
             />
           </div>
           <div>
-            <DateRangePicker
+            <MyDateRangePicker
+              id="toursRange"
               label="Tours Period"
               value={toursRange}
               minDate={schedulingRange.endDate ? (() => { const d = new Date(schedulingRange.endDate); d.setDate(d.getDate() + 1); return d; })() : minDate}
