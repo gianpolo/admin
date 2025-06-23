@@ -17,7 +17,7 @@ import {
 import { PlayIcon, StopIcon } from "../icons";
 
 const formatPeriod = (start, end) =>
-  `${start?.replace(/-/g, "/"}) to ${end?.replace(/-/g, "/")}`;
+  `${(start || '').replace(/-/g, '/')} to ${(end || '').replace(/-/g, '/')}`;
 
 export default function SelfSchedulingConfigurations() {
   const dispatch = useDispatch();
@@ -158,7 +158,7 @@ export default function SelfSchedulingConfigurations() {
                     </TableCell>
                   </TableRow>
                 );
-              })
+              })}
             </TableBody>
           </Table>
         </div>
