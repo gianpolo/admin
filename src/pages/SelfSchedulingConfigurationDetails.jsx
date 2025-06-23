@@ -129,7 +129,7 @@ export default function SelfSchedulingConfigurationDetails() {
               <Link className="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400" to="/">
                 Home
                 <svg className="stroke-current" width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M6.0765 12.667L10.2432 8.50033L6.0765 4.33366" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M6.0765 12.667L10.2432 8.50033L6.0765 4.33366" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </Link>
             </li>
@@ -166,88 +166,85 @@ export default function SelfSchedulingConfigurationDetails() {
       {simulationMessage && (
         <p className="mb-4 text-sm text-blue-500">{simulationMessage}</p>
       )}
-      {config && (
-        <p className="mb-4 text-sm text-gray-500">
-          {config.isRunning
-            ? "This configuration is running"
-            : "This configuration is not running"}
-        </p>
-      )}
+
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
       {config && (
         <div className="space-y-3">
-          <p><strong>Description:</strong> {config.description}</p>
-          <p><strong>Scheduling Window:</strong> {config.schedulingWindowStart} - {config.schedulingWindowEnd}</p>
-          <p><strong>Tours Period:</strong> {config.toursPeriodStart} - {config.toursPeriodEnd}</p>
-          <p><strong>Experiences:</strong> {config.experienceIds && config.experienceIds.join(", ")}</p>
-          <p><strong>Guides:</strong> {config.guideIds && config.guideIds.join(", ")}</p>
-          <p><strong>Status:</strong> {config.isRunning ? "Running" : "Closed"}</p>
+          <p className="dark:text-gray-400"><strong className="dark:text-white/90">Description:</strong> {config.description}</p>
+          <p className="dark:text-gray-400"><strong className="dark:text-white/90">Scheduling Window:</strong> {config.schedulingWindowStart} - {config.schedulingWindowEnd}</p>
+          <p className="dark:text-gray-400"><strong className="dark:text-white/90">Tours Period:</strong> {config.toursPeriodStart} - {config.toursPeriodEnd}</p>
+          <p className="dark:text-gray-400"><strong className="dark:text-white/90">Experiences:</strong> {config.experienceIds && config.experienceIds.join(", ")}</p>
+          <p className="dark:text-gray-400"><strong className="dark:text-white/90">Guides:</strong> {config.guideIds && config.guideIds.join(", ")}</p>
+          <p className="dark:text-gray-400"><strong className="dark:text-white/90">Status:</strong> {config.isRunning ? "Running" : "Closed"}</p>
         </div>
-      )}
+      )
+      }
 
       {itemsLoading && <p>Loading items...</p>}
       {itemsError && <p className="text-red-500">{itemsError}</p>}
-      {!itemsLoading && !itemsError && (
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] mt-6">
-          <div className="max-w-full overflow-x-auto">
-            <Table>
-              <TableHeader className="border-b border-gray-100 dark:border-white/[0.05] text-xs">
-                <TableRow>
-                  <TableCell
-                    isHeader
-                    colSpan={3}
-                    className="px-5 py-2 font-medium text-gray-500 text-start"
-                  >
-                    {headerInfo()}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-2 font-medium text-gray-500 text-start"
-                  >
-                    ID / Name
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-2 font-medium text-gray-500 text-start"
-                  >
-                    Tour Date
-                  </TableCell>
-                  <TableCell
-                    isHeader
-                    className="px-5 py-2 font-medium text-gray-500 text-start"
-                  >
-                    Available Slots
-                  </TableCell>
-                </TableRow>
-              </TableHeader>
-              <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-xs">
-                {items.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell className="px-5 py-2 text-start">
-                      <div className="leading-snug">
-                        <div className="font-normal text-gray-500">{item.id}</div>
-                        <div className="text-brand-600 truncate">{item.name}</div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="px-5 py-2 text-start">{item.tourDate}</TableCell>
-                    <TableCell className="px-5 py-2 text-start">{item.availableSlots}</TableCell>
-                </TableRow>
-              ))}
-              {items.length === 0 && (
-                <TableRow>
-                    <TableCell colSpan={3} className="px-5 py-2 text-center text-gray-500">
-                      No items found
+      {
+        !itemsLoading && !itemsError && (
+          <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] mt-6">
+            <div className="max-w-full overflow-x-auto">
+              <Table>
+                <TableHeader className="border-b border-gray-100 dark:border-white/[0.05] text-xs">
+                  <TableRow>
+                    <TableCell
+                      isHeader
+                      colSpan={3}
+                      className="px-5 py-2 font-medium text-gray-500 text-start"
+                    >
+                      {headerInfo()}
                     </TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                  <TableRow>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-2 font-medium text-gray-500 text-start"
+                    >
+                      ID / Name
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-2 font-medium text-gray-500 text-start"
+                    >
+                      Tour Date
+                    </TableCell>
+                    <TableCell
+                      isHeader
+                      className="px-5 py-2 font-medium text-gray-500 text-start"
+                    >
+                      Available Slots
+                    </TableCell>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-xs">
+                  {items.map((item) => (
+                    <TableRow key={item.id}>
+                      <TableCell className="px-5 py-2 text-start">
+                        <div className="leading-snug">
+                          <div className="font-normal text-gray-500">{item.id}</div>
+                          <div className="text-brand-600 truncate">{item.name}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell className="px-5 py-2 text-start">{item.tourDate}</TableCell>
+                      <TableCell className="px-5 py-2 text-start">{item.availableSlots}</TableCell>
+                    </TableRow>
+                  ))}
+                  {items.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={3} className="px-5 py-2 text-center text-gray-500">
+                        No items found
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
           </div>
-        </div>
-      )}
+        )
+      }
     </>
   );
 }
