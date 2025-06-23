@@ -2,6 +2,11 @@ import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext({});
 
+const API_BASE_URL =
+  import.meta.env.REACT_APP_USE_FAKE_SERVER === "true"
+    ? "http://localhost:3001/api/v1"
+    : import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => localStorage.getItem("token") || "");
 
@@ -9,7 +14,7 @@ export const AuthProvider = ({ children }) => {
     const body = new URLSearchParams();
     body.append("userName", username);
     body.append("password", password);
-    const url = `http://localhost:5005/api/v1/auth/signin`;
+    const url = `${API_BASE_URL}/auth/signin`;
     const res = await fetch(url, {
       method: "POST",
       headers: {

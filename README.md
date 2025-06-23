@@ -73,6 +73,20 @@ git clone https://github.com/TailAdmin/free-react-tailwind-admin-dashboard.git
    yarn dev
    ```
 
+### Using the mock backend
+
+This project includes a simple Express server located in the `mock-server` folder.
+Run it during development when the real backend is not available:
+
+```bash
+cd mock-server
+npm install
+npm start
+```
+
+Start the React app with the environment variable `REACT_APP_USE_FAKE_SERVER=true`
+to point all API requests to the mock server running on `http://localhost:3001`.
+
 ## Components
 
 TailAdmin is a pre-designed starting point for building a web-based dashboard using React.js and Tailwind CSS. The

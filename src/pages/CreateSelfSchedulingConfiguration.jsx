@@ -10,7 +10,10 @@ import MultiSelect from "../components/form/MultiSelect";
 import Button from "../components/ui/button/Button";
 
 const getToken = () => localStorage.getItem("token") || "";
-const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+const backend_url =
+  import.meta.env.REACT_APP_USE_FAKE_SERVER === "true"
+    ? "http://localhost:3001/api/v1"
+    : import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
 
 export default function CreateSelfSchedulingConfiguration() {
   const [cities, setCities] = useState([]);

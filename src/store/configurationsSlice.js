@@ -1,5 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
+const API_BASE_URL =
+  import.meta.env.REACT_APP_USE_FAKE_SERVER === "true"
+    ? "http://localhost:3001/api/v1"
+    : import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+
 export const fetchConfigurations = createAsyncThunk(
   "configurations/fetchConfigurations",
   async ({ pageSize = 10, pageNumber = 1, cityId } = {}, { rejectWithValue }) => {
@@ -9,9 +14,8 @@ export const fetchConfigurations = createAsyncThunk(
       if (pageNumber) params.append("pageNumber", pageNumber);
       if (cityId !== undefined) params.append("cityId", cityId);
       const token = getToken();
-      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
       const response = await fetch(
-        `${backend_url}/configurations?${params.toString()}`,
+        `${API_BASE_URL}/configurations?${params.toString()}`,
         {
           headers: {
             "Authorization": `Bearer ${token}`
@@ -33,8 +37,7 @@ export const openConfiguration = createAsyncThunk(
   async ({ id }, { rejectWithValue }) => {
     try {
       const token = getToken();
-      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
-      const url = `${backend_url}/configurations/${id}/open`;
+      const url = `${API_BASE_URL}/configurations/${id}/open`;
       const res = await fetch(url, {
         method: "POST",
         headers: { "Authorization": `Bearer ${token}` },
@@ -54,8 +57,7 @@ export const closeConfiguration = createAsyncThunk(
   async ({ id }, { rejectWithValue }) => {
     try {
       const token = getToken();
-      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
-      const url = `${backend_url}/configurations/${id}/close`;
+      const url = `${API_BASE_URL}/configurations/${id}/close`;
 
       const res = await fetch(url, {
         method: "POST",
