@@ -13,7 +13,7 @@ export const signIn = createAsyncThunk(
       const body = new URLSearchParams();
       body.append("userName", username);
       body.append("password", password);
-      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "/api";
       const res = await fetch(`${backend_url}/auth/signin`, {
         method: "POST",
         headers: {

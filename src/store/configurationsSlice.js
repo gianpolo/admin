@@ -9,7 +9,7 @@ export const fetchConfigurations = createAsyncThunk(
       if (pageNumber) params.append("pageNumber", pageNumber);
       if (cityId !== undefined) params.append("cityId", cityId);
       const token = getToken();
-      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "/api";
       const response = await fetch(
         `${backend_url}/configurations?${params.toString()}`,
         {
@@ -33,7 +33,7 @@ export const openConfiguration = createAsyncThunk(
   async ({ id }, { rejectWithValue }) => {
     try {
       const token = getToken();
-      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "/api";
       const url = `${backend_url}/configurations/${id}/open`;
       const res = await fetch(url, {
         method: "POST",
@@ -54,7 +54,7 @@ export const closeConfiguration = createAsyncThunk(
   async ({ id }, { rejectWithValue }) => {
     try {
       const token = getToken();
-      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "/api";
       const url = `${backend_url}/configurations/${id}/close`;
 
       const res = await fetch(url, {

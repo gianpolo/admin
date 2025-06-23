@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useRef } from "react";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { useAuth } from "./AuthContext.jsx";
 
-const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "/api";
 const hubUrl = backend_url.replace(/\/api\/v1\/?$/, "") + "/hubs/notifications";
 
 const NotificationContext = createContext(undefined);
