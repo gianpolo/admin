@@ -16,8 +16,12 @@ const TableRow = ({ children, className, handleClick }) => {
     return <tr onClick={handleClick} className={className}>{children}</tr>;
 };
 // TableCell Component
-const TableCell = ({ children, isHeader = false, className, }) => {
+const TableCell = ({ children, isHeader = false, className, ...props }) => {
     const CellTag = isHeader ? "th" : "td";
-    return <CellTag className={` ${className}`} >{children}</CellTag>;
+    return (
+        <CellTag className={` ${className}`} {...props}>
+            {children}
+        </CellTag>
+    );
 };
 export { Table, TableHeader, TableBody, TableRow, TableCell };
