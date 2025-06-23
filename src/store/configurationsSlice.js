@@ -28,6 +28,36 @@ export const fetchConfigurations = createAsyncThunk(
   }
 );
 
+export const openConfiguration = createAsyncThunk(
+  "configurations/openConfiguration",
+  async (date, { dispatch, rejectWithValue }) => {
+    try {
+      await fetch(`http://localhost:5005/configurations/open?date=${date}`, {
+        method: "POST",
+      });
+      dispatch(fetchConfigurations({ pageSize: 10, pageNumber: 1, cityId: 1 }));
+      return date;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const closeConfiguration = createAsyncThunk(
+  "configurations/closeConfiguration",
+  async (date, { dispatch, rejectWithValue }) => {
+    try {
+      await fetch(`http://localhost:5005/configurations/close?date=${date}`, {
+        method: "POST",
+      });
+      dispatch(fetchConfigurations({ pageSize: 10, pageNumber: 1, cityId: 1 }));
+      return date;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 const configurationsSlice = createSlice({
   name: "configurations",
   initialState: {
@@ -47,6 +77,22 @@ const configurationsSlice = createSlice({
         state.list = action.payload || [];
       })
       .addCase(fetchConfigurations.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(openConfiguration.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(openConfiguration.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(closeConfiguration.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(closeConfiguration.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

@@ -2,12 +2,25 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
 import PageMeta from "../components/common/PageMeta";
-import { fetchConfigurations } from "../store/configurationsSlice";
+import {
+  fetchConfigurations,
+  openConfiguration,
+  closeConfiguration,
+} from "../store/configurationsSlice";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "../components/ui/table";
+import { PlayIcon, StopIcon } from "../icons";
 
 export default function SelfSchedulingConfigurations() {
   const dispatch = useDispatch();
   const { list, status, error } = useSelector((state) => state.configurations);
+
+  const handleOpen = (date) => {
+    dispatch(openConfiguration(date));
+  };
+
+  const handleClose = (date) => {
+    dispatch(closeConfiguration(date));
+  };
 
   useEffect(() => {
     dispatch(fetchConfigurations({ pageSize: 10, pageNumber: 1, cityId:1 }));
@@ -36,11 +49,15 @@ export default function SelfSchedulingConfigurations() {
                 <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Schedule End</TableCell>
                 <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Experiences</TableCell>
                 <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Guides</TableCell>
+                <TableCell isHeader className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">Actions</TableCell>
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
               {list.map((cfg) => (
-                <TableRow key={cfg.id}>
+                <TableRow
+                  key={cfg.id}
+                  className={cfg.isRunning ? "border-l-4 border-green-500" : "bg-gray-100"}
+                >
                   <TableCell className="px-5 py-4 text-start">{cfg.id}</TableCell>
                   <TableCell className="px-5 py-4 text-start">{cfg.cityId}</TableCell>
                   <TableCell className="px-5 py-4 text-start">{cfg.description}</TableCell>
@@ -50,6 +67,23 @@ export default function SelfSchedulingConfigurations() {
                   <TableCell className="px-5 py-4 text-start">{cfg.schedulingWindowEnd}</TableCell>
                   <TableCell className="px-5 py-4 text-start">{cfg.experienceIds && cfg.experienceIds.join(", ")}</TableCell>
                   <TableCell className="px-5 py-4 text-start">{cfg.guideIds && cfg.guideIds.join(", ")}</TableCell>
+                  <TableCell className="px-5 py-4 text-start">
+                    {cfg.isRunning ? (
+                      <button
+                        onClick={() => handleClose(cfg.schedulingWindowEnd)}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <StopIcon className="size-5" />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleOpen(cfg.schedulingWindowStart)}
+                        className="text-green-500 hover:text-green-700"
+                      >
+                        <PlayIcon className="size-5" />
+                      </button>
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
