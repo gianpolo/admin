@@ -17,12 +17,14 @@ import {
 } from "../components/ui/table";
 import { PlayIcon, StopIcon } from "../icons";
 
-const formatPeriod = (start, end) =>
-  `${(start || "").replace(/-/g, "/")} to ${(end || "").replace(/-/g, "/")}`;
 
 export default function SelfSchedulingConfigurations() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const formatPeriod = (start, end) =>
+    `${(start || '').replace(/-/g, '/')} to ${(end || '').replace(/-/g, '/')}`;
+
+
   const { list, status, error, actionStatus } = useSelector(
     (state) => state.configurations
   );
@@ -117,6 +119,7 @@ export default function SelfSchedulingConfigurations() {
                     <TableCell className="px-5 py-4 text-start">
                       {cfg.guideIds && cfg.guideIds.join(", ")}
                     </TableCell>
+
                     <TableCell className="px-5 py-4 text-start" onClick={(e) => e.stopPropagation()}>
                       {loading ? (
                         <svg
@@ -141,17 +144,21 @@ export default function SelfSchedulingConfigurations() {
                         </svg>
                       ) : cfg.isRunning ? (
                         <button
+
                           onClick={(event) => {
                             event.stopPropagation();
                             dispatch(closeConfiguration({ id: cfg.id }))
                           }
                           }
+
+
                           className="text-red-600"
                         >
                           <StopIcon className="inline-block" />
                         </button>
                       ) : (
                         <button
+
                           onClick={(event) => {
                             event.stopPropagation();
                             dispatch(openConfiguration({ id: cfg.id }))
