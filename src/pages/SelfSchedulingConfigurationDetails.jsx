@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import PageMeta from "../components/common/PageMeta";
@@ -7,101 +7,59 @@ import useGoBack from "../hooks/useGoBack";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "../components/ui/table";
 import { PlayIcon, StopIconCircle, ChevronLeftIcon } from "../icons";
 import { simulateConfiguration } from "../store/configurationsSlice";
+import {
+  fetchConfigurationDetails,
+  fetchConfigurationItems,
+  performConfigurationAction,
+  updateAvailableSlots,
+} from "../store/configurationDetailsSlice.js";
 import { useNotifications } from "../context/NotificationContext.jsx";
 import ConfigurationInfoCard from "../components/configuration/ConfigurationInfoCard.jsx";
-
-const getToken = () => localStorage.getItem("token") || "";
-const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
 
 export default function SelfSchedulingConfigurationDetails() {
   const { id } = useParams();
   const goBack = useGoBack();
   const dispatch = useDispatch();
   const { simulationMessage } = useSelector((state) => state.configurations);
-  const [config, setConfig] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [items, setItems] = useState([]);
-  const [itemsLoading, setItemsLoading] = useState(true);
-  const [itemsError, setItemsError] = useState("");
+  const {
+    config,
+    items,
+    status,
+    itemsStatus,
+    error,
+    itemsError,
+  } = useSelector((state) => state.configDetails);
   const { onAvailableSlotsUpdated, offAvailableSlotsUpdated } = useNotifications();
 
   useEffect(() => {
-    async function load() {
-      try {
-        const token = getToken();
-        const res = await fetch(`${backend_url}/configurations/${id}`, {
-          headers: { "Authorization": `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Failed to fetch configuration");
-        const data = await res.json();
-        setConfig(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, [id]);
+    dispatch(fetchConfigurationDetails(id));
+    dispatch(fetchConfigurationItems(id));
+  }, [dispatch, id]);
 
-  useEffect(() => {
-    async function loadItems() {
-      try {
-        const token = getToken();
-        const res = await fetch(`${backend_url}/items?configurationId=${id}`, {
-          headers: { "Authorization": `Bearer ${token}` },
-        });
-        if (!res.ok) throw new Error("Failed to fetch tour items");
-        const data = await res.json();
-        const list = Array.isArray(data) ? data : data.items || [];
-        list.sort((a, b) => {
-          const da = new Date(a.tourDate);
-          const db = new Date(b.tourDate);
-          if (da - db !== 0) return da - db;
-          return (a.name || "").localeCompare(b.name || "");
-        });
-        setItems(list);
-      } catch (err) {
-        setItemsError(err.message);
-      } finally {
-        setItemsLoading(false);
-      }
-    }
-    loadItems();
-  }, [id]);
 
   useEffect(() => {
     const handler = ({ itemId, availableSlots }) => {
-      setItems((prev) =>
-        prev.map((it) =>
-          it.id === itemId ? { ...it, availableSlots } : it
-        )
-      );
+      dispatch(updateAvailableSlots({ itemId, availableSlots }));
     };
     onAvailableSlotsUpdated(handler);
     return () => offAvailableSlotsUpdated(handler);
-  }, [onAvailableSlotsUpdated, offAvailableSlotsUpdated]);
+  }, [dispatch, onAvailableSlotsUpdated, offAvailableSlotsUpdated]);
 
-  const handleAction = async (action) => {
-    try {
-      const token = getToken();
-      const res = await fetch(`${backend_url}/configurations/${id}/${action}`, {
-        method: "POST",
-        headers: { "Authorization": `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Action failed");
-      const data = await res.json();
-      setConfig(data);
-    } catch (err) {
-      setError(err.message);
-    }
+  const handleAction = (action) => {
+    dispatch(performConfigurationAction({ id, action }));
   };
 
   const handleSimulation = () => {
     if (!config) return;
     dispatch(simulateConfiguration({ guideIds: config.guideIds || [] }));
   };
+
+  const sortedItems = [...items].sort((a, b) => {
+    const da = new Date(a.tourDate);
+    const db = new Date(b.tourDate);
+    if (da - db !== 0) return da - db;
+    return (a.name || "").localeCompare(b.name || "");
+  });
 
   const headerInfo = () => {
     if (!config) return "";
@@ -182,15 +140,15 @@ export default function SelfSchedulingConfigurationDetails() {
         <p className="mb-4 text-sm text-blue-500">{simulationMessage}</p>
       )}
 
-      {loading && <p>Loading...</p>}
+      {status === "loading" && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
       {config && <ConfigurationInfoCard config={config} />}
 
 
-      {itemsLoading && <p>Loading items...</p>}
+      {itemsStatus === "loading" && <p>Loading items...</p>}
       {itemsError && <p className="text-red-500">{itemsError}</p>}
       {
-        !itemsLoading && !itemsError && (
+        itemsStatus !== "loading" && !itemsError && (
           <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] mt-6">
             <div className="max-w-full overflow-x-auto">
               <Table>
@@ -238,7 +196,7 @@ export default function SelfSchedulingConfigurationDetails() {
                   </TableRow>
                 </TableHeader>
                 <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-xs">
-                  {items.map((item) => (
+                  {sortedItems.map((item) => (
                     <TableRow key={item.id}>
                       <TableCell className="px-6 py-3 whitespace-nowrap">
                         <div className="leading-snug">
@@ -258,7 +216,7 @@ export default function SelfSchedulingConfigurationDetails() {
                       </TableCell>
                     </TableRow>
                   ))}
-                  {items.length === 0 && (
+                  {sortedItems.length === 0 && (
                     <TableRow>
                       <TableCell colSpan={3} className="px-5 py-2 text-center text-gray-500">
                         No items found

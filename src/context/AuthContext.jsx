@@ -1,37 +1,17 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { signIn as signInThunk, signOut as signOutAction } from "../store/authSlice.js";
 
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(() => localStorage.getItem("token") || "");
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.auth.token);
 
-  const signIn = async (username, password) => {
-    const body = new URLSearchParams();
-    body.append("userName", username);
-    body.append("password", password);
-    const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
-    const url = `${backend_url}/auth/signin`;
-    const res = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: body.toString(),
-    });
-    if (!res.ok) {
-      throw new Error("Failed to sign in");
-    }
-    const data = await res.json();
-    console.log(data);
-    if (data) {
-      localStorage.setItem("token", data.accessToken);
-      setToken(data.accessToken);
-    }
-  };
+  const signIn = (username, password) => dispatch(signInThunk({ username, password }));
 
   const signOut = () => {
-    localStorage.removeItem("token");
-    setToken("");
+    dispatch(signOutAction());
   };
 
   return (
