@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
 import PageMeta from "../components/common/PageMeta";
 import Button from "../components/ui/button/Button";
 import useGoBack from "../hooks/useGoBack";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "../components/ui/table";
 import { PlayIcon, StopIcon } from "../icons";
+import { simulateConfiguration } from "../store/configurationsSlice";
 
 const getToken = () => localStorage.getItem("token") || "";
 const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
@@ -13,13 +15,14 @@ const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5
 export default function SelfSchedulingConfigurationDetails() {
   const { id } = useParams();
   const goBack = useGoBack();
+  const dispatch = useDispatch();
+  const { simulationMessage } = useSelector((state) => state.configurations);
   const [config, setConfig] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [items, setItems] = useState([]);
   const [itemsLoading, setItemsLoading] = useState(true);
   const [itemsError, setItemsError] = useState("");
-  const [simMessage, setSimMessage] = useState("");
 
   useEffect(() => {
     async function load() {
@@ -49,7 +52,14 @@ export default function SelfSchedulingConfigurationDetails() {
         });
         if (!res.ok) throw new Error("Failed to fetch tour items");
         const data = await res.json();
-        setItems(Array.isArray(data) ? data : data.items || []);
+        const list = Array.isArray(data) ? data : data.items || [];
+        list.sort((a, b) => {
+          const da = new Date(a.tourDate);
+          const db = new Date(b.tourDate);
+          if (da - db !== 0) return da - db;
+          return (a.name || "").localeCompare(b.name || "");
+        });
+        setItems(list);
       } catch (err) {
         setItemsError(err.message);
       } finally {
@@ -74,24 +84,9 @@ export default function SelfSchedulingConfigurationDetails() {
     }
   };
 
-  const handleSimulation = async () => {
+  const handleSimulation = () => {
     if (!config) return;
-    setSimMessage("");
-    try {
-      const body = (config.guideIds || []).map((guideId) => ({
-        guideId,
-        guideName: `Guide ${guideId}`,
-      }));
-      const res = await fetch("http://localhost:5006/virtualguides", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      if (!res.ok) throw new Error("Simulation failed");
-      setSimMessage("Simulation started");
-    } catch (err) {
-      setSimMessage(err.message);
-    }
+    dispatch(simulateConfiguration({ guideIds: config.guideIds || [] }));
   };
 
   const headerInfo = () => {
@@ -147,8 +142,8 @@ export default function SelfSchedulingConfigurationDetails() {
           )
         )}
       </div>
-      {simMessage && (
-        <p className="mb-4 text-sm text-blue-500">{simMessage}</p>
+      {simulationMessage && (
+        <p className="mb-4 text-sm text-blue-500">{simulationMessage}</p>
       )}
       {config && (
         <p className="mb-4 text-sm text-gray-500">
@@ -176,12 +171,12 @@ export default function SelfSchedulingConfigurationDetails() {
         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] mt-6">
           <div className="max-w-full overflow-x-auto">
             <Table>
-              <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+              <TableHeader className="border-b border-gray-100 dark:border-white/[0.05] text-xs">
                 <TableRow>
                   <TableCell
                     isHeader
                     colSpan={3}
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                    className="px-5 py-2 font-medium text-gray-500 text-start"
                   >
                     {headerInfo()}
                   </TableCell>
@@ -189,40 +184,40 @@ export default function SelfSchedulingConfigurationDetails() {
                 <TableRow>
                   <TableCell
                     isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                    className="px-5 py-2 font-medium text-gray-500 text-start"
                   >
                     ID / Name
                   </TableCell>
                   <TableCell
                     isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                    className="px-5 py-2 font-medium text-gray-500 text-start"
                   >
                     Tour Date
                   </TableCell>
                   <TableCell
                     isHeader
-                    className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
+                    className="px-5 py-2 font-medium text-gray-500 text-start"
                   >
                     Available Slots
                   </TableCell>
                 </TableRow>
               </TableHeader>
-              <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+              <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-xs">
                 {items.map((item) => (
                   <TableRow key={item.id}>
-                    <TableCell className="px-5 py-4 text-start">
+                    <TableCell className="px-5 py-2 text-start">
                       <div className="leading-snug">
-                        <div className="text-sm font-normal text-gray-500">{item.id}</div>
+                        <div className="font-normal text-gray-500">{item.id}</div>
                         <div className="text-brand-600 truncate">{item.name}</div>
                       </div>
                     </TableCell>
-                    <TableCell className="px-5 py-4 text-start">{item.tourDate}</TableCell>
-                    <TableCell className="px-5 py-4 text-start">{item.availableSlots}</TableCell>
-                  </TableRow>
-                ))}
-                {items.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={3} className="px-5 py-4 text-center text-gray-500">
+                    <TableCell className="px-5 py-2 text-start">{item.tourDate}</TableCell>
+                    <TableCell className="px-5 py-2 text-start">{item.availableSlots}</TableCell>
+                </TableRow>
+              ))}
+              {items.length === 0 && (
+                <TableRow>
+                    <TableCell colSpan={3} className="px-5 py-2 text-center text-gray-500">
                       No items found
                     </TableCell>
                   </TableRow>

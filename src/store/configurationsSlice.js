@@ -71,6 +71,30 @@ export const closeConfiguration = createAsyncThunk(
   }
 );
 
+export const simulateConfiguration = createAsyncThunk(
+  "configurations/simulateConfiguration",
+  async ({ guideIds = [] }, { rejectWithValue }) => {
+    try {
+      const body = guideIds.map((guideId) => ({
+        guideId,
+        guideName: `Guide ${guideId}`,
+      }));
+      const res = await fetch("http://localhost:5006/virtualguides", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to start simulation");
+      }
+      const data = await res.json().catch(() => ({}));
+      return data.message || "Simulation started";
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 const configurationsSlice = createSlice({
   name: "configurations",
   initialState: {
@@ -78,6 +102,8 @@ const configurationsSlice = createSlice({
     status: "idle",
     error: null,
     actionStatus: {},
+    simulationStatus: "idle",
+    simulationMessage: "",
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -115,6 +141,18 @@ const configurationsSlice = createSlice({
       })
       .addCase(closeConfiguration.rejected, (state, action) => {
         state.actionStatus[action.meta.arg.id] = "idle";
+      })
+      .addCase(simulateConfiguration.pending, (state) => {
+        state.simulationStatus = "loading";
+        state.simulationMessage = "";
+      })
+      .addCase(simulateConfiguration.fulfilled, (state, action) => {
+        state.simulationStatus = "succeeded";
+        state.simulationMessage = action.payload;
+      })
+      .addCase(simulateConfiguration.rejected, (state, action) => {
+        state.simulationStatus = "failed";
+        state.simulationMessage = action.payload;
       });
   },
 });
