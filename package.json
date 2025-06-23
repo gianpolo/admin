@@ -33,6 +33,7 @@
     "react-router": "^7.1.5",
     "swiper": "^11.2.3",
     "tailwind-merge": "^3.0.1",
+    "@microsoft/signalr": "^7.0.0",
     "vite-plugin-mkcert": "^1.17.8"
   },
   "devDependencies": {
