@@ -47,13 +47,13 @@ export default function SelfSchedulingConfigurations() {
                   isHeader
                   className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                 >
-                  City
+                  ID / Description
                 </TableCell>
                 <TableCell
                   isHeader
                   className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                 >
-                  ID / Description
+                  Scheduling Window
                 </TableCell>
                 <TableCell
                   isHeader
@@ -65,7 +65,7 @@ export default function SelfSchedulingConfigurations() {
                   isHeader
                   className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                 >
-                  Scheduling Window
+                  City
                 </TableCell>
                 <TableCell
                   isHeader
@@ -95,7 +95,6 @@ export default function SelfSchedulingConfigurations() {
                     key={cfg.id}
                     className={`${cfg.isRunning ? "border-l-4 border-green-500" : "bg-gray-50"}`}
                   >
-                    <TableCell className="px-5 py-4 text-start">{cfg.cityId}</TableCell>
                     <TableCell className="px-5 py-4 text-start">
                       <div className="leading-snug">
                         <div className="text-sm font-normal text-gray-500">{cfg.id}</div>
@@ -103,11 +102,12 @@ export default function SelfSchedulingConfigurations() {
                       </div>
                     </TableCell>
                     <TableCell className="px-5 py-4 text-start">
-                      {formatPeriod(cfg.toursPeriodStart, cfg.toursPeriodEnd)}
-                    </TableCell>
-                    <TableCell className="px-5 py-4 text-start">
                       {formatPeriod(cfg.schedulingWindowStart, cfg.schedulingWindowEnd)}
                     </TableCell>
+                    <TableCell className="px-5 py-4 text-start">
+                      {formatPeriod(cfg.toursPeriodStart, cfg.toursPeriodEnd)}
+                    </TableCell>
+                    <TableCell className="px-5 py-4 text-start">{cfg.cityId}</TableCell>
                     <TableCell className="px-5 py-4 text-start">
                       {cfg.experienceIds && cfg.experienceIds.join(", ")}
                     </TableCell>
