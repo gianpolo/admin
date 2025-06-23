@@ -29,7 +29,7 @@ export default function SelfSchedulingConfigurationDetails() {
     error,
     itemsError,
   } = useSelector((state) => state.configDetails);
-  const { onAvailableSlotsUpdated, offAvailableSlotsUpdated } = useNotifications();
+  const { onBasketItemAdded, offBasketItemAdded } = useNotifications();
 
   useEffect(() => {
     dispatch(fetchConfigurationDetails(id));
@@ -38,12 +38,12 @@ export default function SelfSchedulingConfigurationDetails() {
 
 
   useEffect(() => {
-    const handler = ({ itemId, availableSlots }) => {
-      dispatch(updateAvailableSlots({ itemId, availableSlots }));
+    const handler = ({ itemId }) => {
+      dispatch(updateAvailableSlots({ itemId }));
     };
-    onAvailableSlotsUpdated(handler);
-    return () => offAvailableSlotsUpdated(handler);
-  }, [dispatch, onAvailableSlotsUpdated, offAvailableSlotsUpdated]);
+    onBasketItemAdded(handler);
+    return () => offBasketItemAdded(handler);
+  }, [dispatch, onBasketItemAdded, offBasketItemAdded]);
 
   const handleAction = (action) => {
     dispatch(performConfigurationAction({ id, action }));
