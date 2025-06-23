@@ -51,22 +51,22 @@ export const NotificationProvider = ({ children }) => {
       }
     };
   }, [token]);
+ 
 
-
-
-
-
-
-  const onAvailableSlotsUpdated = (handler) => {
-    connectionRef.current?.on("AvailableSlotsUpdated", handler);
+  const onBasketItemAdded = (handler) => { 
+    connectionRef.current?.on("BasketItemAdded", handler);
   };
 
-  const offAvailableSlotsUpdated = (handler) => {
-    connectionRef.current?.off("AvailableSlotsUpdated", handler);
+  const offBasketItemAdded = (handler) => {
+    connectionRef.current?.off("BasketItemAdded", handler);
   };
+
+  const onItemAvailabilityUpdateIntegrationEvent = (handler) => {
+    connectionRef.current?.on("BasketItemAdded", handler);
+  }
 
   return (
-    <NotificationContext.Provider value={{ onAvailableSlotsUpdated, offAvailableSlotsUpdated }}>
+    <NotificationContext.Provider value={{ onBasketItemAdded, offBasketItemAdded }}>
       {children}
     </NotificationContext.Provider>
   );
