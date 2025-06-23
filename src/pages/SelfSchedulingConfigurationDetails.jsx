@@ -5,10 +5,10 @@ import PageMeta from "../components/common/PageMeta";
 import Button from "../components/ui/button/Button";
 import useGoBack from "../hooks/useGoBack";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "../components/ui/table";
-import { PlayIcon, StopIcon, ChevronLeftIcon } from "../icons";
+import { PlayIcon, StopIconCircle, ChevronLeftIcon } from "../icons";
 import { simulateConfiguration } from "../store/configurationsSlice";
 import { useNotifications } from "../context/NotificationContext.jsx";
-
+import ConfigurationInfoCard from "../components/configuration/ConfigurationInfoCard.jsx";
 
 const getToken = () => localStorage.getItem("token") || "";
 const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
@@ -160,7 +160,7 @@ export default function SelfSchedulingConfigurationDetails() {
               <Button
                 variant="outline"
                 className="text-red-600"
-                startIcon={<StopIcon className="size-4" />}
+                startIcon={<StopIconCircle className="size-4" />}
                 onClick={() => handleAction("close")}
               >
                 Close
@@ -184,17 +184,8 @@ export default function SelfSchedulingConfigurationDetails() {
 
       {loading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
-      {config && (
-        <div className="space-y-3">
-          <p className="dark:text-gray-400"><strong className="dark:text-white/90">Description:</strong> {config.description}</p>
-          <p className="dark:text-gray-400"><strong className="dark:text-white/90">Scheduling Window:</strong> {config.schedulingWindowStart} - {config.schedulingWindowEnd}</p>
-          <p className="dark:text-gray-400"><strong className="dark:text-white/90">Tours Period:</strong> {config.toursPeriodStart} - {config.toursPeriodEnd}</p>
-          <p className="dark:text-gray-400"><strong className="dark:text-white/90">Experiences:</strong> {config.experienceIds && config.experienceIds.join(", ")}</p>
-          <p className="dark:text-gray-400"><strong className="dark:text-white/90">Guides:</strong> {config.guideIds && config.guideIds.join(", ")}</p>
-          <p className="dark:text-gray-400"><strong className="dark:text-white/90">Status:</strong> {config.isRunning ? "Running" : "Closed"}</p>
-        </div>
-      )
-      }
+      {config && <ConfigurationInfoCard config={config} />}
+ 
 
       {itemsLoading && <p>Loading items...</p>}
       {itemsError && <p className="text-red-500">{itemsError}</p>}
