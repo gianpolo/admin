@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const getToken = () => localStorage.getItem("token") || "";
-const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+const backend_url =
+  import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
 
 export const fetchCities = createAsyncThunk(
   "configForm/fetchCities",
@@ -23,7 +24,9 @@ export const fetchExperiences = createAsyncThunk(
   async ({ cityName }, { rejectWithValue }) => {
     try {
       const res = await fetch(
-        `${backend_url}/tours?cityName=${encodeURIComponent(cityName)}&pageSize=20&pageNumber=1`,
+        `${backend_url}/tours?cityName=${encodeURIComponent(
+          cityName
+        )}&pageSize=20&pageNumber=1`,
         { headers: { Authorization: `Bearer ${getToken()}` } }
       );
       if (!res.ok) throw new Error("Failed to fetch experiences");
@@ -73,7 +76,7 @@ export const createConfiguration = createAsyncThunk(
   "configForm/createConfiguration",
   async (payload, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${backend_url}/configuration`, {
+      const res = await fetch(`${backend_url}/configurations`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${getToken()}`,
@@ -95,9 +98,9 @@ export const createConfiguration = createAsyncThunk(
 const createConfigurationSlice = createSlice({
   name: "configForm",
   initialState: {
-    cities: [],
-    experiences: [],
-    guides: [],
+    cities: null,
+    experiences: null,
+    guides: null,
     status: "idle",
     error: "",
     createStatus: "idle",

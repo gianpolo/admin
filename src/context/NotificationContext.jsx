@@ -1,7 +1,11 @@
 import { createContext, useContext, useEffect, useRef } from "react";
-import { HubConnectionBuilder, LogLevel, HttpTransportType } from "@microsoft/signalr";
+import {
+  HubConnectionBuilder,
+  LogLevel,
+  HttpTransportType,
+} from "@microsoft/signalr";
 import { useAuth } from "./AuthContext.jsx";
-const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://localhost:31782";
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5010";
 const hubUrl = backendUrl.replace(/\/api\/v1\/?$/, "") + "/hubs/notifications";
 const NotificationContext = createContext(undefined);
 
@@ -46,14 +50,16 @@ export const NotificationProvider = ({ children }) => {
 
     return () => {
       cancelled = true;
-      if (connection.state === "Connected" || connection.state === "Connecting") {
-        connection.stop().catch(() => { });
+      if (
+        connection.state === "Connected" ||
+        connection.state === "Connecting"
+      ) {
+        connection.stop().catch(() => {});
       }
     };
   }, [token]);
- 
 
-  const onBasketItemAdded = (handler) => { 
+  const onBasketItemAdded = (handler) => {
     connectionRef.current?.on("BasketItemAdded", handler);
   };
 
@@ -63,10 +69,12 @@ export const NotificationProvider = ({ children }) => {
 
   const onItemAvailabilityUpdateIntegrationEvent = (handler) => {
     connectionRef.current?.on("BasketItemAdded", handler);
-  }
+  };
 
   return (
-    <NotificationContext.Provider value={{ onBasketItemAdded, offBasketItemAdded }}>
+    <NotificationContext.Provider
+      value={{ onBasketItemAdded, offBasketItemAdded }}
+    >
       {children}
     </NotificationContext.Provider>
   );
@@ -75,7 +83,9 @@ export const NotificationProvider = ({ children }) => {
 export const useNotifications = () => {
   const ctx = useContext(NotificationContext);
   if (!ctx) {
-    throw new Error("useNotifications must be used within a NotificationProvider");
+    throw new Error(
+      "useNotifications must be used within a NotificationProvider"
+    );
   }
   return ctx;
 };
