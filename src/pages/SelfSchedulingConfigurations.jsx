@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
@@ -7,6 +7,7 @@ import {
   fetchConfigurations,
   openConfiguration,
   closeConfiguration,
+  deleteConfiguration,
 } from "../store/configurationsSlice";
 import {
   Table,
@@ -15,12 +16,20 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
-import { PlayIcon, StopIconCircle } from "../icons";
+import { PlayIcon, StopIconCircle, TrashBinIcon } from "../icons";
+import { useModal } from "../hooks/useModal";
+import ConfirmationModal from "../components/common/ConfirmationModal.jsx";
 
 
 export default function SelfSchedulingConfigurations() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const {
+    isOpen: isDeleteOpen,
+    openModal: openDeleteModal,
+    closeModal: closeDeleteModal,
+  } = useModal();
+  const [deleteId, setDeleteId] = useState(null);
   const formatPeriod = (start, end) =>
     `${(start || '').replace(/-/g, '/')} to ${(end || '').replace(/-/g, '/')}`;
 
@@ -28,6 +37,18 @@ export default function SelfSchedulingConfigurations() {
   const { list, status, error, actionStatus } = useSelector(
     (state) => state.configurations
   );
+
+  const handleDeleteClick = (id) => {
+    setDeleteId(id);
+    openDeleteModal();
+  };
+
+  const confirmDelete = () => {
+    if (deleteId != null) {
+      dispatch(deleteConfiguration({ id: deleteId }));
+    }
+    closeDeleteModal();
+  };
 
   useEffect(() => {
     dispatch(fetchConfigurations({ pageSize: 10, pageNumber: 1, cityId: 1 }));
@@ -151,29 +172,39 @@ export default function SelfSchedulingConfigurations() {
                             d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
                           ></path>
                         </svg>
-                      ) : cfg.isRunning ? (
-                        <button
-
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            dispatch(closeConfiguration({ id: cfg.id }))
-                          }
-                          }
-                          className="text-red-600 text-lg hover:text-2xl"
-                        >
-                          <StopIconCircle className="inline-block" />
-                        </button>
                       ) : (
-                        <button
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            dispatch(openConfiguration({ id: cfg.id }))
-                          }
-                          }
-                          className="text-green-600 text-lg hover:text-2xl"
-                        >
-                          <PlayIcon className="inline-block" />
-                        </button>
+                        <div className="flex items-center gap-2">
+                          {cfg.isRunning ? (
+                            <button
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                dispatch(closeConfiguration({ id: cfg.id }));
+                              }}
+                              className="text-red-600 text-lg hover:text-2xl"
+                            >
+                              <StopIconCircle className="inline-block" />
+                            </button>
+                          ) : (
+                            <button
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                dispatch(openConfiguration({ id: cfg.id }));
+                              }}
+                              className="text-green-600 text-lg hover:text-2xl"
+                            >
+                              <PlayIcon className="inline-block" />
+                            </button>
+                          )}
+                          <button
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              handleDeleteClick(cfg.id);
+                            }}
+                            className="text-gray-500 text-lg hover:text-red-600"
+                          >
+                            <TrashBinIcon className="inline-block" />
+                          </button>
+                        </div>
                       )}
                     </TableCell>
                   </TableRow>
@@ -183,6 +214,12 @@ export default function SelfSchedulingConfigurations() {
           </Table>
         </div>
       </div >
+      <ConfirmationModal
+        isOpen={isDeleteOpen}
+        onClose={closeDeleteModal}
+        onConfirm={confirmDelete}
+        message="Deleting this configuration will remove all related items. Are you sure?"
+      />
     </>
   );
 }

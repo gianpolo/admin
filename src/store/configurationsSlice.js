@@ -71,6 +71,27 @@ export const closeConfiguration = createAsyncThunk(
   }
 );
 
+export const deleteConfiguration = createAsyncThunk(
+  "configurations/deleteConfiguration",
+  async ({ id }, { rejectWithValue }) => {
+    try {
+      const token = getToken();
+      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+      const url = `${backend_url}/configurations/${id}`;
+      const res = await fetch(url, {
+        method: "DELETE",
+        headers: { "Authorization": `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        throw new Error("Failed to delete configuration");
+      }
+      return { id };
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 export const simulateConfiguration = createAsyncThunk(
   "configurations/simulateConfiguration",
   async ({ guideIds = [] }, { rejectWithValue }) => {
@@ -140,6 +161,16 @@ const configurationsSlice = createSlice({
         state.actionStatus[action.payload.id] = "idle";
       })
       .addCase(closeConfiguration.rejected, (state, action) => {
+        state.actionStatus[action.meta.arg.id] = "idle";
+      })
+      .addCase(deleteConfiguration.pending, (state, action) => {
+        state.actionStatus[action.meta.arg.id] = "loading";
+      })
+      .addCase(deleteConfiguration.fulfilled, (state, action) => {
+        state.list = state.list.filter((c) => c.id !== action.payload.id);
+        delete state.actionStatus[action.payload.id];
+      })
+      .addCase(deleteConfiguration.rejected, (state, action) => {
         state.actionStatus[action.meta.arg.id] = "idle";
       })
       .addCase(simulateConfiguration.pending, (state) => {
