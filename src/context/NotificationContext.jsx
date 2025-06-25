@@ -23,7 +23,7 @@ export const NotificationProvider = ({ children }) => {
         transport: HttpTransportType.WebSockets,
       })
       .withAutomaticReconnect()
-      .configureLogging(LogLevel.Information)
+      .configureLogging(LogLevel.Trace)
       .build();
 
     connectionRef.current = connection;
@@ -60,6 +60,7 @@ export const NotificationProvider = ({ children }) => {
   }, [token]);
 
   const onBasketItemAdded = (handler) => {
+    console.log("Registering BasketItemAddedEvent handler");
     connectionRef.current?.on("BasketItemAddedEvent", handler);
   };
 
@@ -68,13 +69,11 @@ export const NotificationProvider = ({ children }) => {
   };
 
   const onItemAvailabilityUpdated = (handler) => {
-    connectionRef.current?.on(
-      "ItemAvailabilityUpdatedEvent",
-      handler
-    );
+    console.log("Registering BasketItemAddedEvent handler");
+    connectionRef.current?.on("ItemAvailabilityUpdatedEvent", handler);
   };
   const offItemAvailabilityUpdated = (handler) => {
-    connectionRef.current?.on("ItemAvailabilityUpdatedEvent", handler);
+    connectionRef.current?.off("ItemAvailabilityUpdatedEvent", handler);
   };
   return (
     <NotificationContext.Provider

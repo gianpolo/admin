@@ -65,13 +65,11 @@ const configurationDetailsSlice = createSlice({
     updateAvailableSlots(state, action) {
       const { itemId, initialSlots, reserved, confirmed } = action.payload;
       state.items = state.items.map((it) =>
-        it.id === itemId ? { ...it, availableSlots: initialSlots, reserved, confirmed } : it
+        it.id === itemId
+          ? { ...it, availableSlots: initialSlots, reserved, confirmed }
+          : it
       );
-    },
-    updateAvailableSlots2(state, action) {
-      const { itemId } = action.payload;
-      console.log(action.payload);
-    },
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -105,6 +103,6 @@ const configurationDetailsSlice = createSlice({
   },
 });
 
-export const { updateAvailableSlots, updateAvailableSlots2 } =
+export const { updateAvailableSlots } =
   configurationDetailsSlice.actions;
 export default configurationDetailsSlice.reducer;

@@ -43,8 +43,9 @@ export default function SelfSchedulingConfigurationDetails() {
   }, [dispatch, id]);
 
   useEffect(() => {
-    const handler = ({ itemId }) => {
-      dispatch(updateAvailableSlots2({ itemId }));
+    const handler = (payload) => {
+      console.log("Basket Item Added", payload);
+      dispatch(updateAvailableSlots2(payload));
     };
     onBasketItemAdded(handler);
     return () => offBasketItemAdded(handler);
@@ -52,6 +53,7 @@ export default function SelfSchedulingConfigurationDetails() {
   
   useEffect(() => {
     const handler = (payload) => {
+      console.log("Item availability updated:", payload);
       dispatch(updateAvailableSlots(payload));
     };
     onItemAvailabilityUpdated(handler);
