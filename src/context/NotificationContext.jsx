@@ -60,20 +60,30 @@ export const NotificationProvider = ({ children }) => {
   }, [token]);
 
   const onBasketItemAdded = (handler) => {
-    connectionRef.current?.on("BasketItemAdded", handler);
+    connectionRef.current?.on("BasketItemAddedEvent", handler);
   };
 
   const offBasketItemAdded = (handler) => {
-    connectionRef.current?.off("BasketItemAdded", handler);
+    connectionRef.current?.off("BasketItemAddedEvent", handler);
   };
 
-  const onItemAvailabilityUpdateIntegrationEvent = (handler) => {
-    connectionRef.current?.on("BasketItemAdded", handler);
+  const onItemAvailabilityUpdated = (handler) => {
+    connectionRef.current?.on(
+      "ItemAvailabilityUpdatedEvent",
+      handler
+    );
   };
-
+  const offItemAvailabilityUpdated = (handler) => {
+    connectionRef.current?.on("ItemAvailabilityUpdatedEvent", handler);
+  };
   return (
     <NotificationContext.Provider
-      value={{ onBasketItemAdded, offBasketItemAdded }}
+      value={{
+        onBasketItemAdded,
+        offBasketItemAdded,
+        onItemAvailabilityUpdated,
+        offItemAvailabilityUpdated,
+      }}
     >
       {children}
     </NotificationContext.Provider>

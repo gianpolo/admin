@@ -2,19 +2,23 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 export const fetchConfigurations = createAsyncThunk(
   "configurations/fetchConfigurations",
-  async ({ pageSize = 10, pageNumber = 1, cityId } = {}, { rejectWithValue }) => {
+  async (
+    { pageSize = 10, pageNumber = 1, cityId } = {},
+    { rejectWithValue }
+  ) => {
     try {
       const params = new URLSearchParams();
       if (pageSize) params.append("pageSize", pageSize);
       if (pageNumber) params.append("pageNumber", pageNumber);
       if (cityId !== undefined) params.append("cityId", cityId);
       const token = getToken();
-      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+      const backend_url =
+        import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
       const response = await fetch(
         `${backend_url}/configurations?${params.toString()}`,
         {
           headers: {
-            "Authorization": `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -33,11 +37,12 @@ export const openConfiguration = createAsyncThunk(
   async ({ id }, { rejectWithValue }) => {
     try {
       const token = getToken();
-      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+      const backend_url =
+        import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
       const url = `${backend_url}/configurations/${id}/open`;
       const res = await fetch(url, {
         method: "POST",
-        headers: { "Authorization": `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) {
         throw new Error("Failed to open configuration");
@@ -54,12 +59,13 @@ export const closeConfiguration = createAsyncThunk(
   async ({ id }, { rejectWithValue }) => {
     try {
       const token = getToken();
-      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+      const backend_url =
+        import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
       const url = `${backend_url}/configurations/${id}/close`;
 
       const res = await fetch(url, {
         method: "POST",
-        headers: { "Authorization": `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) {
         throw new Error("Failed to close configuration");
@@ -76,11 +82,12 @@ export const deleteConfiguration = createAsyncThunk(
   async ({ id }, { rejectWithValue }) => {
     try {
       const token = getToken();
-      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+      const backend_url =
+        import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
       const url = `${backend_url}/configurations/${id}`;
       const res = await fetch(url, {
         method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) {
         throw new Error("Failed to delete configuration");
@@ -100,7 +107,7 @@ export const simulateConfiguration = createAsyncThunk(
         guideId,
         guideName: `Guide ${guideId}`,
       }));
-      const res = await fetch("http://localhost:5006/virtualguides", {
+      const res = await fetch("http://localhost:5009/virtualguides", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -189,4 +196,3 @@ const configurationsSlice = createSlice({
 });
 const getToken = () => localStorage.getItem("token") || "";
 export default configurationsSlice.reducer;
-
