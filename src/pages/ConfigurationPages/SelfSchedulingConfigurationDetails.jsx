@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { Link, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import PageMeta from "../../components/common/PageMeta.jsx";
-import Button from "../../components/ui/button/Button.jsx";
 import useGoBack from "../../hooks/useGoBack.js";
 import {
   Table,
@@ -11,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table/index.jsx";
-import { PlayIcon, StopIconCircle, ChevronLeftIcon } from "../../icons";
+import { ChevronLeftIcon } from "../../icons";
 import { simulateConfiguration } from "../../store/configurationsSlice.js";
 import {
   fetchConfigurationDetails,
@@ -136,40 +135,19 @@ export default function SelfSchedulingConfigurationDetails() {
           </ol>
         </nav>
       </div>
-      <div className="mb-4 flex items-center justify-between">
-        {config &&
-          (config.isRunning ? (
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={handleSimulation}>
-                Simulate
-              </Button>
-              <Button
-                variant="outline"
-                className="text-red-600"
-                startIcon={<StopIconCircle className="size-4" />}
-                onClick={() => handleAction("close")}
-              >
-                Close
-              </Button>
-            </div>
-          ) : (
-            <Button
-              variant="outline"
-              className="text-green-600"
-              startIcon={<PlayIcon className="size-4" />}
-              onClick={() => handleAction("open")}
-            >
-              Open
-            </Button>
-          ))}
-      </div>
       {simulationMessage && (
         <p className="mb-4 text-sm text-blue-500">{simulationMessage}</p>
       )}
 
       {status === "loading" && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
-      {config && <ConfigurationInfoCard config={config} />}
+      {config && (
+        <ConfigurationInfoCard
+          config={config}
+          onAction={handleAction}
+          onSimulation={handleSimulation}
+        />
+      )}
 
       {itemsStatus === "loading" && <p>Loading items...</p>}
       {itemsError && <p className="text-red-500">{itemsError}</p>}
