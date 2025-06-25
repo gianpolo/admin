@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const getToken = () => localStorage.getItem("token") || "";
-const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+const backend_url =
+  import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
 
 export const fetchConfigurationDetails = createAsyncThunk(
   "configDetails/fetchConfigurationDetails",
@@ -62,11 +63,14 @@ const configurationDetailsSlice = createSlice({
   },
   reducers: {
     updateAvailableSlots(state, action) {
-      console.log("here")
-      const { itemId } = action.payload;
+      const { itemId, initialSlots, reserved, confirmed } = action.payload;
       state.items = state.items.map((it) =>
-        it.id === itemId ? { ...it, availableSlots: it.availableSlots - 1 } : it
+        it.id === itemId ? { ...it, availableSlots: initialSlots, reserved, confirmed } : it
       );
+    },
+    updateAvailableSlots2(state, action) {
+      const { itemId } = action.payload;
+      console.log(action.payload);
     },
   },
   extraReducers: (builder) => {
@@ -101,5 +105,6 @@ const configurationDetailsSlice = createSlice({
   },
 });
 
-export const { updateAvailableSlots } = configurationDetailsSlice.actions;
+export const { updateAvailableSlots, updateAvailableSlots2 } =
+  configurationDetailsSlice.actions;
 export default configurationDetailsSlice.reducer;

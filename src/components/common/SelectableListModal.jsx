@@ -47,7 +47,10 @@ export default function SelectableListModal({
         {!disabled && (
           <Button
             size="sm"
-            onClick={openModal}
+            onClick={(event) => {
+              event.preventDefault();
+              openModal(event);
+            }}
             disabled={!items || items.length == 0}
           >
             Add
