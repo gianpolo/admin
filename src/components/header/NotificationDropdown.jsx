@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
+import { eventsData } from "../../utils/constants.js";
 export default function NotificationDropdown() {
     const [isOpen, setIsOpen] = useState(false);
     const [notifying, setNotifying] = useState(true);
@@ -85,17 +86,23 @@ export default function NotificationDropdown() {
                   onItemClick={closeDropdown}
                   className="flex flex-col gap-1 rounded-lg border-b border-gray-100 p-3 hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-white/5"
                 >
-                  <span className="font-medium text-gray-800 dark:text-white/90">
-                    {n.EventType === "ConfigurationCreatedEvent"
-                      ? "A configuration was created"
-                      : "A configuration was opened"}
-                  </span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                    {new Date(n.CreatedOn).toLocaleString()}
-                  </span>
-                  <span className="text-sm text-gray-500 dark:text-gray-400">
-                    {n.Description || "No description available."}
-                  </span>
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`mr-2 rounded-full h-8 w-8  flex items-center justify-center text-white ${
+                        eventsData[n.context][n.eventName].bg
+                      }`}
+                    >
+                      {eventsData[n.context][n.eventName].icon}
+                    </span>
+                    <div className="text-[10px]">
+                      <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
+                        {eventsData[n.context][n.eventName].text}
+                      </span>
+                      <span className="block text-gray-500 text-theme-xs dark:text-gray-400">
+                        {new Date(n.createdOn).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
                 </DropdownItem>
               </li>
             ))}
