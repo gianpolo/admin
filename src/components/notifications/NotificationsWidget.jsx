@@ -5,7 +5,6 @@ import ComponentCard from "../common/ComponentCard.jsx";
 import { eventsData } from "../../utils/constants.js";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table/index.jsx";
 import {
-  clearNotifications,
   fetchEventsLogs,
 } from "../../store/notificationsSlice.js";
 export default function NotificationsWidget() {
@@ -16,9 +15,6 @@ export default function NotificationsWidget() {
     dispatch(fetchEventsLogs(id));
   }, [id]);
 
-  const handleClear = () => {
-    dispatch(clearNotifications());
-  };
 
   return (
     <ComponentCard title="Events log">

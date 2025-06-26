@@ -141,7 +141,8 @@ export default function SelfSchedulingConfigurationDetails() {
               items={items}
               itemsStatus={itemsStatus}
               itemsError={itemsError}
-            ></TourItemList> 
+              highlightId={highlightId}
+            ></TourItemList>
         </div>
         <div className="col-span-4 ">
           <NotificationsWidget />
