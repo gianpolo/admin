@@ -7,9 +7,25 @@ import {
 import { updateAvailableSlots } from "./configurationDetailsSlice.js";
 
 let connection = null;
-
+const getToken = () => localStorage.getItem("token") || "";
+const backend_url =
+  import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
 // Small helper slice to keep a list of incoming notifications
-
+export const fetchEventsLogs = createAsyncThunk(
+  "notifications/fetchEventsLog",
+  async (id, { rejectWithValue }) => {
+    console.log("fetching logs");
+    try {
+      const res = await fetch(`${backend_url}/logs?id=${id}`, {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      if (!res.ok) throw new Error("Failed to fetch logs");
+      return await res.json();
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
 export const startNotifications = createAsyncThunk(
   "notifications/start",
   async (_, { getState, dispatch, rejectWithValue }) => {
@@ -20,7 +36,6 @@ export const startNotifications = createAsyncThunk(
     const hubUrl =
       backendUrl.replace(/\/api\/v1\/?$/, "") + "/hubs/notifications";
     try {
-      console.log("Connecting to notifications hub:", hubUrl);
       connection = new HubConnectionBuilder()
         .withUrl(hubUrl, {
           accessTokenFactory: () => token,
@@ -33,13 +48,38 @@ export const startNotifications = createAsyncThunk(
         .build();
 
       connection.on("BasketItemAddedEvent", (payload) => {
+        console.log("BasketItemAddedEvent", payload);
+        dispatch(addNotification(payload));
+      });
+      connection.on("BasketItemRemovedEvent", (payload) => {
+        console.log("BasketItemRemovedEvent", payload);
+        dispatch(addNotification(payload));
+      });
+      connection.on("BasketItemExpiredEvent", (payload) => {
+        console.log("BasketItemExpiredEvent", payload);
+        dispatch(addNotification(payload));
+      });
+      connection.on("BasketConfirmedEvent", (payload) => {
+        console.log("BasketConfirmedEvent", payload);
+        dispatch(addNotification(payload));
+      });
+      connection.on("AddBasketItemFailedEvent", (payload) => {
+        console.log("AddBasketItemFailedEvent", payload);
         dispatch(addNotification(payload));
       });
       connection.on("TourItemAvailabilityUpdatedEvent", (payload) => {
+        console.log("TourItemAvailabilityUpdatedEvent", payload);
         dispatch(updateAvailableSlots(payload.content));
         dispatch(addNotification(payload));
       });
-
+      connection.on("TourItemReservationFailureEvent", (payload) => {
+        console.log("TourItemReservationFailureEvent", payload);
+        dispatch(addNotification(payload));
+      });
+      connection.on("TourItemCreatedEvent", (payload) => {
+        console.log("TourItemCreatedEvent", payload);
+        dispatch(addNotification(payload));
+      });
       connection.on("ConfigurationCreatedEvent", (payload) => {
         console.log("ConfigurationCreatedEvent", payload);
         dispatch(addNotification(payload));
@@ -50,6 +90,10 @@ export const startNotifications = createAsyncThunk(
         dispatch(addNotification(payload));
       });
 
+      connection.on("ConfigurationClosedEvent", (payload) => {
+        console.log("ConfigurationClosedEvent", payload);
+        dispatch(addNotification(payload));
+      });
       await connection.start();
     } catch (err) {
       return rejectWithValue(err.message);
@@ -80,6 +124,18 @@ const notificationsSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(fetchEventsLogs.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(fetchEventsLogs.fulfilled, (state, action) => {
+        state.status = "succeeded";
+        state.items = action.payload || [];
+      })
+      .addCase(fetchEventsLogs.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
       .addCase(startNotifications.pending, (state) => {
         state.status = "connecting";
       })
