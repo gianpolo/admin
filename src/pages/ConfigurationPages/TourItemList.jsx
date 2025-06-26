@@ -11,39 +11,16 @@ import Input from "../../components/form/input/InputField.jsx";
 export default function TourItemList({
   itemsStatus,
   itemsError,
-  config,
   items,
   onItemSelection,
+  highlightId,
 }) {
   const [filterDate, setFilterDate] = useState("");
   const [filterId, setFilterId] = useState("");
-  const [highlightId, setHighlightId] = useState(null);
-  const headerInfo = () => {
-    if (!config) return "";
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const from = new Date(config.schedulingWindowStart);
-    const end = new Date(config.schedulingWindowEnd);
-    from.setHours(0, 0, 0, 0);
-    end.setHours(0, 0, 0, 0);
-    const dayMs = 86400000;
-
-    if (config.isRunning) {
-      const diff = Math.floor((today - from) / dayMs);
-      return `Running for ${diff} day${diff === 1 ? "" : "s"}`;
-    }
-    if (today < from) {
-      const diff = Math.ceil((from - today) / dayMs);
-      return `${diff} day${diff === 1 ? "" : "s"} remaining`;
-    }
-    const diff = Math.floor((today - end) / dayMs);
-    return `Closed for ${diff} day${diff === 1 ? "" : "s"}`;
-  };
-
   const sortedItems = [...items].sort((a, b) => {
-    const da = new Date(a.tourDate);
-    const db = new Date(b.tourDate);
-    if (da - db !== 0) return da - db;
+    const ta = new Date(a.updatedAt || a.tourDate);
+    const tb = new Date(b.updatedAt || b.tourDate);
+    if (tb - ta !== 0) return tb - ta;
     return (a.name || "").localeCompare(b.name || "");
   });
   const filteredItems = sortedItems.filter((it) => {

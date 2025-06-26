@@ -54,7 +54,7 @@ export default function SelfSchedulingConfigurations() {
   useEffect(() => {
     dispatch(fetchConfigurations({ pageSize: 10, pageNumber: 1, cityId: 1 }));
   }, [dispatch]);
- 
+
   return (
     <>
       <PageMeta
