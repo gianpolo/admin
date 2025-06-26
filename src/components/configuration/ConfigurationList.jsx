@@ -29,7 +29,7 @@ export default function ConfigurationList({
             event.stopPropagation();
             onClose(cfg.id);
           }}
-          className="text-red-600 text-lg hover:text-2xl"
+          className="text-red-500 text-lg hover:text-2xl"
         >
           <StopIconCircle className="inline-block" />
         </button>
@@ -63,7 +63,7 @@ export default function ConfigurationList({
         </TableRow>
       </TableHeader>
       <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-        {list.map((cfg) => { 
+        {list.map((cfg) => {
           const loading = actionStatus[cfg.id] === "loading";
           return (
             <TableRow

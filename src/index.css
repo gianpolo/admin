@@ -775,3 +775,16 @@ span.flatpickr-weekday,
 .simplebar-scrollbar.simplebar-visible:before {
   @apply opacity-100;
 }
+
+@keyframes item-flash {
+  from {
+    background-color: var(--color-success-100);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+.flash-update {
+  animation: item-flash 2s ease-out;
+}

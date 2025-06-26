@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ThemeToggleButton } from "../common/ThemeToggleButton";
 import NotificationDropdown from "./NotificationDropdown";
+import NotificationStatusIcon from "./NotificationStatusIcon.jsx";
 import UserDropdown from "./UserDropdown";
 import { Link } from "react-router";
 const Header = ({ onClick, onToggle }) => {
@@ -61,7 +62,10 @@ const Header = ({ onClick, onToggle }) => {
           {/* <!-- Dark Mode Toggler --> */}
           <ThemeToggleButton />
           {/* <!-- Dark Mode Toggler --> */}
-          <NotificationDropdown />
+          <div className="flex items-center">
+            <NotificationDropdown />
+            <NotificationStatusIcon />
+          </div>
           {/* <!-- Notification Menu Area --> */}
         </div>
         {/* <!-- User Area --> */}
