@@ -69,7 +69,7 @@ export const startNotifications = createAsyncThunk(
       });
       connection.on("TourItemAvailabilityUpdatedEvent", (payload) => {
         console.log("TourItemAvailabilityUpdatedEvent", payload);
-        dispatch(updateAvailableSlots(payload.content));
+        dispatch(updateAvailableSlots(payload));
         dispatch(addNotification(payload));
       });
       connection.on("TourItemReservationFailureEvent", (payload) => {

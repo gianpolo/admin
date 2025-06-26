@@ -11,6 +11,7 @@ export default function ConfigurationInfoCard({
   config,
   onAction,
   onSimulation,
+  isSimulating = false,
   actionLoading = false,
 }) {
   const { isOpen, openModal, closeModal } = useModal();
@@ -62,7 +63,9 @@ export default function ConfigurationInfoCard({
           <div className="flex">
             {config.isRunning && onSimulation && (
               <Button variant="outline" onClick={onSimulation}>
-                Start Virtual SelfScheduling
+                {isSimulating
+                  ? "Stop Virtual SelfScheduling"
+                  : "Start Virtual SelfScheduling"}
               </Button>
             )}
           </div>
