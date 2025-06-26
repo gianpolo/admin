@@ -39,9 +39,9 @@ export default function ConfigurationInfoCard({
               <Spinner />
             ) : config.isRunning ? (
               <Button
-                variant="outline"
-                className="text-red-600 text-xs py-2!"
-                startIcon={<StopIconCircle className="size-4" />}
+                variant="outlineRed"
+                className="text-xs py-2!"
+                startIcon={<StopIconCircle className="size-4 text-red-500" />}
                 onClick={() => onAction && onAction("close")}
               >
                 Close
@@ -176,12 +176,12 @@ export default function ConfigurationInfoCard({
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
                   <div className="col-span-2 lg:col-span-1">
                     <Label>First Name</Label>
-                    <Input type="text" value="Musharof" />
+                    <Input type="text" value=" Gianpiero" />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
                     <Label>Last Name</Label>
-                    <Input type="text" value="Chowdhury" />
+                    <Input type="text" value="Ferraro" />
                   </div>
 
                   <div className="col-span-2 lg:col-span-1">
@@ -196,7 +196,7 @@ export default function ConfigurationInfoCard({
 
                   <div className="col-span-2">
                     <Label>Bio</Label>
-                    <Input type="text" value="Team Manager" />
+                    <Input type="text" value="Developer" />
                   </div>
                 </div>
               </div>
