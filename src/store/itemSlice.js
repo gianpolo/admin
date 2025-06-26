@@ -19,7 +19,7 @@ export const fetchItemDetails = createAsyncThunk(
       const slotData = await slotRes.json();
       return {
         ...itemData,
-        availableSlots: slotData.initialAvailability,
+        initialSlots: slotData.initialSlots,
         reservedSlots: slotData.reservedSlots,
         confirmedSlots: slotData.confirmedSlots,
       };

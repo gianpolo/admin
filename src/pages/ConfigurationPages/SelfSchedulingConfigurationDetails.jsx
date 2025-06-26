@@ -182,7 +182,7 @@ export default function SelfSchedulingConfigurationDetails() {
                   <TableCell isHeader className="px-6 py-3 whitespace-nowrap">
                     <div className="flex items-center">
                       <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
-                        Initial Availability
+                        Initial Slots
                       </p>
                     </div>
                   </TableCell>
@@ -232,7 +232,7 @@ export default function SelfSchedulingConfigurationDetails() {
                     <TableCell>
                       <div className="flex items-center">
                         <p className="text-gray-500 text-theme-sm dark:text-gray-400">
-                          {item.availableSlots}
+                          {item.initialSlots}
                         </p>
                       </div>
                     </TableCell>

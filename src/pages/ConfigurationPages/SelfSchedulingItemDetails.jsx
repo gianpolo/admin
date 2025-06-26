@@ -19,7 +19,10 @@ export default function SelfSchedulingItemDetails() {
 
   return (
     <>
-      <PageMeta title="Tour Item Details" description="Schedulable item overview" />
+      <PageMeta
+        title="Tour Item Details"
+        description="Schedulable item overview"
+      />
       <div className="mb-6 flex items-center gap-2">
         <button
           onClick={(e) => {
@@ -43,12 +46,13 @@ export default function SelfSchedulingItemDetails() {
           </h3>
           <p className="text-gray-500">ID: {item.id}</p>
           <p className="text-gray-500">Tour Date: {item.tourDate}</p>
-          <p className="text-gray-500">Available Slots: {item.availableSlots}</p>
+          <p className="text-gray-500">Available Slots: {item.initialSlots}</p>
           <p className="text-gray-500">
             Reserved Slots: {item.reservedSlots ? item.reservedSlots.length : 0}
           </p>
           <p className="text-gray-500">
-            Confirmed Slots: {item.confirmedSlots ? item.confirmedSlots.length : 0}
+            Confirmed Slots:{" "}
+            {item.confirmedSlots ? item.confirmedSlots.length : 0}
           </p>
         </div>
       )}
