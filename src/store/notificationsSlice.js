@@ -8,6 +8,8 @@ import { updateAvailableSlots } from "./configurationDetailsSlice.js";
 
 let connection = null;
 
+// Small helper slice to keep a list of incoming notifications
+
 export const startNotifications = createAsyncThunk(
   "notifications/start",
   async (_, { getState, dispatch, rejectWithValue }) => {
@@ -32,6 +34,14 @@ export const startNotifications = createAsyncThunk(
         dispatch(updateAvailableSlots(payload));
       });
 
+      connection.on("ConfigurationCreatedEvent", (payload) => {
+        dispatch(addNotification(payload));
+      });
+
+      connection.on("ConfigurationOpenedEvent", (payload) => {
+        dispatch(addNotification(payload));
+      });
+
       await connection.start();
     } catch (err) {
       return rejectWithValue(err.message);
@@ -51,8 +61,15 @@ export const stopNotifications = createAsyncThunk(
 
 const notificationsSlice = createSlice({
   name: "notifications",
-  initialState: { status: "idle" },
-  reducers: {},
+  initialState: { status: "idle", items: [] },
+  reducers: {
+    addNotification(state, action) {
+      state.items.unshift(action.payload);
+    },
+    clearNotifications(state) {
+      state.items = [];
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(startNotifications.pending, (state) => {
@@ -69,5 +86,7 @@ const notificationsSlice = createSlice({
       });
   },
 });
+
+export const { addNotification, clearNotifications } = notificationsSlice.actions;
 
 export default notificationsSlice.reducer;
