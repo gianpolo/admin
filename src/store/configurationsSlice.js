@@ -27,6 +27,7 @@ export const fetchConfigurations = createAsyncThunk(
       }
       return await response.json();
     } catch (err) {
+      console.error("Error fetching configurations:", err);
       return rejectWithValue(err.message);
     }
   }

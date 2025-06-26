@@ -17,8 +17,10 @@ export const startNotifications = createAsyncThunk(
     if (!token) return rejectWithValue("No auth token");
     const backendUrl =
       import.meta.env.VITE_BACKEND_URL || "http://localhost:5010";
-    const hubUrl = backendUrl.replace(/\/api\/v1\/?$/, "") + "/hubs/notifications";
+    const hubUrl =
+      backendUrl.replace(/\/api\/v1\/?$/, "") + "/hubs/notifications";
     try {
+      console.log("Connecting to notifications hub:", hubUrl);
       connection = new HubConnectionBuilder()
         .withUrl(hubUrl, {
           accessTokenFactory: () => token,
@@ -27,7 +29,7 @@ export const startNotifications = createAsyncThunk(
           transport: HttpTransportType.WebSockets,
         })
         .withAutomaticReconnect()
-        .configureLogging(LogLevel.Warning)
+        .configureLogging(LogLevel.Information)
         .build();
 
       connection.on("TourItemAvailabilityUpdatedEvent", (payload) => {
@@ -35,10 +37,12 @@ export const startNotifications = createAsyncThunk(
       });
 
       connection.on("ConfigurationCreatedEvent", (payload) => {
+        console.log("ConfigurationCreatedEvent", payload);
         dispatch(addNotification(payload));
       });
 
       connection.on("ConfigurationOpenedEvent", (payload) => {
+        console.log("ConfigurationOpenedEvent", payload);
         dispatch(addNotification(payload));
       });
 
@@ -87,6 +91,7 @@ const notificationsSlice = createSlice({
   },
 });
 
-export const { addNotification, clearNotifications } = notificationsSlice.actions;
+export const { addNotification, clearNotifications } =
+  notificationsSlice.actions;
 
 export default notificationsSlice.reducer;
