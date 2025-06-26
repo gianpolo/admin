@@ -193,6 +193,27 @@ export default function SelfSchedulingConfigurationDetails() {
                   </TableCell>
                 </TableRow>
                 <TableRow>
+                  <TableCell isHeader className="px-6 py-2">
+                    <Input
+                      type="text"
+                      placeholder="Filter by ID"
+                      value={filterId}
+                      onChange={(e) => setFilterId(e.target.value)}
+                    />
+                  </TableCell>
+                  <TableCell isHeader className="px-6 py-2">
+                    <Input
+                      type="date"
+                      value={filterDate}
+                      onChange={(e) => setFilterDate(e.target.value)}
+                    />
+                  </TableCell>
+                  <TableCell isHeader />
+                  <TableCell isHeader />
+                  <TableCell isHeader />
+                </TableRow>
+
+                <TableRow>
                   <TableCell isHeader className="px-6 py-3 whitespace-nowrap">
                     <div className="flex items-center">
                       <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
@@ -229,32 +250,14 @@ export default function SelfSchedulingConfigurationDetails() {
                     </div>
                   </TableCell>
                 </TableRow>
-                <TableRow>
-                  <TableCell isHeader className="px-6 py-2">
-                    <Input
-                      type="text"
-                      placeholder="Filter by ID"
-                      value={filterId}
-                      onChange={(e) => setFilterId(e.target.value)}
-                    />
-                  </TableCell>
-                  <TableCell isHeader className="px-6 py-2">
-                    <Input
-                      type="date"
-                      value={filterDate}
-                      onChange={(e) => setFilterDate(e.target.value)}
-                    />
-                  </TableCell>
-                  <TableCell isHeader />
-                  <TableCell isHeader />
-                  <TableCell isHeader />
-                </TableRow>
               </TableHeader>
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-xs">
                 {filteredItems.map((item) => (
                   <TableRow
                     key={item.id}
-                    className={`cursor-pointer hover:dark:bg-white/[0.04] ${highlightId === item.id ? "flash-update" : ""}`}
+                    className={`cursor-pointer hover:dark:bg-white/[0.04] ${
+                      highlightId === item.id ? "flash-update" : ""
+                    }`}
                     handleClick={(event) => {
                       event.stopPropagation();
                       navigate(`/self-scheduling-items/${item.id}`);
