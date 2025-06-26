@@ -63,8 +63,22 @@ const configurationDetailsSlice = createSlice({
   },
   reducers: {
     updateAvailableSlots(state, action) {
-      const { itemId, initialSlots, reserved, confirmed, updatedAt } =
-        action.payload;
+      const {
+        itemId,
+        initialSlots,
+        reserved,
+        confirmed,
+        createdAt,
+      } = action.payload;
+        it.id === itemId
+          ? {
+              ...it,
+              initialSlots,
+              reserved,
+              confirmed,
+              updatedAt: createdAt || new Date().toISOString(),
+            }
+          : it
       state.items = state.items.map((it) =>
         it.id === itemId
           ? {

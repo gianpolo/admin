@@ -5,7 +5,11 @@ import PageMeta from "../../components/common/PageMeta.jsx";
 import useGoBack from "../../hooks/useGoBack.js";
 import NotificationsWidget from "../../components/notifications/NotificationsWidget";
 import { ChevronLeftIcon } from "../../icons";
-import { simulateConfiguration } from "../../store/configurationsSlice.js";
+import {
+  startSimulation,
+  stopSimulation,
+  checkSimulation,
+} from "../../store/configurationsSlice.js";
 import {
   fetchConfigurationDetails,
   fetchConfigurationItems,
@@ -19,7 +23,9 @@ export default function SelfSchedulingConfigurationDetails() {
   const goBack = useGoBack();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { simulationMessage } = useSelector((state) => state.configurations);
+  const { simulationMessage, isSimulationRunning } = useSelector(
+    (state) => state.configurations
+  );
   const {
     config,
     items,
@@ -35,6 +41,7 @@ export default function SelfSchedulingConfigurationDetails() {
   useEffect(() => {
     dispatch(fetchConfigurationDetails(id));
     dispatch(fetchConfigurationItems(id));
+    dispatch(checkSimulation({ id }));
   }, [dispatch, id]);
 
   useEffect(() => {
@@ -60,7 +67,11 @@ export default function SelfSchedulingConfigurationDetails() {
 
   const handleSimulation = () => {
     if (!config) return;
-    dispatch(simulateConfiguration({ guideIds: config.guideIds || [] }));
+    if (isSimulationRunning) {
+      dispatch(stopSimulation({ id }));
+    } else {
+      dispatch(startSimulation({ id }));
+    }
   };
 
   const handleItemClick = (id) => {
@@ -130,6 +141,7 @@ export default function SelfSchedulingConfigurationDetails() {
           config={config}
           onAction={handleAction}
           onSimulation={handleSimulation}
+          isSimulating={isSimulationRunning}
           actionLoading={actionLoading}
         />
       )}

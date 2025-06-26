@@ -100,24 +100,56 @@ export const deleteConfiguration = createAsyncThunk(
   }
 );
 
-export const simulateConfiguration = createAsyncThunk(
-  "configurations/simulateConfiguration",
-  async ({ guideIds = [] }, { rejectWithValue }) => {
+export const checkSimulation = createAsyncThunk(
+  "configurations/checkSimulation",
+  async ({ id }, { rejectWithValue }) => {
     try {
-      const body = guideIds.map((guideId) => ({
-        guideId,
-        guideName: `Guide ${guideId}`,
-      }));
-      const res = await fetch("http://localhost:5009/virtualguides", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-      if (!res.ok) {
-        throw new Error("Failed to start simulation");
-      }
+      const res = await fetch(`http://localhost:5009/virtualguides/${id}`);
+      if (res.status === 404) return false;
+      if (!res.ok) throw new Error("Failed to fetch simulation status");
+      return true;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const startSimulation = createAsyncThunk(
+  "configurations/startSimulation",
+  async ({ id }, { rejectWithValue }) => {
+    try {
+      const res = await fetch(
+        `http://localhost:5009/virtualguides/${id}/start`,
+        {
+          method: "POST",
+        }
+      );
       const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to start simulation");
+      }
       return data.message || "Simulation started";
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const stopSimulation = createAsyncThunk(
+  "configurations/stopSimulation",
+  async ({ id }, { rejectWithValue }) => {
+    try {
+      const res = await fetch(
+        `http://localhost:5009/virtualguides/${id}/stop`,
+        {
+          method: "POST",
+        }
+      );
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to stop simulation");
+      }
+      return data.message || "Simulation stopped";
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -133,6 +165,7 @@ const configurationsSlice = createSlice({
     actionStatus: {},
     simulationStatus: "idle",
     simulationMessage: "",
+    isSimulationRunning: false,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -181,17 +214,34 @@ const configurationsSlice = createSlice({
       .addCase(deleteConfiguration.rejected, (state, action) => {
         state.actionStatus[action.meta.arg.id] = "idle";
       })
-      .addCase(simulateConfiguration.pending, (state) => {
+      .addCase(startSimulation.pending, (state) => {
         state.simulationStatus = "loading";
         state.simulationMessage = "";
       })
-      .addCase(simulateConfiguration.fulfilled, (state, action) => {
+      .addCase(startSimulation.fulfilled, (state, action) => {
         state.simulationStatus = "succeeded";
         state.simulationMessage = action.payload;
+        state.isSimulationRunning = true;
       })
-      .addCase(simulateConfiguration.rejected, (state, action) => {
+      .addCase(startSimulation.rejected, (state, action) => {
         state.simulationStatus = "failed";
         state.simulationMessage = action.payload;
+      })
+      .addCase(stopSimulation.pending, (state) => {
+        state.simulationStatus = "loading";
+        state.simulationMessage = "";
+      })
+      .addCase(stopSimulation.fulfilled, (state, action) => {
+        state.simulationStatus = "succeeded";
+        state.simulationMessage = action.payload;
+        state.isSimulationRunning = false;
+      })
+      .addCase(stopSimulation.rejected, (state, action) => {
+        state.simulationStatus = "failed";
+        state.simulationMessage = action.payload;
+      })
+      .addCase(checkSimulation.fulfilled, (state, action) => {
+        state.isSimulationRunning = action.payload;
       });
   },
 });
