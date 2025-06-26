@@ -105,9 +105,11 @@ export const checkSimulation = createAsyncThunk(
   async ({ id }, { rejectWithValue }) => {
     try {
       const res = await fetch(`http://localhost:5009/virtualguides/${id}`);
+
       if (res.status === 404) return false;
       if (!res.ok) throw new Error("Failed to fetch simulation status");
-      return true;
+      var started = await res.json();
+      return !!started;
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -124,11 +126,11 @@ export const startSimulation = createAsyncThunk(
           method: "POST",
         }
       );
-      const data = await res.json().catch(() => ({}));
+
       if (!res.ok) {
         throw new Error(data.message || "Failed to start simulation");
       }
-      return data.message || "Simulation started";
+      return true;
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -145,11 +147,11 @@ export const stopSimulation = createAsyncThunk(
           method: "POST",
         }
       );
-      const data = await res.json().catch(() => ({}));
+
       if (!res.ok) {
         throw new Error(data.message || "Failed to stop simulation");
       }
-      return data.message || "Simulation stopped";
+      return true;
     } catch (err) {
       return rejectWithValue(err.message);
     }

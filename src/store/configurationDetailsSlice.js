@@ -68,7 +68,7 @@ const configurationDetailsSlice = createSlice({
         initialSlots,
         reserved,
         confirmed,
-        createdAt,
+        createdOn,
       } = action.payload;
         it.id === itemId
           ? {
@@ -76,9 +76,9 @@ const configurationDetailsSlice = createSlice({
               initialSlots,
               reserved,
               confirmed,
-              updatedAt: createdAt || new Date().toISOString(),
+              updatedAt: createdOn || new Date().toISOString(),
             }
-          : it
+          : it;
       state.items = state.items.map((it) =>
         it.id === itemId
           ? {
