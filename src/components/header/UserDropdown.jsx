@@ -2,8 +2,15 @@ import { useState } from "react";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { Link } from "react-router";
+import { getUserName, getInitials } from "../../utils/auth.js";
 export default function UserDropdown() {
     const [isOpen, setIsOpen] = useState(false);
+    const userName = getUserName() || "Gianpiero";
+    const initials = getInitials(userName) || "G";
+    const [bgColor] = useState(() => {
+        const hue = Math.floor(Math.random() * 360);
+        return `hsl(${hue},70%,60%)`;
+    });
     function toggleDropdown() {
         setIsOpen(!isOpen);
     }
@@ -12,11 +19,11 @@ export default function UserDropdown() {
     }
     return (<div className="relative">
       <button onClick={toggleDropdown} className="flex items-center text-gray-700 dropdown-toggle dark:text-gray-400">
-        <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
-          <img src="/images/user/owner.jpg" alt="User"/>
+        <span className="mr-3 rounded-full h-11 w-11 flex items-center justify-center text-white" style={{ backgroundColor: bgColor }}>
+          {initials}
         </span>
 
-        <span className="block mr-1 font-medium text-theme-sm">Musharof</span>
+        <span className="block mr-1 font-medium text-theme-sm">{userName}</span>
         <svg className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M4.3125 8.65625L9 13.3437L13.6875 8.65625" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
@@ -25,7 +32,7 @@ export default function UserDropdown() {
       <Dropdown isOpen={isOpen} onClose={closeDropdown} className="absolute right-0 mt-[17px] flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark">
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            Musharof Chowdhury
+            {userName}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
             randomuser@pimjo.com
