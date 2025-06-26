@@ -63,6 +63,7 @@ const configurationDetailsSlice = createSlice({
   },
   reducers: {
     updateAvailableSlots(state, action) {
+      debugger;
       console.log("Updating available slots for item:", action.payload);
       const { itemId, initialSlots, reserved, confirmed } = action.payload;
       state.items = state.items.map((it) =>
