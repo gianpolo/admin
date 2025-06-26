@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import PageMeta from "../../components/common/PageMeta.jsx";
@@ -157,10 +157,8 @@ export default function SelfSchedulingConfigurationDetails() {
               <TableHeader className="border-b border-gray-100 dark:border-white/[0.05] text-xs">
                 <TableRow>
                   <TableCell isHeader className="px-6 py-3 whitespace-nowrap">
-                    {" "}
                     <div className="flex items-center">
                       <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
-                        {" "}
                         {headerInfo()}
                       </p>
                     </div>
@@ -170,7 +168,6 @@ export default function SelfSchedulingConfigurationDetails() {
                   <TableCell isHeader className="px-6 py-3 whitespace-nowrap">
                     <div className="flex items-center">
                       <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
-                        {" "}
                         Name / ID
                       </p>
                     </div>
@@ -178,7 +175,6 @@ export default function SelfSchedulingConfigurationDetails() {
                   <TableCell isHeader className="px-6 py-3 whitespace-nowrap">
                     <div className="flex items-center">
                       <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
-                        {" "}
                         Tour Date
                       </p>
                     </div>
@@ -188,21 +184,21 @@ export default function SelfSchedulingConfigurationDetails() {
                       <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
                         Initial Availability
                       </p>
-                    </div>{" "}
+                    </div>
                   </TableCell>
                   <TableCell isHeader className="px-6 py-3 whitespace-nowrap">
                     <div className="flex items-center">
                       <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
                         Reserved Slots
                       </p>
-                    </div>{" "}
+                    </div>
                   </TableCell>
                   <TableCell isHeader className="px-6 py-3 whitespace-nowrap">
                     <div className="flex items-center">
                       <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
                         Confirmed Slots
                       </p>
-                    </div>{" "}
+                    </div>
                   </TableCell>
                 </TableRow>
               </TableHeader>
@@ -210,7 +206,9 @@ export default function SelfSchedulingConfigurationDetails() {
                 {sortedItems.map((item) => (
                   <TableRow
                     key={item.id}
-                    handleClick={() => {
+                    className={`cursor-pointer hover:dark:bg-white/[0.04]`}
+                    handleClick={(event) => {
+                      event.stopPropagation();
                       navigate(`/self-scheduling-items/${item.id}`);
                     }}
                   >
@@ -227,7 +225,6 @@ export default function SelfSchedulingConfigurationDetails() {
                     <TableCell>
                       <div className="flex items-center">
                         <p className="text-gray-500 text-theme-sm dark:text-gray-400">
-                          {" "}
                           {item.tourDate}
                         </p>
                       </div>
@@ -236,6 +233,20 @@ export default function SelfSchedulingConfigurationDetails() {
                       <div className="flex items-center">
                         <p className="text-gray-500 text-theme-sm dark:text-gray-400">
                           {item.availableSlots}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <p className="text-gray-500 text-theme-sm dark:text-gray-400">
+                          {item.reservedSlots || 0}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <p className="text-gray-500 text-theme-sm dark:text-gray-400">
+                          {item.confirmedSlots || 0}
                         </p>
                       </div>
                     </TableCell>
