@@ -3,14 +3,7 @@ import { Link, useParams, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import PageMeta from "../../components/common/PageMeta.jsx";
 import useGoBack from "../../hooks/useGoBack.js";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "../../components/ui/table/index.jsx";
-import Input from "../../components/form/input/InputField.jsx";
+import NotificationsWidget from "../../components/notifications/NotificationsWidget";
 import { ChevronLeftIcon } from "../../icons";
 import { simulateConfiguration } from "../../store/configurationsSlice.js";
 import {
@@ -20,7 +13,7 @@ import {
   clearLastUpdatedId,
 } from "../../store/configurationDetailsSlice.js";
 import ConfigurationInfoCard from "../../components/configuration/ConfigurationInfoCard.jsx";
-
+import TourItemList from "./TourItemList.jsx";
 export default function SelfSchedulingConfigurationDetails() {
   const { id } = useParams();
   const goBack = useGoBack();
@@ -38,10 +31,7 @@ export default function SelfSchedulingConfigurationDetails() {
   } = useSelector((state) => state.configDetails);
 
   const [actionLoading, setActionLoading] = useState(false);
-  const [filterDate, setFilterDate] = useState("");
-  const [filterId, setFilterId] = useState("");
   const [highlightId, setHighlightId] = useState(null);
-
   useEffect(() => {
     dispatch(fetchConfigurationDetails(id));
     dispatch(fetchConfigurationItems(id));
@@ -73,41 +63,9 @@ export default function SelfSchedulingConfigurationDetails() {
     dispatch(simulateConfiguration({ guideIds: config.guideIds || [] }));
   };
 
-  const sortedItems = [...items].sort((a, b) => {
-    const da = new Date(a.tourDate);
-    const db = new Date(b.tourDate);
-    if (da - db !== 0) return da - db;
-    return (a.name || "").localeCompare(b.name || "");
-  });
-
-  const filteredItems = sortedItems.filter((it) => {
-    const dateOk = filterDate ? it.tourDate.startsWith(filterDate) : true;
-    const idOk = filterId ? String(it.id).includes(filterId) : true;
-    return dateOk && idOk;
-  });
-
-  const headerInfo = () => {
-    if (!config) return "";
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const from = new Date(config.schedulingWindowStart);
-    const end = new Date(config.schedulingWindowEnd);
-    from.setHours(0, 0, 0, 0);
-    end.setHours(0, 0, 0, 0);
-    const dayMs = 86400000;
-
-    if (config.isRunning) {
-      const diff = Math.floor((today - from) / dayMs);
-      return `Running for ${diff} day${diff === 1 ? "" : "s"}`;
-    }
-    if (today < from) {
-      const diff = Math.ceil((from - today) / dayMs);
-      return `${diff} day${diff === 1 ? "" : "s"} remaining`;
-    }
-    const diff = Math.floor((today - end) / dayMs);
-    return `Closed for ${diff} day${diff === 1 ? "" : "s"}`;
+  const handleItemClick = (id) => {
+    navigate(`/self-scheduling-items/${id}`);
   };
-
   return (
     <>
       <PageMeta
@@ -175,149 +133,20 @@ export default function SelfSchedulingConfigurationDetails() {
           actionLoading={actionLoading}
         />
       )}
-
-      {itemsStatus === "loading" && <p>Loading items...</p>}
-      {itemsError && <p className="text-red-500">{itemsError}</p>}
-      {itemsStatus !== "loading" && !itemsError && (
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03] mt-6">
-          <div className="max-w-full overflow-x-auto">
-            <Table>
-              <TableHeader className="border-b border-gray-100 dark:border-white/[0.05] text-xs">
-                <TableRow>
-                  <TableCell isHeader className="px-6 py-3 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
-                        {headerInfo()}
-                      </p>
-                    </div>
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell isHeader className="px-6 py-2">
-                    <Input
-                      type="text"
-                      placeholder="Filter by ID"
-                      value={filterId}
-                      onChange={(e) => setFilterId(e.target.value)}
-                    />
-                  </TableCell>
-                  <TableCell isHeader className="px-6 py-2">
-                    <Input
-                      type="date"
-                      value={filterDate}
-                      onChange={(e) => setFilterDate(e.target.value)}
-                    />
-                  </TableCell>
-                  <TableCell isHeader />
-                  <TableCell isHeader />
-                  <TableCell isHeader />
-                </TableRow>
-
-                <TableRow>
-                  <TableCell isHeader className="px-6 py-3 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
-                        Name / ID
-                      </p>
-                    </div>
-                  </TableCell>
-                  <TableCell isHeader className="px-6 py-3 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
-                        Tour Date
-                      </p>
-                    </div>
-                  </TableCell>
-                  <TableCell isHeader className="px-6 py-3 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
-                        Initial Slots
-                      </p>
-                    </div>
-                  </TableCell>
-                  <TableCell isHeader className="px-6 py-3 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
-                        Reserved Slots
-                      </p>
-                    </div>
-                  </TableCell>
-                  <TableCell isHeader className="px-6 py-3 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
-                        Confirmed Slots
-                      </p>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              </TableHeader>
-              <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-xs">
-                {filteredItems.map((item) => (
-                  <TableRow
-                    key={item.id}
-                    className={`cursor-pointer hover:dark:bg-white/[0.04] ${
-                      highlightId === item.id ? "flash-update" : ""
-                    }`}
-                    handleClick={(event) => {
-                      event.stopPropagation();
-                      navigate(`/self-scheduling-items/${item.id}`);
-                    }}
-                  >
-                    <TableCell>
-                      <div className="leading-snug">
-                        <div className="dark:text-white font-medium truncate">
-                          {item.name}
-                        </div>
-                        <div className="text-theme-xs text-gray-400 dark:text-gray-400">
-                          {item.id}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <p className="text-gray-500 text-theme-sm dark:text-gray-400">
-                          {item.tourDate}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <p className="text-gray-500 text-theme-sm dark:text-gray-400">
-                          {item.initialSlots}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <p className="text-gray-500 text-theme-sm dark:text-gray-400">
-                          {item.reservedSlots || 0}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center">
-                        <p className="text-gray-500 text-theme-sm dark:text-gray-400">
-                          {item.confirmedSlots || 0}
-                        </p>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {filteredItems.length === 0 && (
-                  <TableRow>
-                    <TableCell
-                      colSpan={3}
-                      className="px-5 py-2 text-center text-gray-500"
-                    >
-                      No items found
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
+      <div className="grid grid-cols-12 gap-6 mt-6">
+        <div className="col-span-8">
+         
+            <TourItemList
+              onItemSelection={handleItemClick}
+              items={items}
+              itemsStatus={itemsStatus}
+              itemsError={itemsError}
+            ></TourItemList> 
         </div>
-      )}
+        <div className="col-span-4 ">
+          <NotificationsWidget />
+        </div>
+      </div>
     </>
   );
 }

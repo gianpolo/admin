@@ -66,7 +66,7 @@ const configurationDetailsSlice = createSlice({
       console.log("Updating initial slots for item:", action.payload);
       const { itemId, initialSlots, reserved, confirmed } = action.payload;
       state.items = state.items.map((it) =>
-        it.id === itemId ? { ...it, initialSlots, reserved, confirmed } : it
+        it.id === itemId ? { ...it, initialSlots, reserved, confirmed, updatedAt: createdAt} : it
       );
       state.lastUpdatedId = itemId;
     },
