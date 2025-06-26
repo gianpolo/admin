@@ -44,7 +44,6 @@ export const performConfigurationAction = createAsyncThunk(
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       if (!res.ok) throw new Error("Action failed");
-      return await res.json();
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -69,7 +68,7 @@ const configurationDetailsSlice = createSlice({
           ? { ...it, availableSlots: initialSlots, reserved, confirmed }
           : it
       );
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -103,6 +102,5 @@ const configurationDetailsSlice = createSlice({
   },
 });
 
-export const { updateAvailableSlots } =
-  configurationDetailsSlice.actions;
+export const { updateAvailableSlots } = configurationDetailsSlice.actions;
 export default configurationDetailsSlice.reducer;
