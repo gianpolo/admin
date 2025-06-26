@@ -16,10 +16,7 @@ import {
   fetchConfigurationDetails,
   fetchConfigurationItems,
   performConfigurationAction,
-  updateAvailableSlots,
-  updateAvailableSlots2,
 } from "../../store/configurationDetailsSlice.js";
-import { useNotifications } from "../../context/NotificationContext.jsx";
 import ConfigurationInfoCard from "../../components/configuration/ConfigurationInfoCard.jsx";
 
 export default function SelfSchedulingConfigurationDetails() {
@@ -30,35 +27,12 @@ export default function SelfSchedulingConfigurationDetails() {
   const { config, items, status, itemsStatus, error, itemsError } = useSelector(
     (state) => state.configDetails
   );
-  const {
-    onBasketItemAdded,
-    offBasketItemAdded,
-    onItemAvailabilityUpdated,
-    offItemAvailabilityUpdated,
-  } = useNotifications();
 
   useEffect(() => {
     dispatch(fetchConfigurationDetails(id));
     dispatch(fetchConfigurationItems(id));
   }, [dispatch, id]);
 
-  useEffect(() => {
-    const handler = (payload) => {
-      console.log("Basket Item Added", payload);
-      dispatch(updateAvailableSlots2(payload));
-    };
-    onBasketItemAdded(handler);
-    return () => offBasketItemAdded(handler);
-  }, [dispatch, onBasketItemAdded, offBasketItemAdded]);
-  
-  useEffect(() => {
-    const handler = (payload) => {
-      console.log("Item availability updated:", payload);
-      dispatch(updateAvailableSlots(payload));
-    };
-    onItemAvailabilityUpdated(handler);
-    return () => offItemAvailabilityUpdated(handler);
-  }, [dispatch, onItemAvailabilityUpdated, offItemAvailabilityUpdated]);
   const handleAction = (action) => {
     dispatch(performConfigurationAction({ id, action }));
   };
