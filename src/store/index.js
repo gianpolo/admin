@@ -4,6 +4,7 @@ import authReducer from "./authSlice.js";
 import configDetailsReducer from "./configurationDetailsSlice.js";
 import createConfigReducer from "./createConfigurationSlice.js";
 import notificationsReducer from "./notificationsSlice.js";
+import itemsReducer from "./itemSlice.js";
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     configDetails: configDetailsReducer,
     configForm: createConfigReducer,
     notifications: notificationsReducer,
+    items: itemsReducer,
   },
 });
 
