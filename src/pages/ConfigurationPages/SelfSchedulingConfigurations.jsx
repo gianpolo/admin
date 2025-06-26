@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router";
+import { useNavigate, useLocation } from "react-router";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb.jsx";
 import PageMeta from "../../components/common/PageMeta.jsx";
 import {
@@ -17,6 +17,8 @@ import ConfigurationList from "../../components/configuration/ConfigurationList.
 export default function SelfSchedulingConfigurations() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const highlightId = location.state?.newId;
   const {
     isOpen: isDeleteOpen,
     openModal: openDeleteModal,
@@ -77,6 +79,7 @@ export default function SelfSchedulingConfigurations() {
             <ConfigurationList
               list={list}
               actionStatus={actionStatus}
+              highlightId={highlightId}
               onDelete={handleDeleteClick}
               onOpen={handleOpenClick}
               onClose={handleCloseClick}

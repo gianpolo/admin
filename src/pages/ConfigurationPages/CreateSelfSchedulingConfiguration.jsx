@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 import {
   fetchCities,
   fetchExperiences,
@@ -24,6 +25,7 @@ import {
 
 export default function CreateSelfSchedulingConfiguration() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { cities, experiences, guides, createStatus, createError } =
     useSelector((state) => state.configForm);
 
@@ -40,7 +42,6 @@ export default function CreateSelfSchedulingConfiguration() {
   const [selectedExperienceIds, setSelectedExperienceIds] = useState([]);
   const [selectedGuideIds, setSelectedGuideIds] = useState([]);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
   const minDate = new Date();
   minDate.setDate(minDate.getDate() + 1);
   minDate.setHours(0, 0, 0, 0);
@@ -136,7 +137,9 @@ export default function CreateSelfSchedulingConfiguration() {
     };
     const res = await dispatch(createConfigurationThunk(payload));
     if (createConfigurationThunk.fulfilled.match(res)) {
-      setSuccess(true);
+      const newId = res.payload && res.payload.id ? res.payload.id : undefined;
+      navigate('/self-scheduling-configurations', { state: { newId } });
+      return;
     } else if (res.payload) {
       setError(res.payload);
     } else {
@@ -153,7 +156,6 @@ export default function CreateSelfSchedulingConfiguration() {
       <PageBreadcrumb pageTitle="Add Self Scheduling Configuration" />
       {error && <p className="text-red-500 mb-3">{error}</p>}
       {createError && <p className="text-red-500 mb-3">{createError}</p>}
-      {success && <p className="text-green-500 mb-3">Configuration created</p>}
       {!cities ? (
         <Spinner />
       ) : (
@@ -166,13 +168,13 @@ export default function CreateSelfSchedulingConfiguration() {
               onChange={(val) => {
                 setCityId(val);
               }}
-              disabled={createStatus === "loading" || success}
+              disabled={createStatus === "loading"}
             />
           </div>
           <div>
             <Label htmlFor="desc">Description</Label>
             <InputField
-              disabled={createStatus === "loading" || success}
+              disabled={createStatus === "loading"}
               id="desc"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -180,7 +182,7 @@ export default function CreateSelfSchedulingConfiguration() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <MyDateRangePicker
-              disabled={createStatus === "loading" || success}
+              disabled={createStatus === "loading"}
               id="schedulingRange"
               label="Scheduling Window"
               value={schedulingRange}
@@ -200,7 +202,7 @@ export default function CreateSelfSchedulingConfiguration() {
             />
 
             <MyDateRangePicker
-              disabled={createStatus === "loading" || success}
+              disabled={createStatus === "loading"}
               id="toursRange"
               label="Tours Period"
               value={toursRange}
@@ -221,7 +223,7 @@ export default function CreateSelfSchedulingConfiguration() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <SelectableListModal
-                disabled={createStatus === "loading" || success}
+                disabled={createStatus === "loading"}
                 title="Experiences"
                 items={experiences}
                 selected={selectedExperienceIds}
@@ -257,7 +259,7 @@ export default function CreateSelfSchedulingConfiguration() {
             </div>
             <div>
               <SelectableListModal
-                disabled={createStatus === "loading" || success}
+                disabled={createStatus === "loading"}
                 title="Guides"
                 items={guides}
                 selected={selectedGuideIds}
@@ -294,7 +296,7 @@ export default function CreateSelfSchedulingConfiguration() {
           </div>
           <div>
             <Button
-              disabled={createStatus === "loading" || success}
+              disabled={createStatus === "loading"}
               type="submit"
               className="bg-brand-500 text-white hover:bg-brand-600"
             >

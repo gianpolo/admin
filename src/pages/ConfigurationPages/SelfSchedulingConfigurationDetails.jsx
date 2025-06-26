@@ -29,13 +29,21 @@ export default function SelfSchedulingConfigurationDetails() {
     (state) => state.configDetails
   );
 
+  const [actionLoading, setActionLoading] = useState(false);
+
   useEffect(() => {
     dispatch(fetchConfigurationDetails(id));
     dispatch(fetchConfigurationItems(id));
   }, [dispatch, id]);
 
-  const handleAction = (action) => {
-    dispatch(performConfigurationAction({ id, action }));
+  const handleAction = async (action) => {
+    setActionLoading(true);
+    const result = await dispatch(performConfigurationAction({ id, action }));
+    if (performConfigurationAction.fulfilled.match(result)) {
+      dispatch(fetchConfigurationDetails(id));
+      dispatch(fetchConfigurationItems(id));
+    }
+    setActionLoading(false);
   };
 
   const handleSimulation = () => {
@@ -136,6 +144,7 @@ export default function SelfSchedulingConfigurationDetails() {
           config={config}
           onAction={handleAction}
           onSimulation={handleSimulation}
+          actionLoading={actionLoading}
         />
       )}
 

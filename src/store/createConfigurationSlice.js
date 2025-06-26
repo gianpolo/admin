@@ -84,11 +84,15 @@ export const createConfiguration = createAsyncThunk(
         },
         body: JSON.stringify(payload),
       });
+      const text = await res.text();
       if (!res.ok) {
-        const text = await res.text();
         throw new Error(text || "Failed to create configuration");
       }
-      return true;
+      try {
+        return text ? JSON.parse(text) : true;
+      } catch (e) {
+        return true;
+      }
     } catch (err) {
       return rejectWithValue(err.message);
     }
