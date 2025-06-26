@@ -32,8 +32,12 @@ export const startNotifications = createAsyncThunk(
         .configureLogging(LogLevel.Information)
         .build();
 
+      connection.on("BasketItemAddedEvent", (payload) => { 
+          dispatch(addNotification(payload));
+        });
       connection.on("TourItemAvailabilityUpdatedEvent", (payload) => {
         dispatch(updateAvailableSlots(payload));
+        dispatch(addNotification(payload));
       });
 
       connection.on("ConfigurationCreatedEvent", (payload) => {
