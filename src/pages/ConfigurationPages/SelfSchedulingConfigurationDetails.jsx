@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useParams, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import PageMeta from "../../components/common/PageMeta.jsx";
 import useGoBack from "../../hooks/useGoBack.js";
@@ -23,6 +23,7 @@ export default function SelfSchedulingConfigurationDetails() {
   const { id } = useParams();
   const goBack = useGoBack();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { simulationMessage } = useSelector((state) => state.configurations);
   const { config, items, status, itemsStatus, error, itemsError } = useSelector(
     (state) => state.configDetails
@@ -198,7 +199,12 @@ export default function SelfSchedulingConfigurationDetails() {
               </TableHeader>
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-xs">
                 {sortedItems.map((item) => (
-                  <TableRow key={item.id} handleClick={() => {}}>
+                  <TableRow
+                    key={item.id}
+                    handleClick={() => {
+                      navigate(`/self-scheduling-items/${item.id}`);
+                    }}
+                  >
                     <TableCell>
                       <div className="leading-snug">
                         <div className="dark:text-white font-medium truncate">

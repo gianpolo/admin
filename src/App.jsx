@@ -3,6 +3,7 @@ import NotFound from "./pages/OtherPage/NotFound";
 import SelfSchedulingConfigurations from "./pages/ConfigurationPages/SelfSchedulingConfigurations.jsx";
 import CreateSelfSchedulingConfiguration from "./pages/ConfigurationPages/CreateSelfSchedulingConfiguration.jsx";
 import SelfSchedulingConfigurationDetails from "./pages/ConfigurationPages/SelfSchedulingConfigurationDetails.jsx";
+import SelfSchedulingItemDetails from "./pages/ConfigurationPages/SelfSchedulingItemDetails.jsx";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
@@ -35,6 +36,10 @@ export default function App() {
             <Route
               path="/self-scheduling-configurations/:id"
               element={<SelfSchedulingConfigurationDetails />}
+            />
+            <Route
+              path="/self-scheduling-items/:id"
+              element={<SelfSchedulingItemDetails />}
             />
           </Route>
           <Route path="/signin" element={<SignIn />} />
