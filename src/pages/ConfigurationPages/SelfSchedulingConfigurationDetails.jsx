@@ -10,12 +10,14 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table/index.jsx";
+import Input from "../../components/form/input/InputField.jsx";
 import { ChevronLeftIcon } from "../../icons";
 import { simulateConfiguration } from "../../store/configurationsSlice.js";
 import {
   fetchConfigurationDetails,
   fetchConfigurationItems,
   performConfigurationAction,
+  clearLastUpdatedId,
 } from "../../store/configurationDetailsSlice.js";
 import ConfigurationInfoCard from "../../components/configuration/ConfigurationInfoCard.jsx";
 
@@ -25,16 +27,36 @@ export default function SelfSchedulingConfigurationDetails() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { simulationMessage } = useSelector((state) => state.configurations);
-  const { config, items, status, itemsStatus, error, itemsError } = useSelector(
-    (state) => state.configDetails
-  );
+  const {
+    config,
+    items,
+    status,
+    itemsStatus,
+    error,
+    itemsError,
+    lastUpdatedId,
+  } = useSelector((state) => state.configDetails);
 
   const [actionLoading, setActionLoading] = useState(false);
+  const [filterDate, setFilterDate] = useState("");
+  const [filterId, setFilterId] = useState("");
+  const [highlightId, setHighlightId] = useState(null);
 
   useEffect(() => {
     dispatch(fetchConfigurationDetails(id));
     dispatch(fetchConfigurationItems(id));
   }, [dispatch, id]);
+
+  useEffect(() => {
+    if (lastUpdatedId) {
+      setHighlightId(lastUpdatedId);
+      const t = setTimeout(() => {
+        setHighlightId(null);
+        dispatch(clearLastUpdatedId());
+      }, 2000);
+      return () => clearTimeout(t);
+    }
+  }, [lastUpdatedId, dispatch]);
 
   const handleAction = async (action) => {
     setActionLoading(true);
@@ -56,6 +78,12 @@ export default function SelfSchedulingConfigurationDetails() {
     const db = new Date(b.tourDate);
     if (da - db !== 0) return da - db;
     return (a.name || "").localeCompare(b.name || "");
+  });
+
+  const filteredItems = sortedItems.filter((it) => {
+    const dateOk = filterDate ? it.tourDate.startsWith(filterDate) : true;
+    const idOk = filterId ? String(it.id).includes(filterId) : true;
+    return dateOk && idOk;
   });
 
   const headerInfo = () => {
@@ -201,12 +229,32 @@ export default function SelfSchedulingConfigurationDetails() {
                     </div>
                   </TableCell>
                 </TableRow>
+                <TableRow>
+                  <TableCell isHeader className="px-6 py-2">
+                    <Input
+                      type="text"
+                      placeholder="Filter by ID"
+                      value={filterId}
+                      onChange={(e) => setFilterId(e.target.value)}
+                    />
+                  </TableCell>
+                  <TableCell isHeader className="px-6 py-2">
+                    <Input
+                      type="date"
+                      value={filterDate}
+                      onChange={(e) => setFilterDate(e.target.value)}
+                    />
+                  </TableCell>
+                  <TableCell isHeader />
+                  <TableCell isHeader />
+                  <TableCell isHeader />
+                </TableRow>
               </TableHeader>
               <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-xs">
-                {sortedItems.map((item) => (
+                {filteredItems.map((item) => (
                   <TableRow
                     key={item.id}
-                    className={`cursor-pointer hover:dark:bg-white/[0.04]`}
+                    className={`cursor-pointer hover:dark:bg-white/[0.04] ${highlightId === item.id ? "flash-update" : ""}`}
                     handleClick={(event) => {
                       event.stopPropagation();
                       navigate(`/self-scheduling-items/${item.id}`);
@@ -252,7 +300,7 @@ export default function SelfSchedulingConfigurationDetails() {
                     </TableCell>
                   </TableRow>
                 ))}
-                {sortedItems.length === 0 && (
+                {filteredItems.length === 0 && (
                   <TableRow>
                     <TableCell
                       colSpan={3}
