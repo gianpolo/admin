@@ -33,8 +33,12 @@ export default function SelfSchedulingConfigurationDetails() {
     dispatch(fetchConfigurationItems(id));
   }, [dispatch, id]);
 
-  const handleAction = (action) => {
-    dispatch(performConfigurationAction({ id, action }));
+  const handleAction = async (action) => {
+    const result = await dispatch(performConfigurationAction({ id, action }));
+    if (performConfigurationAction.fulfilled.match(result)) {
+      dispatch(fetchConfigurationDetails(id));
+      dispatch(fetchConfigurationItems(id));
+    }
   };
 
   const handleSimulation = () => {

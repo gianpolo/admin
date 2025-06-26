@@ -8,9 +8,11 @@ import {
 } from "../ui/table";
 import { PlayIcon, StopIconCircle, TrashBinIcon } from "../../icons";
 import Spinner from "../ui/spinner/Spinner";
+import Badge from "../ui/badge/Badge.jsx";
 export default function ConfigurationList({
   list,
   actionStatus,
+  highlightId,
   onOpen,
   onClose,
   onDelete,
@@ -61,14 +63,14 @@ export default function ConfigurationList({
         </TableRow>
       </TableHeader>
       <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-        {list.map((cfg) => {
+        {list.map((cfg) => { 
           const loading = actionStatus[cfg.id] === "loading";
           return (
             <TableRow
               key={cfg.id}
               className={`cursor-pointer ${
-                cfg.isRunning ? " dark:bg-brand-500/12" : ""
-              }`}
+                cfg.id === highlightId ? "bg-blue-50 dark:bg-blue-900/10" : ""
+              } ${cfg.isRunning ? " dark:bg-brand-500/12" : ""}`}
               handleClick={(event) => {
                 event.stopPropagation();
                 onItemSelection(cfg.id);
@@ -77,8 +79,11 @@ export default function ConfigurationList({
               <TableCell>{loading ? <Spinner /> : renderAction(cfg)}</TableCell>
               <TableCell>
                 <div className="leading-snug">
-                  <div className="dark:text-white font-medium truncate">
+                  <div className="dark:text-white font-medium truncate flex items-center gap-1">
                     {cfg.description}
+                    {highlightId === cfg.id && (
+                      <Badge variant="light" color="info">NEW</Badge>
+                    )}
                   </div>
                   <div
                     className={`text-theme-xs   ${
