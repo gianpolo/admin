@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import PageMeta from "../../components/common/PageMeta.jsx";
@@ -28,17 +28,21 @@ export default function SelfSchedulingConfigurationDetails() {
     (state) => state.configDetails
   );
 
+  const [actionLoading, setActionLoading] = useState(false);
+
   useEffect(() => {
     dispatch(fetchConfigurationDetails(id));
     dispatch(fetchConfigurationItems(id));
   }, [dispatch, id]);
 
   const handleAction = async (action) => {
+    setActionLoading(true);
     const result = await dispatch(performConfigurationAction({ id, action }));
     if (performConfigurationAction.fulfilled.match(result)) {
       dispatch(fetchConfigurationDetails(id));
       dispatch(fetchConfigurationItems(id));
     }
+    setActionLoading(false);
   };
 
   const handleSimulation = () => {
@@ -139,6 +143,7 @@ export default function SelfSchedulingConfigurationDetails() {
           config={config}
           onAction={handleAction}
           onSimulation={handleSimulation}
+          actionLoading={actionLoading}
         />
       )}
 
