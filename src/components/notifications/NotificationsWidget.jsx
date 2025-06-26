@@ -16,13 +16,19 @@ export default function NotificationsWidget() {
     dispatch(fetchEventsLogs(id));
   }, [id]);
 
+  const filtered = notifications.filter((n) => {
+    const configId =
+      n.ConfigurationId ?? n.configurationId ?? n.configId ?? n.aggregateId;
+    return String(configId) === String(id);
+  });
+
   const handleClear = () => {
     dispatch(clearNotifications());
   };
 
   return (
     <ComponentCard title="Events log">
-      {notifications.length === 0 ? (
+      {filtered.length === 0 ? (
         <p className=" text-sm text-gray-500 dark:text-gray-400">
           No notifications
         </p>
@@ -30,7 +36,7 @@ export default function NotificationsWidget() {
         <>
           <Table>
             <TableBody>
-              {notifications.map((n, idx) => {
+              {filtered.map((n, idx) => {
                 console.log(n);
                 var x = eventsData[n.context][n.eventName];
                 console.log("here");
