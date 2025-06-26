@@ -70,7 +70,9 @@ export default function ConfigurationList({
               key={cfg.id}
               className={`cursor-pointer ${
                 cfg.id === highlightId ? "bg-blue-50 dark:bg-blue-900/10" : ""
-              } ${cfg.isRunning ? " dark:bg-brand-500/12" : ""}`}
+              } ${
+                cfg.isRunning ? " dark:bg-brand-500/12" : ""
+              } hover:dark:bg-white/[0.04]`}
               handleClick={(event) => {
                 event.stopPropagation();
                 onItemSelection(cfg.id);
@@ -82,7 +84,9 @@ export default function ConfigurationList({
                   <div className="dark:text-white font-medium truncate flex items-center gap-1">
                     {cfg.description}
                     {highlightId === cfg.id && (
-                      <Badge variant="light" color="info">NEW</Badge>
+                      <Badge variant="light" color="info">
+                        NEW
+                      </Badge>
                     )}
                   </div>
                   <div

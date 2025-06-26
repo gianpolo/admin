@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import PageMeta from "../../components/common/PageMeta.jsx";
-import LogStream from "../../components/logviewer/LogStream.jsx";
+// import LogStream from "../../components/logviewer/LogStream.jsx";
 
 export default function SelfSchedulingItemDetails() {
   const { id } = useParams();
@@ -44,9 +44,9 @@ export default function SelfSchedulingItemDetails() {
           <p className="text-gray-500">Available Slots: {item.availableSlots}</p>
         </div>
       )}
-      <div className="mt-6">
+      {/* <div className="mt-6">
         <LogStream itemId={id} />
-      </div>
+      </div> */}
     </>
   );
 }
