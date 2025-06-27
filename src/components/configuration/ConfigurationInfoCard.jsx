@@ -1,24 +1,12 @@
-import { useModal } from "../../hooks/useModal";
-import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
-import Input from "../form/input/InputField";
-import Label from "../form/Label";
 import Badge from "../ui/badge/Badge.jsx";
 import { PlayIcon, StopIconCircle } from "../../icons";
 import Spinner from "../ui/spinner/Spinner";
-
 export default function ConfigurationInfoCard({
   config,
   onAction,
-  onSimulation,
-  isSimulating = false,
   actionLoading = false,
 }) {
-  const { isOpen, openModal, closeModal } = useModal();
-  const handleSave = () => {
-    console.log("Saving changes...");
-    closeModal();
-  };
   return (
     <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
       <div className="flex flex-col gap-4">
@@ -27,49 +15,13 @@ export default function ConfigurationInfoCard({
             <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90">
               Overview
             </h4>
-            <Badge
-              variant="light"
-              color={config.isRunning ? "success" : "warning"}
-            >
-              {config.isRunning ? "Running" : "Pending"}
-            </Badge>
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {actionLoading ? (
-              <Spinner />
-            ) : config.isRunning ? (
-              <Button
-                variant="outlineRed"
-                className="text-xs py-2!"
-                startIcon={<StopIconCircle className="size-4 text-red-500" />}
-                onClick={() => onAction && onAction("close")}
-              >
-                Close
-              </Button>
-            ) : (
-              <Button
-                variant="outline"
-                className="text-green-600 text-xs py-2!"
-                startIcon={<PlayIcon className="size-4" />}
-                onClick={() => onAction && onAction("open")}
-              >
-                Open
-              </Button>
-            )}
+            {actionLoading && <Spinner />}
           </div>
         </div>
-        <div className="flex flex-col gap-4">
-          <div className="flex">
-            {config.isRunning && onSimulation && (
-              <Button variant="outline" onClick={onSimulation}>
-                {isSimulating
-                  ? "Stop Virtual SelfScheduling"
-                  : "Start Virtual SelfScheduling"}
-              </Button>
-            )}
-          </div>
-        </div>
+
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7 2xl:gap-x-32">
           <div>
             <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
@@ -84,7 +36,7 @@ export default function ConfigurationInfoCard({
               Tours Period
             </p>
             <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-              {config.toursPeriodStart} - {config.toursPeriodEnd}
+              {config.toursPeriodStart} to {config.toursPeriodEnd}
             </p>
           </div>
 
@@ -107,11 +59,42 @@ export default function ConfigurationInfoCard({
           </div>
 
           <div>
-            <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-              Scheduling Window
-            </p>
+            <div className="flex items-center mb-2">
+              <div className=" text-xs leading-normal text-gray-500 dark:text-gray-400 mr-5">
+                Scheduling Window
+              </div>
+              <div>
+                <Badge
+                  variant="light"
+                  color={config.isRunning ? "success" : "warning"}
+                >
+                  {config.isRunning ? "Running" : "Pending"}
+                </Badge>
+              </div>
+            </div>
             <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-              {config.schedulingWindowStart} - {config.schedulingWindowEnd}
+              {config.schedulingWindowStart} to {config.schedulingWindowEnd}
+            </p>
+            <p className="text-center">
+              {config.isRunning ? (
+                <Button
+                  variant="outlineRed"
+                  className="text-xs py-2!"
+                  startIcon={<StopIconCircle className="size-4 text-red-500" />}
+                  onClick={() => onAction && onAction("close")}
+                >
+                  Close
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  className="text-green-600 text-xs py-2!"
+                  startIcon={<PlayIcon className="size-4" />}
+                  onClick={() => onAction && onAction("open")}
+                >
+                  Open
+                </Button>
+              )}
             </p>
           </div>
 
@@ -126,7 +109,7 @@ export default function ConfigurationInfoCard({
         </div>
       </div>
 
-      <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
+      {/* <Modal isOpen={isOpen} onClose={closeModal} className="max-w-[700px] m-4">
         <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
           <div className="px-2 pr-14">
             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
@@ -214,7 +197,7 @@ export default function ConfigurationInfoCard({
             </div>
           </form>
         </div>
-      </Modal>
+      </Modal> */}
     </div>
   );
 }
