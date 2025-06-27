@@ -17,7 +17,9 @@ import {
   clearLastUpdatedId,
 } from "../../store/configurationDetailsSlice.js";
 import ConfigurationInfoCard from "../../components/configuration/ConfigurationInfoCard.jsx";
-import TourItemList from "./TourItemList.jsx";
+import TourItemList from "../../components/configuration/TourItemList.jsx"; 
+import Spinner from "../../components/ui/spinner/Spinner";
+import SimulationWidget from "../../components/configuration/SimulationWidget.jsx";
 export default function SelfSchedulingConfigurationDetails() {
   const { id } = useParams();
   const goBack = useGoBack();
@@ -130,30 +132,41 @@ export default function SelfSchedulingConfigurationDetails() {
           </ol>
         </nav>
       </div>
-      {simulationMessage && (
-        <p className="mb-4 text-sm text-blue-500">{simulationMessage}</p>
+
+      {error && <p className="text-red-500">{error}</p>}
+      {status === "loading" ? (
+        <Spinner />
+      ) : (
+        config && (
+          <div className="grid grid-cols-12 gap-6 mt-6">
+            <div className="col-span-8">
+              <ConfigurationInfoCard
+                config={config}
+                onAction={handleAction}
+                actionLoading={actionLoading}
+              />
+            </div>
+            <div className="col-span-4">
+              {config.isRunning && (
+                <SimulationWidget
+                  isSimulationRunning={isSimulationRunning}
+                  handleSimulation={handleSimulation}
+                />
+              )}
+            </div>
+          </div>
+        )
       )}
 
-      {status === "loading" && <p>Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
-      {config && (
-        <ConfigurationInfoCard
-          config={config}
-          onAction={handleAction}
-          onSimulation={handleSimulation}
-          isSimulating={isSimulationRunning}
-          actionLoading={actionLoading}
-        />
-      )}
       <div className="grid grid-cols-12 gap-6 mt-6">
-        <div className="col-span-8"> 
-            <TourItemList
-              onItemSelection={handleItemClick}
-              items={items}
-              itemsStatus={itemsStatus}
-              itemsError={itemsError}
-              highlightId={highlightId}
-            ></TourItemList>
+        <div className="col-span-8">
+          <TourItemList
+            onItemSelection={handleItemClick}
+            items={items}
+            itemsStatus={itemsStatus}
+            itemsError={itemsError}
+            highlightId={highlightId}
+          ></TourItemList>
         </div>
         <div className="col-span-4 ">
           <NotificationsWidget />

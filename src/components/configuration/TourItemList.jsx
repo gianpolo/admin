@@ -5,9 +5,9 @@ import {
   TableCell,
   TableHeader,
   TableRow,
-} from "../../components/ui/table/index.jsx";
-import ComponentCard from "../../components/common/ComponentCard.jsx";
-import Input from "../../components/form/input/InputField.jsx";
+} from "../ui/table/index.jsx";
+import ComponentCard from "../common/ComponentCard.jsx";
+import Input from "../form/input/InputField.jsx";
 export default function TourItemList({
   itemsStatus,
   itemsError,
@@ -34,7 +34,7 @@ export default function TourItemList({
       {itemsStatus === "loading" && <p>Loading items...</p>}
       {itemsError && <p className="text-red-500">{itemsError}</p>}
       {itemsStatus !== "loading" && !itemsError && (
-        <div className="overflow-hidden   bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+        <div className="overflow-hidden ">
           <div className="max-w-full overflow-x-auto">
             <Table>
               <TableHeader className="border-b border-gray-100 dark:border-white/[0.05] text-xs">
