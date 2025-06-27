@@ -75,7 +75,7 @@ export default function ConfigurationInfoCard({
             <p className="text-sm font-medium text-gray-800 dark:text-white/90">
               {config.schedulingWindowStart} to {config.schedulingWindowEnd}
             </p>
-            <p className="text-center">
+            <p className="text-left mt-2">
               {config.isRunning ? (
                 <Button
                   variant="outlineRed"
