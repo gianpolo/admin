@@ -35,13 +35,14 @@ export default function NotificationsWidget() {
         </p>
       ) : (
         <>
-          <Table>
-            <TableBody className="overflow-y-auto">
-              {notifications.map((n, idx) => {
-                return (
-                  <TableRow className="text-[10px]" key={n.createdOn}>
-                    <TableCell className="px-2 py-2 sm:px-2 text-start ">
-                      <div className="flex items-center gap-3">
+          <div className="max-h-64 overflow-y-auto custom-scrollbar">
+            <Table>
+              <TableBody>
+                {notifications.map((n, idx) => {
+                  return (
+                    <TableRow className="text-[10px]" key={n.createdOn}>
+                      <TableCell className="px-2 py-2 sm:px-2 text-start ">
+                        <div className="flex items-center gap-3">
                         <span
                           className={`mr-2 rounded-full h-8 w-8  flex items-center justify-center text-white ${
                             eventsData[n.context][n.eventName].bg
@@ -62,8 +63,9 @@ export default function NotificationsWidget() {
                   </TableRow>
                 );
               })}
-            </TableBody>
-          </Table>
+              </TableBody>
+            </Table>
+          </div>
         </>
       )}
     </ComponentCard>
