@@ -4,9 +4,7 @@ import { useParams } from "react-router";
 import ComponentCard from "../common/ComponentCard.jsx";
 import { eventsData } from "../../utils/constants.js";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table/index.jsx";
-import {
-  fetchEventsLogs,
-} from "../../store/notificationsSlice.js";
+import { fetchEventsLogs } from "../../store/notificationsSlice.js";
 export default function NotificationsWidget() {
   const dispatch = useDispatch();
   const notifications = useSelector((state) => state.notifications.items);
@@ -15,33 +13,31 @@ export default function NotificationsWidget() {
     dispatch(fetchEventsLogs(id));
   }, [id]);
 
- 
-  const filtered = notifications.filter((n) => {
-    const configId =
-      n.ConfigurationId ?? n.configurationId ?? n.configId ?? n.aggregateId;
-    return String(configId) === String(id);
-  });
+  // const filtered = notifications.filter((n) => {
+  //   const configId = n.content.configurationId;
+  //   console.log(String(configId));
+  //   console.log(String(id));
+  //   var res = configId === id;
+  //   console.log(res);
+
+  //   return res;
+  // });
 
   const handleClear = () => {
     dispatch(clearNotifications());
   };
- 
 
   return (
     <ComponentCard title="Events log">
-      {filtered.length === 0 ? (
+      {notifications.length === 0 ? (
         <p className=" text-sm text-gray-500 dark:text-gray-400">
           No notifications
         </p>
       ) : (
         <>
           <Table>
-            <TableBody>
-              {filtered.map((n, idx) => {
-                console.log(n);
-                var x = eventsData[n.context][n.eventName];
-                console.log("here");
-                console.log(x);
+            <TableBody className="overflow-y-auto">
+              {notifications.map((n, idx) => {
                 return (
                   <TableRow className="text-[10px]" key={n.createdOn}>
                     <TableCell className="px-2 py-2 sm:px-2 text-start ">
