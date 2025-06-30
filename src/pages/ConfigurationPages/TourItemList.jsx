@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -8,6 +8,7 @@ import {
 } from "../../components/ui/table/index.jsx";
 import ComponentCard from "../../components/common/ComponentCard.jsx";
 import Input from "../../components/form/input/InputField.jsx";
+import MultiSelect from "../../components/form/MultiSelect.jsx";
 export default function TourItemList({
   itemsStatus,
   itemsError,
@@ -15,8 +16,13 @@ export default function TourItemList({
   onItemSelection,
   highlightId,
 }) {
-  const [filterDate, setFilterDate] = useState("");
+  const uniqueDates = Array.from(new Set(items.map((it) => it.tourDate)));
+  const [selectedDates, setSelectedDates] = useState(uniqueDates);
   const [filterId, setFilterId] = useState("");
+
+  useEffect(() => {
+    setSelectedDates(uniqueDates);
+  }, [items]);
   const sortedItems = [...items].sort((a, b) => {
     const ta = new Date(a.updatedAt || a.tourDate);
     const tb = new Date(b.updatedAt || b.tourDate);
@@ -24,7 +30,7 @@ export default function TourItemList({
     return (a.name || "").localeCompare(b.name || "");
   });
   const filteredItems = sortedItems.filter((it) => {
-    const dateOk = filterDate ? it.tourDate.startsWith(filterDate) : true;
+    const dateOk = selectedDates.length > 0 ? selectedDates.includes(it.tourDate) : false;
     const idOk = filterId ? String(it.id).includes(filterId) : true;
     return dateOk && idOk;
   });
@@ -48,11 +54,21 @@ export default function TourItemList({
                     />
                   </TableCell>
                   <TableCell isHeader className="px-6 py-2">
-                    <Input
-                      type="date"
-                      value={filterDate}
-                      onChange={(e) => setFilterDate(e.target.value)}
-                    />
+                    <div className="flex items-start space-x-2">
+                      <MultiSelect
+                        label={null}
+                        options={uniqueDates.map((d) => ({ value: d, text: d }))}
+                        value={selectedDates}
+                        onChange={setSelectedDates}
+                      />
+                      <button
+                        type="button"
+                        className="text-xs text-gray-500 underline"
+                        onClick={() => setSelectedDates([])}
+                      >
+                        Clear
+                      </button>
+                    </div>
                   </TableCell>
                   <TableCell isHeader />
                   <TableCell isHeader />

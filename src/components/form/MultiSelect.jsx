@@ -1,6 +1,11 @@
-import { useState } from "react";
-const MultiSelect = ({ label, options, defaultSelected = [], onChange, disabled = false, }) => {
-    const [selectedOptions, setSelectedOptions] = useState(defaultSelected);
+import { useState, useEffect } from "react";
+const MultiSelect = ({ label, options, defaultSelected = [], value, onChange, disabled = false, }) => {
+    const [selectedOptions, setSelectedOptions] = useState(value ?? defaultSelected);
+    useEffect(() => {
+        if (value !== undefined) {
+            setSelectedOptions(value);
+        }
+    }, [value]);
     const [isOpen, setIsOpen] = useState(false);
     const toggleDropdown = () => {
         if (!disabled)
@@ -10,19 +15,23 @@ const MultiSelect = ({ label, options, defaultSelected = [], onChange, disabled 
         const newSelectedOptions = selectedOptions.includes(optionValue)
             ? selectedOptions.filter((value) => value !== optionValue)
             : [...selectedOptions, optionValue];
-        setSelectedOptions(newSelectedOptions);
+        if (value === undefined) {
+            setSelectedOptions(newSelectedOptions);
+        }
         onChange?.(newSelectedOptions);
     };
-    const removeOption = (value) => {
-        const newSelectedOptions = selectedOptions.filter((opt) => opt !== value);
-        setSelectedOptions(newSelectedOptions);
+    const removeOption = (val) => {
+        const newSelectedOptions = selectedOptions.filter((opt) => opt !== val);
+        if (value === undefined) {
+            setSelectedOptions(newSelectedOptions);
+        }
         onChange?.(newSelectedOptions);
     };
     const selectedValuesText = selectedOptions.map((value) => options.find((option) => option.value === value)?.text || "");
     return (<div className="w-full">
-      <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-        {label}
-      </label>
+      {label && (<label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
+            {label}
+          </label>)}
 
       <div className="relative z-20 inline-block w-full">
         <div className="relative flex flex-col items-center">
