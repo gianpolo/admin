@@ -8,15 +8,14 @@ import { updateAvailableSlots } from "./configurationDetailsSlice.js";
 
 let connection = null;
 const getToken = () => localStorage.getItem("token") || "";
-const backend_url =
-  import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
-// Small helper slice to keep a list of incoming notifications
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5010";
+const logsUrl = `${backendUrl}/api/v1/logs/configuration`;
+
 export const fetchEventsLogs = createAsyncThunk(
   "notifications/fetchEventsLog",
   async (id, { rejectWithValue }) => {
-    console.log("fetching logs");
     try {
-      const res = await fetch(`${backend_url}/logs?id=${id}`, {
+      const res = await fetch(`${logsUrl}/${id}`, {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       if (!res.ok) throw new Error("Failed to fetch logs");
@@ -26,15 +25,54 @@ export const fetchEventsLogs = createAsyncThunk(
     }
   }
 );
+
+const registerEventHandlers = (connection, dispatch) => {
+  const simpleEvents = [
+    "BasketItemAddedIntegrationEvent",
+    "BasketItemRemovedIntegrationEvent",
+    "BasketItemExpiredIntegrationEvent",
+    "BasketConfirmedIntegrationEvent",
+    "AddBasketItemFailureIntegrationEvent",
+    "TourItemCreatedIntegrationEvent",
+    "ConfigurationSlotsGenerationRequestedIntegrationEvent",
+    "ConfigurationSlotsGeneratedIntegrationEvent",
+    "ConfigurationOpenedIntegrationEvent",
+    "ConfigurationClosedIntegrationEvent",
+    "ConfigurationCreatedIntegrationEvent",
+  ];
+
+  const slotEvents = [
+    "SlotReservedEvent",
+    "SlotReleasedEvent",
+    "SlotConfirmedEvent",
+    "SlotReservationFailureEvent",
+  ];
+
+  simpleEvents.forEach((event) =>
+    connection.on(event, (payload) => {
+      console.log(event, payload);
+      dispatch(addNotification(payload));
+    })
+  );
+
+  slotEvents.forEach((event) =>
+    connection.on(event, (payload) => {
+      console.log(event, payload);
+      dispatch(updateAvailableSlots(payload));
+      dispatch(addNotification(payload));
+    })
+  );
+};
+
 export const startNotifications = createAsyncThunk(
   "notifications/start",
   async (_, { getState, dispatch, rejectWithValue }) => {
     const { token } = getState().auth;
     if (!token) return rejectWithValue("No auth token");
-    const backendUrl =
-      import.meta.env.VITE_BACKEND_URL || "http://localhost:5010";
+
     const hubUrl =
       backendUrl.replace(/\/api\/v1\/?$/, "") + "/hubs/notifications";
+
     try {
       connection = new HubConnectionBuilder()
         .withUrl(hubUrl, {
@@ -47,53 +85,8 @@ export const startNotifications = createAsyncThunk(
         .configureLogging(LogLevel.Information)
         .build();
 
-      connection.on("BasketItemAddedEvent", (payload) => {
-        console.log("BasketItemAddedEvent", payload);
-        dispatch(addNotification(payload));
-      });
-      connection.on("BasketItemRemovedEvent", (payload) => {
-        console.log("BasketItemRemovedEvent", payload);
-        dispatch(addNotification(payload));
-      });
-      connection.on("BasketItemExpiredEvent", (payload) => {
-        console.log("BasketItemExpiredEvent", payload);
-        dispatch(addNotification(payload));
-      });
-      connection.on("BasketConfirmedEvent", (payload) => {
-        console.log("BasketConfirmedEvent", payload);
-        dispatch(addNotification(payload));
-      });
-      connection.on("AddBasketItemFailedEvent", (payload) => {
-        console.log("AddBasketItemFailedEvent", payload);
-        dispatch(addNotification(payload));
-      });
-      connection.on("TourItemAvailabilityUpdatedEvent", (payload) => {
-        console.log("TourItemAvailabilityUpdatedEvent", payload);
-        dispatch(updateAvailableSlots(payload));
-        dispatch(addNotification(payload));
-      });
-      connection.on("TourItemReservationFailureEvent", (payload) => {
-        console.log("TourItemReservationFailureEvent", payload);
-        dispatch(addNotification(payload));
-      });
-      connection.on("TourItemCreatedEvent", (payload) => {
-        console.log("TourItemCreatedEvent", payload);
-        dispatch(addNotification(payload));
-      });
-      connection.on("ConfigurationCreatedEvent", (payload) => {
-        console.log("ConfigurationCreatedEvent", payload);
-        dispatch(addNotification(payload));
-      });
+      registerEventHandlers(connection, dispatch);
 
-      connection.on("ConfigurationOpenedEvent", (payload) => {
-        console.log("ConfigurationOpenedEvent", payload);
-        dispatch(addNotification(payload));
-      });
-
-      connection.on("ConfigurationClosedEvent", (payload) => {
-        console.log("ConfigurationClosedEvent", payload);
-        dispatch(addNotification(payload));
-      });
       await connection.start();
     } catch (err) {
       return rejectWithValue(err.message);
@@ -113,7 +106,7 @@ export const stopNotifications = createAsyncThunk(
 
 const notificationsSlice = createSlice({
   name: "notifications",
-  initialState: { status: "idle", items: [] },
+  initialState: { status: "idle", items: [], error: null, logs: [] },
   reducers: {
     addNotification(state, action) {
       state.items.unshift(action.payload);
@@ -130,7 +123,7 @@ const notificationsSlice = createSlice({
       })
       .addCase(fetchEventsLogs.fulfilled, (state, action) => {
         state.status = "succeeded";
-        state.items = action.payload || [];
+        state.logs = action.payload || [];
       })
       .addCase(fetchEventsLogs.rejected, (state, action) => {
         state.status = "failed";
@@ -142,8 +135,9 @@ const notificationsSlice = createSlice({
       .addCase(startNotifications.fulfilled, (state) => {
         state.status = "connected";
       })
-      .addCase(startNotifications.rejected, (state) => {
+      .addCase(startNotifications.rejected, (state, action) => {
         state.status = "failed";
+        state.error = action.payload;
       })
       .addCase(stopNotifications.fulfilled, (state) => {
         state.status = "idle";
@@ -153,5 +147,4 @@ const notificationsSlice = createSlice({
 
 export const { addNotification, clearNotifications } =
   notificationsSlice.actions;
-
 export default notificationsSlice.reducer;
