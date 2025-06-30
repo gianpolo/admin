@@ -35,7 +35,7 @@ const registerEventHandlers = (connection, dispatch) => {
     "AddBasketItemFailureIntegrationEvent",
     "TourItemCreatedIntegrationEvent",
     "ConfigurationSlotsGenerationRequestedIntegrationEvent",
-    "ConfigurationSlotsGeneraedIntegrationEvent",
+    "ConfigurationSlotsGeneratedIntegrationEvent",
     "ConfigurationOpenedIntegrationEvent",
     "ConfigurationClosedIntegrationEvent",
     "ConfigurationCreatedIntegrationEvent",
