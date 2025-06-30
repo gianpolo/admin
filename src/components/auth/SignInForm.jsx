@@ -1,15 +1,18 @@
 import { Link, useNavigate } from "react-router";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { ChevronLeftIcon } from "../../icons";
 import Button from "../ui/button/Button";
 import Input from "../form/input/InputField";
 import Label from "../form/Label";
+import Spinner from "../ui/spinner/Spinner";
 import { useAuth } from "../../context/AuthContext.jsx";
 export default function SignInForm() {
     const auth = useAuth();
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const status = useSelector((state) => state.auth.status);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -48,8 +51,8 @@ export default function SignInForm() {
                 <Label htmlFor="password">Password</Label>
                 <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
               </div>
-              <Button className="w-full" size="sm" type="submit">
-                Sign in
+              <Button className="w-full" size="sm" type="submit" disabled={status === "loading"}>
+                {status === "loading" ? <Spinner /> : "Sign in"}
               </Button>
             </form>
           </div>
