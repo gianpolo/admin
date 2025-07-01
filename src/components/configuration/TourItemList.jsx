@@ -8,12 +8,14 @@ import {
 } from "../ui/table/index.jsx";
 import ComponentCard from "../common/ComponentCard.jsx";
 import Input from "../form/input/InputField.jsx";
+import Button from "../ui/button/Button.jsx"
 export default function TourItemList({
   itemsStatus,
   itemsError,
   items,
   onItemSelection,
   highlightId,
+  generateSlots,
 }) {
   const [filterDate, setFilterDate] = useState("");
   const [filterId, setFilterId] = useState("");
@@ -30,7 +32,18 @@ export default function TourItemList({
   });
 
   return (
-    <ComponentCard title="Schedulable Tour Items">
+    <ComponentCard
+      title={
+        <div className="flex items-center">
+          <div className="flex flex-auto">Schedulable Tour Items</div>
+          <div>
+            <Button size="sm" onClick={generateSlots}>
+              Generate slots
+            </Button>
+          </div>
+        </div>
+      }
+    >
       {itemsStatus === "loading" && <p>Loading items...</p>}
       {itemsError && <p className="text-red-500">{itemsError}</p>}
       {itemsStatus !== "loading" && !itemsError && (

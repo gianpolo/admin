@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router";
 import ComponentCard from "../common/ComponentCard.jsx";
@@ -9,24 +9,26 @@ export default function NotificationsWidget() {
   const dispatch = useDispatch();
   const notifications = useSelector((state) => state.notifications.items);
   const logs = useSelector((state) => state.notifications.logs);
+  const [history, setHistory] = useState([...logs]);
   const { id } = useParams();
   useEffect(() => {
     dispatch(fetchEventsLogs(id));
   }, [id]);
+  useEffect(() => {
+    const initialLogs = [...logs];
+    setHistory(initialLogs);
+  }, [logs]);
 
-  // const filtered = notifications.filter((n) => {
-  //   const configId = n.content.configurationId;
-  //   console.log(String(configId));
-  //   console.log(String(id));
-  //   var res = configId === id;
-  //   console.log(res);
-
-  //   return res;
-  // });
-
-  const handleClear = () => {
-    dispatch(clearNotifications());
-  };
+  useEffect(() => {
+    if (notifications && notifications.length > 0) {
+      const newItems = notifications.filter(
+        (n) => !history.find((e) => e.key === n.key)
+      );
+      if (newItems.length > 0) {
+        setHistory((prev) => [...prev, ...newItems]);
+      }
+    }
+  }, [notifications]);
 
   return (
     <ComponentCard title="Events log">
@@ -37,7 +39,7 @@ export default function NotificationsWidget() {
           <div className="max-h-64 overflow-y-auto custom-scrollbar">
             <Table>
               <TableBody>
-                {logs.map((n, idx) => {
+                {/* {logs.map((n, idx) => {
                   return (
                     <TableRow className="text-[10px]" key={n.createdOn}>
                       <TableCell className="px-2 py-2 sm:px-2 text-start ">
@@ -61,8 +63,8 @@ export default function NotificationsWidget() {
                       </TableCell>
                     </TableRow>
                   );
-                })}
-                {notifications.map((n, idx) => {
+                })} */}
+                {history.map((n, idx) => {
                   return (
                     <TableRow className="text-[10px]" key={n.createdOn}>
                       <TableCell className="px-2 py-2 sm:px-2 text-start ">

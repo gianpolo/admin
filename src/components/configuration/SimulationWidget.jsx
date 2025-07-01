@@ -2,6 +2,7 @@ import Button from "../ui/button/Button";
 export default function SimulationWidget({
   isSimulationRunning,
   handleSimulation,
+  disabled,
 }) {
   return (
     <div className="flex flex-col   h-full justify-between max-h-full rounded-2xl bg-gray-50 p-6 text-center dark:bg-white/[0.03]">
@@ -16,15 +17,22 @@ export default function SimulationWidget({
           remove items from the basket and confirm or abandon the basket.
         </p>
       </div>
+
       <div>
         <div className="flex">
           {handleSimulation && (
             <Button
+              disabled={disabled}
               className="bg-brand-500 text-theme-sm hover:bg-brand-600 w-full"
               onClick={handleSimulation}
             >
               {isSimulationRunning ? "Stop" : "Start"}
             </Button>
+          )}
+        </div>
+        <div className="mt-6 text-xs italic  dark:text-orange-300 text-left">
+          {disabled && (
+            <span>Simulation is available only for opened selfscheduling</span>
           )}
         </div>
       </div>
