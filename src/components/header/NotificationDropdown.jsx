@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
-import { eventsData } from "../../utils/constants.js";
+import { eventsData } from "../../utils/constants.jsx";
 export default function NotificationDropdown() {
     const [isOpen, setIsOpen] = useState(false);
     const [notifying, setNotifying] = useState(true);

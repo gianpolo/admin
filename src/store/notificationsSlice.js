@@ -42,10 +42,10 @@ const registerEventHandlers = (connection, dispatch) => {
   ];
 
   const slotEvents = [
-    "SlotReservedEvent",
-    "SlotReleasedEvent",
-    "SlotConfirmedEvent",
-    "SlotReservationFailureEvent",
+    "SlotReservedIntegrationEvent",
+    "SlotReleasedIntegrationEvent",
+    "SlotConfirmedIntegrationEvent",
+    "SlotReservationFailureIntegrationEvent",
   ];
 
   simpleEvents.forEach((event) =>

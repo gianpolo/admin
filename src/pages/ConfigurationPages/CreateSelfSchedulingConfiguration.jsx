@@ -136,7 +136,7 @@ export default function CreateSelfSchedulingConfiguration() {
       guideIds: selectedGuideIds.map((id) => parseInt(id)),
     };
     const res = await dispatch(createConfigurationThunk(payload));
-    if (createConfigurationThunk.fulfilled.match(res)) { 
+    if (createConfigurationThunk.fulfilled.match(res)) {
       const newId = res.payload && res.payload.id ? res.payload.id : undefined;
       navigate(`/self-scheduling-configurations/${newId}`);
       return;
@@ -157,7 +157,9 @@ export default function CreateSelfSchedulingConfiguration() {
       {error && <p className="text-red-500 mb-3">{error}</p>}
       {createError && <p className="text-red-500 mb-3">{createError}</p>}
       {!cities ? (
-        <Spinner />
+        <div className="mt-6 flex h-full justify-center">
+          <Spinner description="Loading Cities" />
+        </div>
       ) : (
         <Form onSubmit={handleSubmit} className="space-y-6">
           <div>

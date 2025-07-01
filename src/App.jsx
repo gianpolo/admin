@@ -9,8 +9,7 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import RequireAuth from "./components/auth/RequireAuth.jsx";
 import SignIn from "./pages/AuthPages/SignIn.jsx";
-export default function App() {
-  console.log("App component rendered");
+export default function App() { 
   return (
     <>
       <Router>

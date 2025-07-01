@@ -55,7 +55,7 @@ export const generateSlots = createAsyncThunk(
   async (configurationId, { rejectWithValue }) => {
     try {
       const res = await fetch(
-        `${backend_url}/SchedulableToursCatalog/slots/${configurationId}`,
+        `${backend_url}/items/slots/${configurationId}`,
         {
           method: "POST",
           headers: { Authorization: `Bearer ${getToken()}` },

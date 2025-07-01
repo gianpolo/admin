@@ -23,9 +23,10 @@ import Spinner from "../../components/ui/spinner/Spinner";
 import SimulationWidget from "../../components/configuration/SimulationWidget.jsx";
 export default function SelfSchedulingConfigurationDetails() {
   const { id } = useParams();
-  const goBack = useGoBack();
+  //const goBack = useGoBack();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  
   const { simulationMessage, isSimulationRunning } = useSelector(
     (state) => state.configurations
   );
@@ -100,7 +101,7 @@ export default function SelfSchedulingConfigurationDetails() {
           <button
             onClick={(event) => {
               event.stopPropagation();
-              goBack();
+              navigate("/self-scheduling-configurations");
             }}
             className="text-gray-400 text-2xl flex mr-10 hover:text-gray-800"
           >
