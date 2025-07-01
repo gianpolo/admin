@@ -136,9 +136,9 @@ export default function CreateSelfSchedulingConfiguration() {
       guideIds: selectedGuideIds.map((id) => parseInt(id)),
     };
     const res = await dispatch(createConfigurationThunk(payload));
-    if (createConfigurationThunk.fulfilled.match(res)) {
+    if (createConfigurationThunk.fulfilled.match(res)) { 
       const newId = res.payload && res.payload.id ? res.payload.id : undefined;
-      navigate('/self-scheduling-configurations', { state: { newId } });
+      navigate(`/self-scheduling-configurations/${newId}`);
       return;
     } else if (res.payload) {
       setError(res.payload);

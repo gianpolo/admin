@@ -17,7 +17,7 @@ import {
   clearLastUpdatedId,
 } from "../../store/configurationDetailsSlice.js";
 import ConfigurationInfoCard from "../../components/configuration/ConfigurationInfoCard.jsx";
-import TourItemList from "../../components/configuration/TourItemList.jsx"; 
+import TourItemList from "../../components/configuration/TourItemList.jsx";
 import Spinner from "../../components/ui/spinner/Spinner";
 import SimulationWidget from "../../components/configuration/SimulationWidget.jsx";
 export default function SelfSchedulingConfigurationDetails() {
@@ -147,12 +147,11 @@ export default function SelfSchedulingConfigurationDetails() {
               />
             </div>
             <div className="col-span-4">
-              {config.isRunning && (
-                <SimulationWidget
-                  isSimulationRunning={isSimulationRunning}
-                  handleSimulation={handleSimulation}
-                />
-              )}
+              <SimulationWidget
+                isSimulationRunning={isSimulationRunning}
+                handleSimulation={handleSimulation}
+                disabled={!config.isRunning}
+              />
             </div>
           </div>
         )

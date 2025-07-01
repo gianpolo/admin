@@ -1,76 +1,81 @@
 export const eventsData = {
   Configuration: {
     ConfigurationSlotsGenerationRequestedIntegrationEvent: {
-      bg: "bg-blue-400",
-      icon: "C+",
-      text: "Configuration Slot Generation Start",
+      bg: "bg-blue-300",
+      icon: "S+",
+      text: "Slots Generation Requested",
     },
-    ConfigurationSlotsGeneraedIntegrationEvent: {
+    ConfigurationSlotsGeneratedIntegrationEvent: {
       bg: "bg-blue-400",
-      icon: "C+",
+      icon: "S+",
+      text: "Slots Generated",
+    },
+    ConfigurationCreatedIntegrationEvent: {
+      bg: "bg-blue-500",
+      icon: "C🆕",
       text: "Configuration Created",
     },
     ConfigurationOpenedIntegrationEvent: {
-      bg: "bg-green-500",
+      bg: "bg-blue-600",
       icon: "C▶",
-      text: "Scheduling Window Start",
+      text: "Scheduling Window Opened",
     },
     ConfigurationClosedIntegrationEvent: {
-      bg: "bg-red-500",
+      bg: "bg-blue-700",
       icon: "C■",
-      text: "Scheduling Window End",
+      text: "Scheduling Window Closed",
     },
   },
   ToursCatalog: {
     TourItemCreatedIntegrationEvent: {
-      bg: "bg-yellow-500",
+      bg: "bg-yellow-300",
       icon: "T+",
       text: "Tour Item Created",
     },
     SlotReservedIntegrationEvent: {
-      bg: "bg-yellow-600",
-      icon: "S+",
+      bg: "bg-yellow-400",
+      icon: "T▶",
       text: "Slot Reserved",
     },
     SlotReleasedIntegrationEvent: {
-      bg: "bg-yellow-600",
-      icon: "S+",
+      bg: "bg-yellow-500",
+      icon: "T◀",
       text: "Slot Released",
     },
     SlotConfirmedIntegrationEvent: {
       bg: "bg-yellow-600",
-      icon: "S+",
+      icon: "T✔",
       text: "Slot Confirmed",
     },
     SlotReservationFailureIntegrationEvent: {
-      bg: "bg-yellow-600",
-      icon: "S+",
+      bg: "bg-yellow-700",
+      icon: "T×",
       text: "Slot Reservation Failed",
     },
   },
   Basket: {
     BasketItemAddedIntegrationEvent: {
-      bg: "bg-indigo-400",
+      bg: "bg-indigo-300",
       icon: "B+",
       text: "Item Added to Basket",
     },
     AddBasketItemFailedIntegrationEvent: {
-      bg: "bg-rose-500",
+      bg: "bg-indigo-400",
       icon: "B×",
-      text: "Add Item to Basket Failed",
+      text: "Add to Basket Failed",
     },
     BasketItemRemovedIntegrationEvent: {
-      bg: "bg-indigo-300",
+      bg: "bg-indigo-500",
       icon: "B−",
       text: "Item Removed from Basket",
     },
     BasketItemExpiredIntegrationEvent: {
-      bg: "bg-gray-500",
+      bg: "bg-indigo-600",
       icon: "B⏰",
-      text: "Item Expired (Grace Period)",
+      text: "Item Expired",
     },
     BasketConfirmedIntegrationEvent: {
-      bg: "bg-green-600",
+      bg: "bg-indigo-700",
       icon: "B✔",
       text: "Basket Confirmed",
     },
