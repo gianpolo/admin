@@ -128,7 +128,7 @@ export const startSimulation = createAsyncThunk(
       );
 
       if (!res.ok) {
-        throw new Error(data.message || "Failed to start simulation");
+        throw new Error("Failed to start simulation");
       }
       return true;
     } catch (err) {
@@ -149,7 +149,7 @@ export const stopSimulation = createAsyncThunk(
       );
 
       if (!res.ok) {
-        throw new Error(data.message || "Failed to stop simulation");
+        throw new Error("Failed to stop simulation");
       }
       return true;
     } catch (err) {

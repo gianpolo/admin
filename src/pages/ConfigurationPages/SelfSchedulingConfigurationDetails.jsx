@@ -15,6 +15,7 @@ import {
   fetchConfigurationItems,
   performConfigurationAction,
   clearLastUpdatedId,
+  generateSlots,
 } from "../../store/configurationDetailsSlice.js";
 import ConfigurationInfoCard from "../../components/configuration/ConfigurationInfoCard.jsx";
 import TourItemList from "../../components/configuration/TourItemList.jsx";
@@ -33,6 +34,7 @@ export default function SelfSchedulingConfigurationDetails() {
     items,
     status,
     itemsStatus,
+    slotsStatus,
     error,
     itemsError,
     lastUpdatedId,
@@ -73,6 +75,14 @@ export default function SelfSchedulingConfigurationDetails() {
       dispatch(stopSimulation({ id }));
     } else {
       dispatch(startSimulation({ id }));
+    }
+  };
+
+  const handleGenerateSlots = async () => {
+    if (!config) return;
+    const result = await dispatch(generateSlots(config.id));
+    if (generateSlots.fulfilled.match(result)) {
+      dispatch(fetchConfigurationItems(id));
     }
   };
 
@@ -165,6 +175,8 @@ export default function SelfSchedulingConfigurationDetails() {
             itemsStatus={itemsStatus}
             itemsError={itemsError}
             highlightId={highlightId}
+            generateSlots={handleGenerateSlots}
+            slotsStatus={slotsStatus}
           ></TourItemList>
         </div>
         <div className="col-span-4 ">

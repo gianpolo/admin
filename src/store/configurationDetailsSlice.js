@@ -50,6 +50,28 @@ export const performConfigurationAction = createAsyncThunk(
   }
 );
 
+export const generateSlots = createAsyncThunk(
+  "configDetails/generateSlots",
+  async (configurationId, { rejectWithValue }) => {
+    try {
+      const res = await fetch(
+        `${backend_url}/SchedulableToursCatalog/slots/${configurationId}`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${getToken()}` },
+        }
+      );
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Failed to generate slots");
+      }
+      return true;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 const configurationDetailsSlice = createSlice({
   name: "configDetails",
   initialState: {
@@ -57,8 +79,10 @@ const configurationDetailsSlice = createSlice({
     items: [],
     status: "idle",
     itemsStatus: "idle",
+    slotsStatus: "idle",
     error: "",
     itemsError: "",
+    slotsError: "",
     lastUpdatedId: null,
   },
   reducers: {
@@ -70,15 +94,6 @@ const configurationDetailsSlice = createSlice({
         confirmed,
         createdOn,
       } = action.payload;
-        it.id === itemId
-          ? {
-              ...it,
-              initialSlots,
-              reserved,
-              confirmed,
-              updatedAt: createdOn || new Date().toISOString(),
-            }
-          : it;
       state.items = state.items.map((it) =>
         it.id === itemId
           ? {
@@ -86,7 +101,7 @@ const configurationDetailsSlice = createSlice({
               initialSlots,
               reserved,
               confirmed,
-              updatedAt: updatedAt || new Date().toISOString(),
+              updatedAt: createdOn || new Date().toISOString(),
             }
           : it
       );
@@ -121,6 +136,17 @@ const configurationDetailsSlice = createSlice({
       .addCase(fetchConfigurationItems.rejected, (state, action) => {
         state.itemsStatus = "failed";
         state.itemsError = action.payload;
+      })
+      .addCase(generateSlots.pending, (state) => {
+        state.slotsStatus = "loading";
+        state.slotsError = "";
+      })
+      .addCase(generateSlots.fulfilled, (state) => {
+        state.slotsStatus = "succeeded";
+      })
+      .addCase(generateSlots.rejected, (state, action) => {
+        state.slotsStatus = "failed";
+        state.slotsError = action.payload;
       })
       .addCase(performConfigurationAction.fulfilled, (state, action) => {
         state.config = action.payload;
