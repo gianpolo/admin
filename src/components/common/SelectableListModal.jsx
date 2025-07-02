@@ -46,14 +46,15 @@ export default function SelectableListModal({
         </div>
         {!disabled && (
           <Button
-            size="sm"
+            size="xs"
             onClick={(event) => {
               event.preventDefault();
               openModal(event);
             }}
+            className="inline-flex items-center rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600"
             disabled={!items || items.length == 0}
           >
-            Add
+            Select
           </Button>
         )}
       </div>

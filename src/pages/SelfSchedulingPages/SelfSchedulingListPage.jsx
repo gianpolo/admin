@@ -4,17 +4,17 @@ import { useNavigate, useLocation } from "react-router";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb.jsx";
 import PageMeta from "../../components/common/PageMeta.jsx";
 import {
-  fetchConfigurations,
+  fetchSelfSchedulings,
   openConfiguration,
   closeConfiguration,
   deleteConfiguration,
-} from "../../store/configurationsSlice.js";
+} from "../../store/selfschedulingsSlice.js";
 
 import { useModal } from "../../hooks/useModal.js";
 import ConfirmationModal from "../../components/common/ConfirmationModal.jsx";
-import ConfigurationList from "../../components/configuration/ConfigurationList.jsx";
+import SelfSchedulingList from "../../components/selfscheduling/SelfSchedulingList.jsx";
 
-export default function SelfSchedulingConfigurations() {
+export default function SelfSchedulingListPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -27,11 +27,10 @@ export default function SelfSchedulingConfigurations() {
   const [deleteId, setDeleteId] = useState(null);
 
   const { list, status, error, actionStatus } = useSelector(
-    (state) => state.configurations
+    (state) => state.selfschedulings
   );
 
-  const handleItemClick = (id) =>
-    navigate(`/self-scheduling-configurations/${id}`);
+  const handleItemClick = (id) => navigate(`/self-schedulings/${id}`);
   const handleOpenClick = (id) => {
     dispatch(openConfiguration({ id: id }));
   };
@@ -52,7 +51,7 @@ export default function SelfSchedulingConfigurations() {
   };
 
   useEffect(() => {
-    dispatch(fetchConfigurations({ pageSize: 10, pageNumber: 1, cityId: 1 }));
+    dispatch(fetchSelfSchedulings({ pageSize: 10, pageNumber: 1, cityId: 1 }));
   }, [dispatch]);
 
   return (
@@ -64,7 +63,7 @@ export default function SelfSchedulingConfigurations() {
       <PageBreadcrumb pageTitle="Self Scheduling Configurations" />
       <div className="mb-4">
         <a
-          href="/self-scheduling-configurations/new"
+          href="/self-schedulings/new"
           className="inline-flex items-center rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600"
         >
           Add New
@@ -76,7 +75,7 @@ export default function SelfSchedulingConfigurations() {
           {status === "loading" ? (
             <p>Loading...</p>
           ) : (
-            <ConfigurationList
+            <SelfSchedulingList
               list={list}
               actionStatus={actionStatus}
               highlightId={highlightId}

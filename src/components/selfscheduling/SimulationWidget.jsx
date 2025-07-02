@@ -5,7 +5,7 @@ export default function SimulationWidget({
   disabled,
 }) {
   return (
-    <div className="flex flex-col   h-full justify-between max-h-full rounded-2xl bg-gray-50 p-6 text-center dark:bg-white/[0.03]">
+    <div className="flex flex-col h-full justify-between border border-gray-200 dark:border-gray-800 max-h-full rounded-2xl bg-white p-6 text-center dark:bg-white/[0.03]">
       <div className="mx-auto flex mb-6">
         <h3 className="font-semibold text-gray-900 dark:text-white">
           Self Scheduling Simulation

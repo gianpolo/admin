@@ -5,7 +5,7 @@ const backend_url =
   import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
 
 export const fetchCities = createAsyncThunk(
-  "configForm/fetchCities",
+  "selfschedulingForm/fetchCities",
   async (_, { rejectWithValue }) => {
     try {
       const res = await fetch(`${backend_url}/cities`, {
@@ -20,7 +20,7 @@ export const fetchCities = createAsyncThunk(
 );
 
 export const fetchExperiences = createAsyncThunk(
-  "configForm/fetchExperiences",
+  "selfschedulingForm/fetchExperiences",
   async ({ cityName }, { rejectWithValue }) => {
     try {
       const res = await fetch(
@@ -39,7 +39,7 @@ export const fetchExperiences = createAsyncThunk(
 );
 
 export const fetchGuides = createAsyncThunk(
-  "configForm/fetchGuides",
+  "selfschedulingForm/fetchGuides",
   async (
     {
       cityId,
@@ -72,11 +72,11 @@ export const fetchGuides = createAsyncThunk(
   }
 );
 
-export const createConfiguration = createAsyncThunk(
-  "configForm/createConfiguration",
+export const createSelfScheduling = createAsyncThunk(
+  "selfschedulingForm/createSelfScheduling",
   async (payload, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${backend_url}/configurations`, {
+      const res = await fetch(`${backend_url}/selfschedulings`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${getToken()}`,
@@ -99,8 +99,8 @@ export const createConfiguration = createAsyncThunk(
   }
 );
 
-const createConfigurationSlice = createSlice({
-  name: "configForm",
+const createSelfSchedulingSlice = createSlice({
+  name: "selfschedulingForm",
   initialState: {
     cities: null,
     experiences: null,
@@ -122,18 +122,18 @@ const createConfigurationSlice = createSlice({
       .addCase(fetchGuides.fulfilled, (state, action) => {
         state.guides = action.payload;
       })
-      .addCase(createConfiguration.pending, (state) => {
+      .addCase(createSelfScheduling.pending, (state) => {
         state.createStatus = "loading";
         state.createError = "";
       })
-      .addCase(createConfiguration.fulfilled, (state) => {
+      .addCase(createSelfScheduling.fulfilled, (state) => {
         state.createStatus = "succeeded";
       })
-      .addCase(createConfiguration.rejected, (state, action) => {
+      .addCase(createSelfScheduling.rejected, (state, action) => {
         state.createStatus = "failed";
         state.createError = action.payload;
       });
   },
 });
 
-export default createConfigurationSlice.reducer;
+export default createSelfSchedulingSlice.reducer;

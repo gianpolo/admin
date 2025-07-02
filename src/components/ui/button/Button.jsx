@@ -3,6 +3,7 @@ const Button = ({ children, size = "md", variant = "primary", startIcon, endIcon
     const sizeClasses = {
         sm: "px-4 py-3 text-sm",
         md: "px-5 py-3.5 text-sm",
+        xs: "px-3 py-2.5 text-xs"
     };
     // Variant Classes
     const variantClasses = {

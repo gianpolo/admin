@@ -3,7 +3,7 @@ import { useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import PageMeta from "../../components/common/PageMeta.jsx";
 import useGoBack from "../../hooks/useGoBack.js";
-import { ChevronLeftIcon } from "../../icons";
+import { ChevronLeftIcon } from "../../icons/index.js";
 import { fetchItemDetails } from "../../store/itemSlice.js";
 // import LogStream from "../../components/logviewer/LogStream.jsx";
 
@@ -37,7 +37,7 @@ export default function SelfSchedulingItemDetails() {
           Tour Item Details
         </h2>
       </div>
-      {status === "loading" && <p>Loading...</p>}
+      {status === "loading" && <Spinner />}
       {error && <p className="text-red-500">{error}</p>}
       {item && (
         <div className="space-y-2">

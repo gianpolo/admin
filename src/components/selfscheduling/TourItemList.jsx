@@ -8,7 +8,8 @@ import {
 } from "../ui/table/index.jsx";
 import ComponentCard from "../common/ComponentCard.jsx";
 import Input from "../form/input/InputField.jsx";
-import Button from "../ui/button/Button.jsx"
+import Button from "../ui/button/Button.jsx";
+import Spinner from "../ui/spinner/Spinner.jsx";
 export default function TourItemList({
   itemsStatus,
   itemsError,
@@ -16,6 +17,7 @@ export default function TourItemList({
   onItemSelection,
   highlightId,
   generateSlots,
+  slotsStatus,
 }) {
   const [filterDate, setFilterDate] = useState("");
   const [filterId, setFilterId] = useState("");
@@ -37,8 +39,12 @@ export default function TourItemList({
         <div className="flex items-center">
           <div className="flex flex-auto">Schedulable Tour Items</div>
           <div>
-            <Button size="sm" onClick={generateSlots}>
-              Generate slots
+            <Button
+              size="sm"
+              onClick={generateSlots}
+              disabled={slotsStatus === "loading"}
+            >
+              {slotsStatus === "loading" ? <Spinner /> : "Generate slots"}
             </Button>
           </div>
         </div>

@@ -5,8 +5,7 @@ import {
   stopNotifications,
 } from "../../store/notificationsSlice.js";
 
-export default function NotificationsInitializer() {
-  console.log("NotificationsInitializer");
+export default function NotificationsInitializer() { 
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token);
 

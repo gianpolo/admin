@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-export const fetchConfigurations = createAsyncThunk(
-  "configurations/fetchConfigurations",
+export const fetchSelfSchedulings = createAsyncThunk(
+  "selfschedulings/fetchSelfSchedulings",
   async (
     { pageSize = 10, pageNumber = 1, cityId } = {},
     { rejectWithValue }
@@ -15,7 +15,7 @@ export const fetchConfigurations = createAsyncThunk(
       const backend_url =
         import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
       const response = await fetch(
-        `${backend_url}/configurations?${params.toString()}`,
+        `${backend_url}/selfschedulings?${params.toString()}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -23,24 +23,24 @@ export const fetchConfigurations = createAsyncThunk(
         }
       );
       if (!response.ok) {
-        throw new Error("Failed to fetch configurations");
+        throw new Error("Failed to fetch selfschedulings");
       }
       return await response.json();
     } catch (err) {
-      console.error("Error fetching configurations:", err);
+      console.error("Error fetching selfschedulings:", err);
       return rejectWithValue(err.message);
     }
   }
 );
 
 export const openConfiguration = createAsyncThunk(
-  "configurations/openConfiguration",
+  "selfschedulings/openConfiguration",
   async ({ id }, { rejectWithValue }) => {
     try {
       const token = getToken();
       const backend_url =
         import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
-      const url = `${backend_url}/configurations/${id}/open`;
+      const url = `${backend_url}/selfschedulings/${id}/open`;
       const res = await fetch(url, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
@@ -56,13 +56,13 @@ export const openConfiguration = createAsyncThunk(
 );
 
 export const closeConfiguration = createAsyncThunk(
-  "configurations/closeConfiguration",
+  "selfschedulings/closeConfiguration",
   async ({ id }, { rejectWithValue }) => {
     try {
       const token = getToken();
       const backend_url =
         import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
-      const url = `${backend_url}/configurations/${id}/close`;
+      const url = `${backend_url}/selfschedulings/${id}/close`;
 
       const res = await fetch(url, {
         method: "POST",
@@ -79,13 +79,13 @@ export const closeConfiguration = createAsyncThunk(
 );
 
 export const deleteConfiguration = createAsyncThunk(
-  "configurations/deleteConfiguration",
+  "selfschedulings/deleteConfiguration",
   async ({ id }, { rejectWithValue }) => {
     try {
       const token = getToken();
       const backend_url =
         import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
-      const url = `${backend_url}/configurations/${id}`;
+      const url = `${backend_url}/selfschedulings/${id}`;
       const res = await fetch(url, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
@@ -101,7 +101,7 @@ export const deleteConfiguration = createAsyncThunk(
 );
 
 export const checkSimulation = createAsyncThunk(
-  "configurations/checkSimulation",
+  "selfschedulings/checkSimulation",
   async ({ id }, { rejectWithValue }) => {
     try {
       const res = await fetch(`http://localhost:5009/virtualguides/${id}`);
@@ -117,7 +117,7 @@ export const checkSimulation = createAsyncThunk(
 );
 
 export const startSimulation = createAsyncThunk(
-  "configurations/startSimulation",
+  "selfschedulings/startSimulation",
   async ({ id }, { rejectWithValue }) => {
     try {
       const res = await fetch(
@@ -128,7 +128,7 @@ export const startSimulation = createAsyncThunk(
       );
 
       if (!res.ok) {
-        throw new Error(data.message || "Failed to start simulation");
+        throw new Error("Failed to start simulation");
       }
       return true;
     } catch (err) {
@@ -138,7 +138,7 @@ export const startSimulation = createAsyncThunk(
 );
 
 export const stopSimulation = createAsyncThunk(
-  "configurations/stopSimulation",
+  "selfschedulings/stopSimulation",
   async ({ id }, { rejectWithValue }) => {
     try {
       const res = await fetch(
@@ -149,7 +149,7 @@ export const stopSimulation = createAsyncThunk(
       );
 
       if (!res.ok) {
-        throw new Error(data.message || "Failed to stop simulation");
+        throw new Error("Failed to stop simulation");
       }
       return true;
     } catch (err) {
@@ -158,7 +158,7 @@ export const stopSimulation = createAsyncThunk(
   }
 );
 
-const configurationsSlice = createSlice({
+const selfschedulingsSlice = createSlice({
   name: "configurations",
   initialState: {
     list: [],
@@ -172,15 +172,15 @@ const configurationsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchConfigurations.pending, (state) => {
+      .addCase(fetchSelfSchedulings.pending, (state) => {
         state.status = "loading";
         state.error = null;
       })
-      .addCase(fetchConfigurations.fulfilled, (state, action) => {
+      .addCase(fetchSelfSchedulings.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.list = action.payload || [];
       })
-      .addCase(fetchConfigurations.rejected, (state, action) => {
+      .addCase(fetchSelfSchedulings.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })
@@ -248,4 +248,4 @@ const configurationsSlice = createSlice({
   },
 });
 const getToken = () => localStorage.getItem("token") || "";
-export default configurationsSlice.reducer;
+export default selfschedulingsSlice.reducer;

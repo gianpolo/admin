@@ -4,7 +4,7 @@ import {
   LogLevel,
   HttpTransportType,
 } from "@microsoft/signalr";
-import { updateAvailableSlots } from "./configurationDetailsSlice.js";
+import { updateAvailableSlots } from "./selfschedulingDetailsSlice.js";
 
 let connection = null;
 const getToken = () => localStorage.getItem("token") || "";
@@ -42,10 +42,10 @@ const registerEventHandlers = (connection, dispatch) => {
   ];
 
   const slotEvents = [
-    "SlotReservedEvent",
-    "SlotReleasedEvent",
-    "SlotConfirmedEvent",
-    "SlotReservationFailureEvent",
+    "SlotReservedIntegrationEvent",
+    "SlotReleasedIntegrationEvent",
+    "SlotConfirmedIntegrationEvent",
+    "SlotReservationFailureIntegrationEvent",
   ];
 
   simpleEvents.forEach((event) =>
