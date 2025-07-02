@@ -1,15 +1,15 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import NotFound from "./pages/OtherPage/NotFound";
-import SelfSchedulingConfigurations from "./pages/ConfigurationPages/SelfSchedulingConfigurations.jsx";
-import CreateSelfSchedulingConfiguration from "./pages/ConfigurationPages/CreateSelfSchedulingConfiguration.jsx";
-import SelfSchedulingConfigurationDetails from "./pages/ConfigurationPages/SelfSchedulingConfigurationDetails.jsx";
-import SelfSchedulingItemDetails from "./pages/ConfigurationPages/SelfSchedulingItemDetails.jsx";
+import SelfSchedulingListPage from "./pages/SelfSchedulingPages/SelfSchedulingListPage.jsx";
+import AddSelfSchedulingPage from "./pages/SelfSchedulingPages/AddSelfSchedulingPage.jsx";
+import SelfSchedulingDetailsPage from "./pages/SelfSchedulingPages/SelfSchedulingDetailsPage.jsx";
+import SelfSchedulingItemDetails from "./pages/SelfSchedulingPages/SelfSchedulingItemDetails.jsx";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import RequireAuth from "./components/auth/RequireAuth.jsx";
 import SignIn from "./pages/AuthPages/SignIn.jsx";
-export default function App() { 
+export default function App() {
   return (
     <>
       <Router>
@@ -25,16 +25,16 @@ export default function App() {
           >
             <Route index path="/" element={<Home />} />
             <Route
-              path="/self-scheduling-configurations"
-              element={<SelfSchedulingConfigurations />}
+              path="/self-schedulings"
+              element={<SelfSchedulingListPage />}
             />
             <Route
-              path="/self-scheduling-configurations/new"
-              element={<CreateSelfSchedulingConfiguration />}
+              path="/self-schedulings/new"
+              element={<AddSelfSchedulingPage />}
             />
             <Route
-              path="/self-scheduling-configurations/:id"
-              element={<SelfSchedulingConfigurationDetails />}
+              path="/self-schedulings/:id"
+              element={<SelfSchedulingDetailsPage />}
             />
             <Route
               path="/self-scheduling-items/:id"

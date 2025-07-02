@@ -3,35 +3,36 @@ import { Link, useParams, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import PageMeta from "../../components/common/PageMeta.jsx";
 import useGoBack from "../../hooks/useGoBack.js";
-import NotificationsWidget from "../../components/notifications/NotificationsWidget";
-import { ChevronLeftIcon } from "../../icons";
+import NotificationsWidget from "../../components/notifications/NotificationsWidget.jsx";
+import { ChevronLeftIcon } from "../../icons/index.js";
 import {
   startSimulation,
   stopSimulation,
   checkSimulation,
-} from "../../store/configurationsSlice.js";
+} from "../../store/selfschedulingsSlice.js";
 import {
-  fetchConfigurationDetails,
-  fetchConfigurationItems,
+  fetchSelfSchedulingDetails,
+  fetchTourItems,
   performConfigurationAction,
   clearLastUpdatedId,
   generateSlots,
-} from "../../store/configurationDetailsSlice.js";
-import ConfigurationInfoCard from "../../components/configuration/ConfigurationInfoCard.jsx";
-import TourItemList from "../../components/configuration/TourItemList.jsx";
-import Spinner from "../../components/ui/spinner/Spinner";
-import SimulationWidget from "../../components/configuration/SimulationWidget.jsx";
-export default function SelfSchedulingConfigurationDetails() {
+} from "../../store/selfschedulingDetailsSlice.js";
+import SelfSchedulingInfoCard from "../../components/selfscheduling/SelfSchedulingInfoCard.jsx";
+import TourItemList from "../../components/selfscheduling/TourItemList.jsx";
+import Spinner from "../../components/ui/spinner/Spinner.jsx";
+import SimulationWidget from "../../components/selfscheduling/SimulationWidget.jsx";
+import Snapshots from "../../components/selfscheduling/Snapshots.jsx";
+export default function SelfSchedulingDetailsPage() {
   const { id } = useParams();
   //const goBack = useGoBack();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
-  const { simulationMessage, isSimulationRunning } = useSelector(
-    (state) => state.configurations
+
+  const { isSimulationRunning } = useSelector(
+    (state) => state.selfschedulings
   );
   const {
-    config,
+    selfscheduling,
     items,
     status,
     itemsStatus,
@@ -39,13 +40,13 @@ export default function SelfSchedulingConfigurationDetails() {
     error,
     itemsError,
     lastUpdatedId,
-  } = useSelector((state) => state.configDetails);
+  } = useSelector((state) => state.selfschedulingsDetails);
 
   const [actionLoading, setActionLoading] = useState(false);
   const [highlightId, setHighlightId] = useState(null);
   useEffect(() => {
-    dispatch(fetchConfigurationDetails(id));
-    dispatch(fetchConfigurationItems(id));
+    dispatch(fetchSelfSchedulingDetails(id));
+    dispatch(fetchTourItems(id));
     dispatch(checkSimulation({ id }));
   }, [dispatch, id]);
 
@@ -64,14 +65,14 @@ export default function SelfSchedulingConfigurationDetails() {
     setActionLoading(true);
     const result = await dispatch(performConfigurationAction({ id, action }));
     if (performConfigurationAction.fulfilled.match(result)) {
-      dispatch(fetchConfigurationDetails(id));
-      dispatch(fetchConfigurationItems(id));
+      dispatch(fetchSelfSchedulingDetails(id));
+      dispatch(fetchTourItems(id));
     }
     setActionLoading(false);
   };
 
   const handleSimulation = () => {
-    if (!config) return;
+    if (!selfscheduling) return;
     if (isSimulationRunning) {
       dispatch(stopSimulation({ id }));
     } else {
@@ -80,10 +81,10 @@ export default function SelfSchedulingConfigurationDetails() {
   };
 
   const handleGenerateSlots = async () => {
-    if (!config) return;
-    const result = await dispatch(generateSlots(config.id));
+    if (!selfscheduling) return;
+    const result = await dispatch(generateSlots(selfscheduling.id));
     if (generateSlots.fulfilled.match(result)) {
-      dispatch(fetchConfigurationItems(id));
+      dispatch(fetchTourItems(id));
     }
   };
 
@@ -93,22 +94,22 @@ export default function SelfSchedulingConfigurationDetails() {
   return (
     <>
       <PageMeta
-        title="Configuration Details"
-        description="Configuration information"
+        title="SelfScheduling Details"
+        description="SelfScheduling information"
       />
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <button
             onClick={(event) => {
               event.stopPropagation();
-              navigate("/self-scheduling-configurations");
+              navigate("/self-schedulings");
             }}
             className="text-gray-400 text-2xl flex mr-10 hover:text-gray-800"
           >
             <ChevronLeftIcon className="inline-block" />
           </button>
           <h2 className="text-xl font-semibold text-gray-800 dark:text-white/90">
-            Configuration Details
+            SelfScheduling Details
           </h2>
         </div>
         <nav>
@@ -148,11 +149,11 @@ export default function SelfSchedulingConfigurationDetails() {
       {status === "loading" ? (
         <Spinner />
       ) : (
-        config && (
+        selfscheduling && (
           <div className="grid grid-cols-12 gap-6 mt-6">
             <div className="col-span-8">
-              <ConfigurationInfoCard
-                config={config}
+              <SelfSchedulingInfoCard
+                selfscheduling={selfscheduling}
                 onAction={handleAction}
                 actionLoading={actionLoading}
               />
@@ -161,13 +162,15 @@ export default function SelfSchedulingConfigurationDetails() {
               <SimulationWidget
                 isSimulationRunning={isSimulationRunning}
                 handleSimulation={handleSimulation}
-                disabled={!config.isRunning}
+                disabled={!selfscheduling.isRunning}
               />
             </div>
           </div>
         )
       )}
-
+      <div className="mt-6">
+        <Snapshots snapshots={[]} />
+      </div>
       <div className="grid grid-cols-12 gap-6 mt-6">
         <div className="col-span-8">
           <TourItemList

@@ -5,11 +5,11 @@ import {
   TableHeader,
   TableRow,
   TableCellHeader,
-} from "../ui/table";
-import { PlayIcon, StopIconCircle, TrashBinIcon } from "../../icons";
-import Spinner from "../ui/spinner/Spinner";
+} from "../ui/table/index.jsx";
+import { PlayIcon, StopIconCircle, TrashBinIcon } from "../../icons/index.js";
+import Spinner from "../ui/spinner/Spinner.jsx";
 import Badge from "../ui/badge/Badge.jsx";
-export default function ConfigurationList({
+export default function SelfSchedulingList({
   list,
   actionStatus,
   highlightId,
@@ -21,13 +21,13 @@ export default function ConfigurationList({
   const formatPeriod = (start, end) =>
     `${(start || "").replace(/-/g, "/")} to ${(end || "").replace(/-/g, "/")}`;
 
-  const renderAction = (cfg) => {
-    if (cfg.isRunning)
+  const renderAction = (ss) => {
+    if (ss.isRunning)
       return (
         <button
           onClick={(event) => {
             event.stopPropagation();
-            onClose(cfg.id);
+            onClose(ss.selfSchedulingId);
           }}
           className="text-red-500 text-lg hover:text-2xl"
         >
@@ -39,7 +39,7 @@ export default function ConfigurationList({
       <button
         onClick={(event) => {
           event.stopPropagation();
-          onOpen(cfg.id);
+          onOpen(ss.id);
         }}
         className="text-green-600 text-lg hover:text-2xl"
       >
@@ -63,27 +63,27 @@ export default function ConfigurationList({
         </TableRow>
       </TableHeader>
       <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-        {list.map((cfg) => {
-          const loading = actionStatus[cfg.id] === "loading";
+        {list.map((ss) => {
+          const loading = actionStatus[ss.id] === "loading";
           return (
             <TableRow
-              key={cfg.id}
+              key={ss.selfSchedulingId}
               className={`cursor-pointer ${
-                cfg.id === highlightId ? "bg-blue-50 dark:bg-blue-900/10" : ""
+                ss.id === highlightId ? "bg-blue-50 dark:bg-blue-900/10" : ""
               } ${
-                cfg.isRunning ? " dark:bg-brand-500/12" : ""
+                ss.isRunning ? " dark:bg-brand-500/12" : ""
               } hover:dark:bg-white/[0.04]`}
               handleClick={(event) => {
                 event.stopPropagation();
-                onItemSelection(cfg.id);
+                onItemSelection(ss.selfSchedulingId);
               }}
             >
-              <TableCell>{loading ? <Spinner /> : renderAction(cfg)}</TableCell>
+              <TableCell>{loading ? <Spinner /> : renderAction(ss)}</TableCell>
               <TableCell>
                 <div className="leading-snug">
                   <div className="dark:text-white font-medium truncate flex items-center gap-1">
-                    {cfg.description}
-                    {highlightId === cfg.id && (
+                    {ss.description}
+                    {highlightId === ss.selfSchedulingId && (
                       <Badge variant="light" color="info">
                         NEW
                       </Badge>
@@ -91,10 +91,10 @@ export default function ConfigurationList({
                   </div>
                   <div
                     className={`text-theme-xs   ${
-                      cfg.isRunning ? "text-gray-400" : "dark:text-gray-400"
+                      ss.isRunning ? "text-gray-400" : "dark:text-gray-400"
                     }`}
                   >
-                    {cfg.id}
+                    {ss.id}
                   </div>
                 </div>
               </TableCell>
@@ -102,8 +102,8 @@ export default function ConfigurationList({
                 <div className="flex items-center">
                   <p className="text-gray-500 text-theme-sm dark:text-gray-400">
                     {formatPeriod(
-                      cfg.schedulingWindowStart,
-                      cfg.schedulingWindowEnd
+                      ss.configuration.schedulingWindow.start,
+                      ss.configuration.schedulingWindow.end
                     )}
                   </p>
                 </div>
@@ -111,28 +111,33 @@ export default function ConfigurationList({
               <TableCell>
                 <div className="flex items-center">
                   <p className="text-gray-500 text-theme-sm dark:text-gray-400">
-                    {formatPeriod(cfg.toursPeriodStart, cfg.toursPeriodEnd)}
+                    {formatPeriod(
+                      ss.configuration.toursPeriod.start,
+                      ss.configuration.toursPeriod.end
+                    )}
                   </p>
                 </div>
               </TableCell>
               <TableCell>
                 <div className="flex items-center">
                   <p className="text-gray-500 text-theme-sm dark:text-gray-400">
-                    {cfg.cityId}
+                    {ss.cityId}
                   </p>
                 </div>
               </TableCell>
               <TableCell>
                 <div className="flex items-center">
                   <p className="text-gray-500 text-theme-sm dark:text-gray-400">
-                    {cfg.experienceIds && cfg.experienceIds.length}
+                    {ss.configuration.subject.experienceIds &&
+                      ss.configuration.subject.experienceIds.length}
                   </p>
                 </div>
               </TableCell>
               <TableCell>
                 <div className="flex items-center">
                   <p className="text-gray-500 text-theme-sm dark:text-gray-400">
-                    {cfg.guideIds && cfg.guideIds.length}
+                    {ss.configuration.audience.guideIds &&
+                      ss.configuration.audience.guideIds.length}
                   </p>
                 </div>
               </TableCell>

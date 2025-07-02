@@ -1,4 +1,4 @@
-import { configurations } from './data.js';
+import { selfschedulings } from './data.js';
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.status(405).json({ message: 'Method not allowed' });
@@ -6,12 +6,14 @@ export default async function handler(req, res) {
   }
 
   const body = req.body;
-  const newId = configurations.length ? Math.max(...configurations.map(c => c.id)) + 1 : 1;
+  const newId = selfschedulings.length
+    ? Math.max(...selfschedulings.map((c) => c.id)) + 1
+    : 1;
   const config = {
     id: newId,
     ...body,
     isRunning: false
   };
-  configurations.push(config);
+  selfschedulings.push(config);
   res.status(200).json(config);
 }

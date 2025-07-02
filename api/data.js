@@ -16,7 +16,7 @@ export const guides = [
   { guide: { id: 3, name: "Anna Bianchi" }, cityId: 3 },
 ];
 
-export let configurations = [
+export let selfschedulings = [
   {
     id: 1,
     cityId: 1,
@@ -34,14 +34,14 @@ export let configurations = [
 export let items = [
   {
     id: 1,
-    configurationId: 1,
+    selfSchedulingId: 1,
     name: "Colosseum Morning",
     tourDate: "2025-02-01",
     initialSlots: 10,
   },
   {
     id: 2,
-    configurationId: 1,
+    selfSchedulingId: 1,
     name: "Colosseum Evening",
     tourDate: "2025-02-02",
     initialSlots: 8,

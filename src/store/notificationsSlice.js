@@ -4,7 +4,7 @@ import {
   LogLevel,
   HttpTransportType,
 } from "@microsoft/signalr";
-import { updateAvailableSlots } from "./configurationDetailsSlice.js";
+import { updateAvailableSlots } from "./selfschedulingDetailsSlice.js";
 
 let connection = null;
 const getToken = () => localStorage.getItem("token") || "";

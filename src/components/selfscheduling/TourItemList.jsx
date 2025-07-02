@@ -8,8 +8,8 @@ import {
 } from "../ui/table/index.jsx";
 import ComponentCard from "../common/ComponentCard.jsx";
 import Input from "../form/input/InputField.jsx";
-import Button from "../ui/button/Button.jsx"
-import Spinner from "../ui/spinner/Spinner"
+import Button from "../ui/button/Button.jsx";
+import Spinner from "../ui/spinner/Spinner.jsx";
 export default function TourItemList({
   itemsStatus,
   itemsError,

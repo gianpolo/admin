@@ -13,7 +13,7 @@ const navItems = [
   {
     icon: <TaskIcon />,
     name: "Self Scheduling Configurations",
-    path: "/self-scheduling-configurations",
+    path: "/self-schedulings",
   },
 ];
 
