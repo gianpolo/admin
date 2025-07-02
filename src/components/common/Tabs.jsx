@@ -1,19 +1,6 @@
 import { useState } from "react";
 
-const tabsData = [
-  {
-    label: "This Text",
-    content:
-      "Ut irure mollit nulla eiusmod excepteur laboris elit sit anim magna tempor excepteur labore nulla.",
-  },
-  {
-    label: "That Text",
-    content:
-      "Fugiat dolor et quis in incididunt aute. Ullamco voluptate consectetur dolor officia sunt est dolor sint.",
-  },
-];
-
-export function Tabs() {
+export function Tabs({ tabsData }) {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
 
   return (
@@ -42,9 +29,9 @@ export function Tabs() {
           {tabsData[activeTabIndex].label}
         </h3>
 
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <div className="text-sm text-gray-500 dark:text-gray-400">
           {tabsData[activeTabIndex].content}
-        </p>
+        </div>
       </div>
     </div>
   );

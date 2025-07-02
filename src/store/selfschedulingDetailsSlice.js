@@ -75,6 +75,25 @@ export const generateSlots = createAsyncThunk(
   }
 );
 
+export const createSnapshot = createAsyncThunk(
+  "selfschedulingDetails/createSnapshot",
+  async (selfSchedulingId, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`${backend_url}/snapshots/${selfSchedulingId}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Failed to create snapshot");
+      }
+      return true;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 const selfschedulingDetailsSlice = createSlice({
   name: "selfschedulingsDetails",
   initialState: {
@@ -83,9 +102,11 @@ const selfschedulingDetailsSlice = createSlice({
     status: "idle",
     itemsStatus: "idle",
     slotsStatus: "idle",
+    snapshotStatus: "idle",
     error: "",
     itemsError: "",
     slotsError: "",
+    snapshotError: "",
     lastUpdatedId: null,
   },
   reducers: {
@@ -118,6 +139,7 @@ const selfschedulingDetailsSlice = createSlice({
       .addCase(fetchSelfSchedulingDetails.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.selfscheduling = action.payload;
+        state.snapshots = action.payload.snapshots
       })
       .addCase(fetchSelfSchedulingDetails.rejected, (state, action) => {
         state.status = "failed";
@@ -145,6 +167,17 @@ const selfschedulingDetailsSlice = createSlice({
       .addCase(generateSlots.rejected, (state, action) => {
         state.slotsStatus = "failed";
         state.slotsError = action.payload;
+      })
+      .addCase(createSnapshot.pending, (state) => {
+        state.snapshotStatus = "loading";
+        state.snapshotError = "";
+      })
+      .addCase(createSnapshot.fulfilled, (state) => {
+        state.snapshotStatus = "succeeded";
+      })
+      .addCase(createSnapshot.rejected, (state, action) => {
+        state.snapshotStatus = "failed";
+        state.snapshotError = action.payload;
       })
       .addCase(performConfigurationAction.fulfilled, (state, action) => {
         state.config = action.payload;
