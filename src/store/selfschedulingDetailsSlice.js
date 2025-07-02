@@ -139,6 +139,7 @@ const selfschedulingDetailsSlice = createSlice({
       .addCase(fetchSelfSchedulingDetails.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.selfscheduling = action.payload;
+        state.snapshots = action.payload.snapshots
       })
       .addCase(fetchSelfSchedulingDetails.rejected, (state, action) => {
         state.status = "failed";
