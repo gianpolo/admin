@@ -169,7 +169,7 @@ export default function SelfSchedulingDetailsPage() {
         )
       )}
       <div className="mt-6">
-        <Snapshots snapshots={[]} />
+        <Snapshots snapshots={[]} selfschedulingId={id} />
       </div>
       <div className="grid grid-cols-12 gap-6 mt-6">
         <div className="col-span-8">
