@@ -78,7 +78,6 @@ export const generateSlots = createAsyncThunk(
 export const createSnapshot = createAsyncThunk(
   "selfschedulingDetails/createSnapshot",
   async (payload, { rejectWithValue }) => {
-    debugger;
     try {
       const res = await fetch(`${backend_url}/snapshots`, {
         method: "POST",
