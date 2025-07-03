@@ -4,7 +4,7 @@ export default function Tabs({ tabsData }) {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
 
   return (
-    <div className="rounded-xl  p-6">
+    <div className="rounded-xl">
       <nav className="-mb-px flex space-x-2 overflow-x-auto">
         {tabsData.map((tab, idx) => {
           return (
