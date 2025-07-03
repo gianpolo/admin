@@ -2,6 +2,7 @@ import Button from "../ui/button/Button.jsx";
 import Badge from "../ui/badge/Badge.jsx";
 import { PlayIcon, StopIconCircle } from "../../icons/index.js";
 import Spinner from "../ui/spinner/Spinner.jsx";
+import CopyableText from "../common/CopyableText.jsx";
 export default function SelfSchedulingInfoCard({
   selfscheduling,
   onAction,
@@ -23,14 +24,16 @@ export default function SelfSchedulingInfoCard({
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7 2xl:gap-x-32">
-          <div>
-            <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-              Id
-            </p>
-            <p className="text-xs font-medium text-gray-800 dark:text-white/90">
-              {selfscheduling.selfSchedulingId}
-            </p>
-          </div>
+          <CopyableText text={selfscheduling.selfSchedulingId}>
+            <div>
+              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                ID
+              </p>
+              <div className="text-xs font-medium text-gray-800 dark:text-white/90">
+                <p>{selfscheduling.selfSchedulingId}</p>
+              </div>
+            </div>{" "}
+          </CopyableText>
           <div>
             <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
               Tours Period

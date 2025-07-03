@@ -2,6 +2,7 @@ import ComponentCard from "../common/ComponentCard";
 import Ribbon from "../common/Ribbon";
 import Button from "../ui/button/Button";
 import Badge from "../ui/badge/Badge";
+import CopyableText from "../common/CopyableText.jsx";
 import { CheckCircleIcon } from "../../icons";
 export default function SnapshotOverview({ snapshot, label, isActive }) {
   const title = (
@@ -24,22 +25,23 @@ export default function SnapshotOverview({ snapshot, label, isActive }) {
       }`}
     >
       <>
-        <div className="flex w-full text-right"></div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7 2xl:gap-x-32">
-          <div>
-            <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-              ID
-            </p>
-            <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-              {snapshot.snapshotId}
-            </p>
-          </div>
+          <CopyableText text={snapshot.snapshotId}>
+            <div>
+              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                ID
+              </p>
+              <div className="text-xs font-medium text-gray-800 dark:text-white/90">
+                <p>{snapshot.snapshotId}</p>
+              </div>
+            </div>
+          </CopyableText>
           <div>
             <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
               Created At
             </p>
             <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-              {snapshot.selfSchedulingId}
+              {snapshot.snapshotDate}
             </p>
           </div>
           <div>
@@ -63,7 +65,9 @@ export default function SnapshotOverview({ snapshot, label, isActive }) {
               Total Tours
             </p>
             <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-              <Badge variant="solid" size="sm">{snapshot.tours.length}</Badge>
+              <Badge variant="solid" size="sm">
+                {snapshot.tours.length}
+              </Badge>
             </p>
           </div>
           <div>
