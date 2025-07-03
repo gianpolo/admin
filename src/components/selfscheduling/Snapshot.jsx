@@ -5,13 +5,8 @@ import SnapshotOverview from "./SnapshotOverview";
 import Spinner from "../ui/spinner/Spinner.jsx";
 import Tabs from "../common/Tabs.jsx";
 import ForecastTable from "./ForecastTable.jsx";
-export default function Snapshot({ snapshotId, label, isActive }) {
-  const [tabsData, setTabsData] = useState([
-    {
-      label: "Calendar",
-      content: <span>Calendar</span>,
-    },
-  ]);
+export default function Snapshot({ snapshotId, label, isActive, loading }) {
+  const [tabsData, setTabsData] = useState();
   const dispatch = useDispatch();
   const { snapshotsDetails } = useSelector(
     (state) => state.selfschedulingsDetails
@@ -33,25 +28,26 @@ export default function Snapshot({ snapshotId, label, isActive }) {
     }
   }, [snapshotsDetails, snapshotId]);
 
-  return (
-    <>
-      {!snapshotsDetails[snapshotId] ||
-        (snapshotsDetails[snapshotId].loading && <Spinner fullscreen />)}
+  if (
+    loading ||
+    !snapshotsDetails[snapshotId] ||
+    snapshotsDetails[snapshotId].loading ||
+    !snapshotsDetails[snapshotId].data ||
+    !tabsData
+  ) {
+    return <Spinner fullscreen />;
+  } else {
+    return (
       <>
-        {snapshotsDetails[snapshotId] && snapshotsDetails[snapshotId].data && (
-          <>
-            <SnapshotOverview
-              isActive={isActive}
-              label={label}
-              snapshot={snapshotsDetails[snapshotId].data}
-            ></SnapshotOverview>
-
-            <div className="mt-6">
-              <Tabs tabsData={tabsData}></Tabs>
-            </div>
-          </>
-        )}
+        <SnapshotOverview
+          isActive={isActive}
+          label={label}
+          snapshot={snapshotsDetails[snapshotId].data}
+        ></SnapshotOverview>
+        <div className="mt-6">
+          <Tabs tabsData={tabsData}></Tabs>
+        </div>
       </>
-    </>
-  );
+    );
+  }
 }

@@ -175,7 +175,7 @@ export default function SelfSchedulingDetailsPage() {
             activeSnapshotId={selfscheduling.activeSnapshotId}
             snapshotStatus={snapshotStatus}
             snapshots={snapshots}
-            selfschedulingId={id}
+            selfSchedulingId={id}
           />
         )}
       </div>

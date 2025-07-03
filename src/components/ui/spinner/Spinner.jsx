@@ -1,8 +1,12 @@
-const Spinner = ({ description = "", fullscreen = false }) => {
+const Spinner = ({ description = "", fullscreen = false, size = "sm" }) => {
+  const sizeClasses = {
+    xs: "w-[20px] h-[20px]",
+    sm: "w-10 h-10",
+  };
   const spinner = (
     <div className="flex dark:text-gray-500 text-sm items-baseline">
       <div
-        className="animate-spin inline-block w-10 h-10 border-[3px] border-current border-t-transparent text-brand-500 rounded-full dark:text-brand-500"
+        className={`animate-spin inline-block ${sizeClasses[size]}  border-[3px] border-current border-t-transparent text-brand-500 rounded-full dark:text-brand-500`}
         role="status"
         aria-label="loading"
       >

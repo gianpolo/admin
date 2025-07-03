@@ -77,11 +77,16 @@ export const generateSlots = createAsyncThunk(
 
 export const createSnapshot = createAsyncThunk(
   "selfschedulingDetails/createSnapshot",
-  async (selfSchedulingId, { rejectWithValue }) => {
+  async (payload, { rejectWithValue }) => {
+    debugger;
     try {
-      const res = await fetch(`${backend_url}/snapshots/${selfSchedulingId}`, {
+      const res = await fetch(`${backend_url}/snapshots`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${getToken()}` },
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       });
       if (!res.ok) {
         const text = await res.text();
