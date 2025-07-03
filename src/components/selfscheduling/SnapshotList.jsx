@@ -12,6 +12,7 @@ export default function SnapshotList({
   onAddSnapshot,
   canAddSnapshot,
   loading,
+  onActivateSnapshot,
 }) {
   const [tabsData, setTabsData] = useState(null);
   const [snapshotLabel, setSnapshotLabel] = useState(
@@ -44,6 +45,7 @@ export default function SnapshotList({
         content: (
           <Snapshot
             loading={loading}
+            onActivateSnapshot={() => onActivateSnapshot(s.snapshotId)}
             isActive={isActive}
             snapshotId={s.snapshotId}
             label={s.snapshotDate}

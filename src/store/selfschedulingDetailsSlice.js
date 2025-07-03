@@ -97,6 +97,31 @@ export const createSnapshot = createAsyncThunk(
     }
   }
 );
+export const activateSnapshot = createAsyncThunk(
+  "selfschedulingDetails/activateSnapshot",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await fetch(
+        `${backend_url}/selfschedulings/${payload.selfSchedulingId}/active-snapshot`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${getToken()}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Failed to create snapshot");
+      }
+      return true;
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
 
 export const fetchSnapshotDetails = createAsyncThunk(
   "selfScheduling/fetchSnapshotDetails",
@@ -212,6 +237,17 @@ const selfschedulingDetailsSlice = createSlice({
         state.snapshotStatus = "succeeded";
       })
       .addCase(createSnapshot.rejected, (state, action) => {
+        state.snapshotStatus = "failed";
+        state.snapshotError = action.payload;
+      })
+      .addCase(activateSnapshot.pending, (state) => {
+        state.snapshotStatus = "loading";
+        state.snapshotError = "";
+      })
+      .addCase(activateSnapshot.fulfilled, (state) => {
+        state.snapshotStatus = "succeeded";
+      })
+      .addCase(activateSnapshot.rejected, (state, action) => {
         state.snapshotStatus = "failed";
         state.snapshotError = action.payload;
       })

@@ -4,14 +4,27 @@ import Button from "../ui/button/Button";
 import Badge from "../ui/badge/Badge";
 import CopyableText from "../common/CopyableText.jsx";
 import { CheckCircleIcon } from "../../icons";
-export default function SnapshotOverview({ snapshot, label, isActive }) {
+export default function SnapshotOverview({
+  snapshot,
+  label,
+  isActive,
+  onActivateSnapshot
+}) {
   const title = (
     <div className="flex relative items-center">
       <div className="flex-1 h-[32px]">{label}</div>
       {isActive ? (
         <Ribbon>active snapshot</Ribbon>
       ) : (
-        <Button size="xs" variant="outline" endIcon={<CheckCircleIcon />}>
+        <Button
+          size="xs"
+          variant="outline"
+          onClick={(event) => {
+            event.preventDefault();
+            onActivateSnapshot();
+          }}
+          endIcon={<CheckCircleIcon />}
+        >
           Activate
         </Button>
       )}

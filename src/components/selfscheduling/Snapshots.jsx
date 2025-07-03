@@ -1,7 +1,7 @@
 import ComponentCard from "../common/ComponentCard";
-import Spinner from "../ui/spinner/Spinner.jsx";
 import { useDispatch } from "react-redux";
 import {
+  activateSnapshot,
   createSnapshot,
   fetchSelfSchedulingDetails,
 } from "../../store/selfschedulingDetailsSlice.js";
@@ -15,12 +15,19 @@ export default function Snapshots({
 }) {
   const dispatch = useDispatch();
 
-  const handleSnapshot = async (label) => {
+  const handleAddSnapshot = async (label) => {
+    if (!selfSchedulingId) return;
+    const result = await dispatch(createSnapshot({ selfSchedulingId, label }));
+    if (createSnapshot.fulfilled.match(result)) {
+      dispatch(fetchSelfSchedulingDetails(selfSchedulingId));
+    }
+  };
+  const handleActivateSnapshot = async (snapshotId) => {
     if (!selfSchedulingId) return;
     const result = await dispatch(
-      createSnapshot({ selfSchedulingId, label })
+      activateSnapshot({ selfSchedulingId, snapshotId })
     );
-    if (createSnapshot.fulfilled.match(result)) {
+    if (activateSnapshot.fulfilled.match(result)) {
       dispatch(fetchSelfSchedulingDetails(selfSchedulingId));
     }
   };
@@ -37,7 +44,8 @@ export default function Snapshots({
           loading={snapshotStatus === "loading"}
           snapshots={snapshots}
           activeSnapshotId={activeSnapshotId}
-          onAddSnapshot={handleSnapshot}
+          onAddSnapshot={handleAddSnapshot}
+          onActivateSnapshot={handleActivateSnapshot}
           canAddSnapshot={snapshotStatus !== "loading"}
         />
       )}

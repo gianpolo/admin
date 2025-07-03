@@ -9,7 +9,7 @@ import {
   closeConfiguration,
   deleteConfiguration,
 } from "../../store/selfschedulingsSlice.js";
-
+import Spinner from "../../components/ui/spinner/Spinner.jsx";
 import { useModal } from "../../hooks/useModal.js";
 import ConfirmationModal from "../../components/common/ConfirmationModal.jsx";
 import SelfSchedulingList from "../../components/selfscheduling/SelfSchedulingList.jsx";
@@ -70,11 +70,13 @@ export default function SelfSchedulingListPage() {
         </a>
       </div>
       {error && <p className="text-red-500">{error}</p>}
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-        <div className="max-w-full overflow-x-auto">
-          {status === "loading" ? (
-            <p>Loading...</p>
-          ) : (
+      {status === "loading" ? (
+        <div className="flex h-full">
+          <Spinner fullscreen size="md"></Spinner>
+        </div>
+      ) : (
+        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+          <div className="max-w-full">
             <SelfSchedulingList
               list={list}
               actionStatus={actionStatus}
@@ -84,9 +86,9 @@ export default function SelfSchedulingListPage() {
               onClose={handleCloseClick}
               onItemSelection={handleItemClick}
             />
-          )}
+          </div>
         </div>
-      </div>
+      )}
       <ConfirmationModal
         isOpen={isDeleteOpen}
         onClose={closeDeleteModal}

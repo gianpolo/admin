@@ -2,6 +2,7 @@ const Spinner = ({ description = "", fullscreen = false, size = "sm" }) => {
   const sizeClasses = {
     xs: "w-[20px] h-[20px]",
     sm: "w-10 h-10",
+    md: "w-12 h-12"
   };
   const spinner = (
     <div className="flex dark:text-gray-500 text-sm items-baseline">
