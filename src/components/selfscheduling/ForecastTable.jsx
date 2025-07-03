@@ -14,6 +14,7 @@ export default function ForecastTable({ snapshot }) {
         <Table>
           <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
             <TableRow>
+              <TableCellHeader>Experience ID</TableCellHeader>
               <TableCellHeader>Option ID</TableCellHeader>
               <TableCellHeader>Tour Date</TableCellHeader>
               <TableCellHeader>Group Size</TableCellHeader>
@@ -24,9 +25,12 @@ export default function ForecastTable({ snapshot }) {
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-sm">
             {forecasts.map((f) => (
               <TableRow key={`${f.optionId}-${f.tourDate}`}>
+                <TableCell className="px-5 py-2">{f.experienceId}</TableCell>
                 <TableCell className="px-5 py-2">{f.optionId}</TableCell>
                 <TableCell className="px-5 py-2">{f.tourDate}</TableCell>
-                <TableCell className="px-5 py-2">{sizeMap[f.optionId] ?? "-"}</TableCell>
+                <TableCell className="px-5 py-2">
+                  {sizeMap[f.optionId] ?? "-"}
+                </TableCell>
                 <TableCell className="px-5 py-2">{f.fulfillment}</TableCell>
                 <TableCell className="px-5 py-2">{f.demand}</TableCell>
               </TableRow>

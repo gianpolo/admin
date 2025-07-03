@@ -25,10 +25,6 @@ export default function Snapshot({ snapshotId, label, isActive }) {
       const data = snapshotsDetails[snapshotId].data;
       const tb = [
         {
-          label: "Calendar",
-          content: <span>calendar</span>,
-        },
-        {
           label: "Forecast",
           content: <ForecastTable snapshot={data} />,
         },
@@ -44,7 +40,6 @@ export default function Snapshot({ snapshotId, label, isActive }) {
       <>
         {snapshotsDetails[snapshotId] && snapshotsDetails[snapshotId].data && (
           <>
-            
             <SnapshotOverview
               isActive={isActive}
               label={label}
