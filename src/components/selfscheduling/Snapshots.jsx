@@ -1,7 +1,10 @@
 import ComponentCard from "../common/ComponentCard";
 import Spinner from "../ui/spinner/Spinner.jsx";
 import { useDispatch } from "react-redux";
-import { createSnapshot } from "../../store/selfschedulingDetailsSlice.js";
+import {
+  createSnapshot,
+  fetchSelfSchedulingDetails,
+} from "../../store/selfschedulingDetailsSlice.js";
 
 import SnapshotList from "./SnapshotList.jsx";
 export default function Snapshots({
@@ -12,9 +15,14 @@ export default function Snapshots({
 }) {
   const dispatch = useDispatch();
 
-  const handleSnapshot = (label) => {
+  const handleSnapshot = async (label) => {
     if (!selfSchedulingId) return;
-    dispatch(createSnapshot({ selfSchedulingId, label }));
+    const result = await dispatch(
+      createSnapshot({ selfSchedulingId, label })
+    );
+    if (createSnapshot.fulfilled.match(result)) {
+      dispatch(fetchSelfSchedulingDetails(selfSchedulingId));
+    }
   };
   return (
     <ComponentCard
