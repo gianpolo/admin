@@ -21,7 +21,7 @@ const TableRow = ({ children, className, handleClick }) => {
 // TableCell Component
 const TableCell = ({ children, isHeader = false, className, ...props }) => {
   const CellTag = isHeader ? "th" : "td";
-  const cn = className || "px-6 py-4 whitespace-nowrap";
+  const cn = className || "px-6 py-4 whitespace-nowrap text-theme-sm";
   return (
     <CellTag className={cn} {...props}>
       {children}
@@ -33,7 +33,7 @@ const TableCellHeader = ({ children, className }) => {
   return (
     <TableCell isHeader className={cn}>
       <div className="flex items-center">
-        <p className="font-medium text-gray-500 text-theme-xs dark:text-gray-400">
+        <p className="text-theme-xs font-medium text-gray-700 dark:text-gray-400">
           {children}
         </p>
       </div>

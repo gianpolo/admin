@@ -24,7 +24,6 @@ export default function SnapshotOverview({ snapshot, label, isActive }) {
       }`}
     >
       <>
-        <div className="flex w-full text-right"></div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7 2xl:gap-x-32">
           <div>
             <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
@@ -63,7 +62,9 @@ export default function SnapshotOverview({ snapshot, label, isActive }) {
               Total Tours
             </p>
             <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-              <Badge variant="solid" size="sm">{snapshot.tours.length}</Badge>
+              <Badge variant="solid" size="sm">
+                {snapshot.tours.length}
+              </Badge>
             </p>
           </div>
           <div>
