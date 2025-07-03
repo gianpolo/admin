@@ -82,7 +82,7 @@ export const startNotifications = createAsyncThunk(
           transport: HttpTransportType.WebSockets,
         })
         .withAutomaticReconnect()
-        .configureLogging(LogLevel.Information)
+        .configureLogging(LogLevel.Warning)
         .build();
 
       registerEventHandlers(connection, dispatch);
