@@ -4,6 +4,7 @@ import { fetchSnapshotDetails } from "../../store/selfschedulingDetailsSlice.js"
 import SnapshotOverview from "./SnapshotOverview";
 import Spinner from "../ui/spinner/Spinner.jsx";
 import Tabs from "../common/Tabs.jsx";
+import ForecastTable from "./ForecastTable.jsx";
 export default function Snapshot({ snapshotId, label, isActive }) {
   const [tabsData, setTabsData] = useState([
     {
@@ -21,16 +22,20 @@ export default function Snapshot({ snapshotId, label, isActive }) {
 
   useEffect(() => {
     if (snapshotsDetails[snapshotId] && snapshotsDetails[snapshotId].loaded) {
-      console.log(snapshotsDetails[snapshotId].data);
+      const data = snapshotsDetails[snapshotId].data;
       const tb = [
         {
           label: "Calendar",
           content: <span>calendar</span>,
         },
+        {
+          label: "Forecast",
+          content: <ForecastTable snapshot={data} />,
+        },
       ];
       setTabsData(tb);
     }
-  }, [snapshotsDetails]);
+  }, [snapshotsDetails, snapshotId]);
 
   return (
     <>
