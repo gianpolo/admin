@@ -788,3 +788,16 @@ span.flatpickr-weekday,
 .flash-update {
   animation: item-flash 2s ease-out;
 }
+
+@keyframes move-to-top {
+  from {
+    transform: translateY(var(--slide-distance));
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.move-top {
+  animation: move-to-top 0.3s ease-out;
+}

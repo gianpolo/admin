@@ -1,5 +1,6 @@
 import ComponentCard from "../common/ComponentCard";
 import { useDispatch } from "react-redux";
+import { useState } from "react";
 import {
   activateSnapshot,
   createSnapshot,
@@ -14,6 +15,7 @@ export default function Snapshots({
   selfSchedulingId,
 }) {
   const dispatch = useDispatch();
+  const [prevActiveId, setPrevActiveId] = useState(null);
 
   const handleAddSnapshot = async (label) => {
     if (!selfSchedulingId) return;
@@ -24,6 +26,7 @@ export default function Snapshots({
   };
   const handleActivateSnapshot = async (snapshotId) => {
     if (!selfSchedulingId) return;
+    setPrevActiveId(activeSnapshotId);
     const result = await dispatch(
       activateSnapshot({ selfSchedulingId, snapshotId })
     );
@@ -44,6 +47,7 @@ export default function Snapshots({
           loading={snapshotStatus === "loading"}
           snapshots={snapshots}
           activeSnapshotId={activeSnapshotId}
+          previousActiveId={prevActiveId}
           onAddSnapshot={handleAddSnapshot}
           onActivateSnapshot={handleActivateSnapshot}
           canAddSnapshot={snapshotStatus !== "loading"}
