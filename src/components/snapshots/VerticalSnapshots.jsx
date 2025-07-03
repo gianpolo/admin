@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import ComponentCard from "../common/ComponentCard";
-import { VerticalTabs } from "../common/VerticalTabs";
+import VerticalTabs from "../common/VerticalTabs.jsx";
 
 export default function VerticalSnapshots({ snapshots = [] }) {
   const [tabsData, setTabsData] = useState([]);
