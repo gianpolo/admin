@@ -94,6 +94,30 @@ export const createSnapshot = createAsyncThunk(
   }
 );
 
+export const fetchSnapshotDetails = createAsyncThunk(
+  "selfScheduling/fetchSnapshotDetails",
+  async (snapshotId, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`${backend_url}/snapshots/${snapshotId}`, {
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      if (!res.ok) throw new Error("Failed to fetch tour items");
+      const data = await res.json();
+      return { snapshotId, data: data };
+    } catch (err) {
+      return rejectWithValue({ snapshotId });
+    }
+  },
+  {
+    condition: (snapshotId, { getState }) => {
+      const { snapshotsDetails } = getState().selfschedulingsDetails;
+      const entry = snapshotsDetails[snapshotId];
+      // if already loaded *or* currently loading, skip fetch
+      return !(entry?.loaded || entry?.loading);
+    },
+  }
+);
+
 const selfschedulingDetailsSlice = createSlice({
   name: "selfschedulingsDetails",
   initialState: {
@@ -108,6 +132,8 @@ const selfschedulingDetailsSlice = createSlice({
     slotsError: "",
     snapshotError: "",
     lastUpdatedId: null,
+    snapshotsDetails: {},
+    snapshots: [],
   },
   reducers: {
     updateAvailableSlots(state, action) {
@@ -139,7 +165,13 @@ const selfschedulingDetailsSlice = createSlice({
       .addCase(fetchSelfSchedulingDetails.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.selfscheduling = action.payload;
-        state.snapshots = action.payload.snapshots
+        state.snapshots = action.payload.snapshots;
+        action.payload.snapshots.forEach((s) => {
+          state.snapshotsDetails[s.snapshotId] = {
+            loading: false,
+            loaded: false,
+          };
+        });
       })
       .addCase(fetchSelfSchedulingDetails.rejected, (state, action) => {
         state.status = "failed";
@@ -181,6 +213,27 @@ const selfschedulingDetailsSlice = createSlice({
       })
       .addCase(performConfigurationAction.fulfilled, (state, action) => {
         state.config = action.payload;
+      })
+      .addCase(fetchSnapshotDetails.pending, (state, { meta }) => {
+        state.snapshotsDetails[meta.arg] = {
+          loading: true,
+          loaded: false,
+          data: state.snapshotsDetails[meta.arg]?.data,
+        };
+      })
+      .addCase(fetchSnapshotDetails.fulfilled, (state, { payload }) => {
+        state.snapshotsDetails[payload.snapshotId] = {
+          loading: false,
+          loaded: true,
+          data: payload.data,
+        };
+      })
+      .addCase(fetchSnapshotDetails.rejected, (state, { meta }) => {
+        state.snapshotsDetails[meta.arg] = {
+          loading: false,
+          loaded: false,
+          data: undefined,
+        };
       });
   },
 });

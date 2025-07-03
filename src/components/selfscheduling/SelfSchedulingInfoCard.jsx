@@ -27,7 +27,7 @@ export default function SelfSchedulingInfoCard({
             <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
               Id
             </p>
-            <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+            <p className="text-xs font-medium text-gray-800 dark:text-white/90">
               {selfscheduling.selfSchedulingId}
             </p>
           </div>
@@ -46,7 +46,10 @@ export default function SelfSchedulingInfoCard({
               Experiences Count
             </p>
             <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-              {selfscheduling.configuration.experienceIds?.length || 0}
+              <Badge variant="solid" size="sm">
+                {selfscheduling.configuration.subject.experienceIds?.length ||
+                  0}
+              </Badge>
             </p>
           </div>
 
@@ -67,6 +70,7 @@ export default function SelfSchedulingInfoCard({
               <div>
                 <Badge
                   variant="light"
+                  size="sm"
                   color={selfscheduling.isRunning ? "success" : "warning"}
                 >
                   {selfscheduling.isRunning ? "Running" : "Pending"}
@@ -105,7 +109,9 @@ export default function SelfSchedulingInfoCard({
               Guides Count
             </p>
             <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-              {selfscheduling.configuration.guideIds?.length || 0}
+              <Badge variant="solid" size="sm">
+                {selfscheduling.configuration.audience.guideIds?.length || 0}
+              </Badge>
             </p>
           </div>
         </div>

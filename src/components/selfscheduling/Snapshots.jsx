@@ -1,54 +1,41 @@
-import { useState, useEffect } from "react";
-import ComponentCard from "../common/ComponentCard";
-import { Tabs } from "../common/Tabs";
-import Button from "../ui/button/Button.jsx";
+ 
+import ComponentCard from "../common/ComponentCard"; 
 import Spinner from "../ui/spinner/Spinner.jsx";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { createSnapshot } from "../../store/selfschedulingDetailsSlice.js";
 
-export default function Snapshots({ selfschedulingId }) {
+import SnapshotList from "./SnapshotList.jsx";
+export default function Snapshots({
+  snapshots,
+  activeSnapshotId,
+  snapshotStatus,
+  selfschedulingId,
+}) {
   const dispatch = useDispatch();
-  const { snapshotStatus, snapshots } = useSelector(
-    (state) => state.selfschedulingsDetails
-  );
+
   const handleSnapshot = () => {
     if (!selfschedulingId) return;
     dispatch(createSnapshot(selfschedulingId));
-  };
-  const [tabsData, setTabsData] = useState();
-
-  useEffect(() => {
-    if (snapshots && snapshots.length > 0) {
-      const tabs = snapshots.map((s) => ({
-        label: s.snapshotDate,
-        content: (
-          <div>
-            <div>{s.label}</div>
-            <div>{s.snapshotId}</div>
-          </div>
-        ),
-      }));
-      setTabsData(tabs);
-    }
-  }, [snapshots]);
+  }; 
   return (
     <ComponentCard
       title={
         <div className="flex items-center">
-          <div className="flex flex-auto">Snapshots</div>
+          <div className="flex flex-auto">Forecasting and Tours Snapshots</div>
           <div>
-            <Button
-              size="sm"
-              onClick={handleSnapshot}
-              disabled={snapshotStatus === "loading"}
-            >
-              {snapshotStatus === "loading" ? <Spinner /> : "Take snapshot"}
-            </Button>
+            {snapshotStatus === "loading" ? <Spinner fullscreen /> : <></>}
           </div>
         </div>
       }
     >
-      {tabsData && <Tabs tabsData={tabsData}></Tabs>}
+      {snapshots && (
+        <SnapshotList
+          snapshots={snapshots}
+          activeSnapshotId={activeSnapshotId}
+          onAddSnapshot={handleSnapshot}
+          canAddSnapshot={snapshotStatus !== "loading"}
+        />
+      )}
     </ComponentCard>
   );
 }
