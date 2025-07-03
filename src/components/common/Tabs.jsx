@@ -1,10 +1,10 @@
 import { useState } from "react";
 
-export function Tabs({ tabsData }) {
+export default function Tabs({ tabsData }) {
   const [activeTabIndex, setActiveTabIndex] = useState(0);
 
   return (
-    <div className="rounded-xl border border-gray-200 p-6 dark:border-gray-800">
+    <div className="rounded-xl  p-6">
       <nav className="-mb-px flex space-x-2 overflow-x-auto">
         {tabsData.map((tab, idx) => {
           return (
@@ -25,10 +25,6 @@ export function Tabs({ tabsData }) {
       </nav>
       {/* Show active tab content. */}
       <div className="pt-4 dark:border-gray-800">
-        <h3 className="mb-1 text-xl font-medium text-gray-800 dark:text-white/90">
-          {tabsData[activeTabIndex].label}
-        </h3>
-
         <div className="text-sm text-gray-500 dark:text-gray-400">
           {tabsData[activeTabIndex].content}
         </div>

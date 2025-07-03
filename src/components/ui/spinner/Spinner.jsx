@@ -12,7 +12,7 @@ const Spinner = ({ description = "", fullscreen = false }) => {
     </div>
   );
   const fullscreenSpinner = (
-    <div className=" z-999999 flex h-full w-full items-center justify-center bg-white dark:bg-black">
+    <div className="z-999999 flex h-full w-full items-center justify-center">
       {spinner}
     </div>
   );

@@ -28,9 +28,7 @@ export default function SelfSchedulingDetailsPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { isSimulationRunning } = useSelector(
-    (state) => state.selfschedulings
-  );
+  const { isSimulationRunning } = useSelector((state) => state.selfschedulings);
   const {
     selfscheduling,
     items,
@@ -44,6 +42,9 @@ export default function SelfSchedulingDetailsPage() {
 
   const [actionLoading, setActionLoading] = useState(false);
   const [highlightId, setHighlightId] = useState(null);
+  const { snapshotStatus, snapshots } = useSelector(
+    (state) => state.selfschedulingsDetails
+  );
   useEffect(() => {
     dispatch(fetchSelfSchedulingDetails(id));
     dispatch(fetchTourItems(id));
@@ -169,7 +170,14 @@ export default function SelfSchedulingDetailsPage() {
         )
       )}
       <div className="mt-6">
-        <Snapshots snapshots={[]} selfschedulingId={id} />
+        {selfscheduling && snapshots && (
+          <Snapshots
+            activeSnapshotId={selfscheduling.activeSnapshotId}
+            snapshotStatus={snapshotStatus}
+            snapshots={snapshots}
+            selfschedulingId={id}
+          />
+        )}
       </div>
       <div className="grid grid-cols-12 gap-6 mt-6">
         <div className="col-span-8">
