@@ -1,8 +1,8 @@
 import { useState } from "react";
-import InputField from "../../components/form/input/InputField.jsx";
-import Form from "../../components/form/Form.jsx";
+import InputField from "../form/input/InputField.jsx";
+import Form from "../form/Form.jsx";
 import Button from "../ui/button/Button.jsx";
-import { PlusIcon } from "../../icons";
+import { PlusIcon } from "../../icons/index.js";
 import Spinner from "../ui/spinner/Spinner.jsx";
 export default function EmptySnapshot({ loading, onAddSnapshot }) {
   const [snapshotLabel, setSnapshotLabel] = useState(
@@ -13,13 +13,13 @@ export default function EmptySnapshot({ loading, onAddSnapshot }) {
       <div className="flex flex-col h-full justify-between border border-gray-200 dark:border-gray-800 max-h-full rounded-2xl bg-white p-6 text-center dark:bg-white/[0.03]">
         <div className="mx-auto flex mb-6">
           <h3 className="mb-3 font-bold text-gray-800 text-title-md dark:text-white/90 xl:text-title-l">
-            No Snapshot Taken
+            No Snapshot Taken Yet
           </h3>
         </div>
         <div className="flex  ">
           <p className="text-base text-gray-500 mb-9 text-center dark:text-gray-400 w-full h-full">
-            Take a snapshot of Forecsting data and Tours included on this
-            SelfScheduling.
+            Capture the current forecasting and tours data for this SelfScheduling by taking a
+            snapshot now.
           </p>
         </div>
         <Form onSubmit={(e) => e.preventDefault()}>

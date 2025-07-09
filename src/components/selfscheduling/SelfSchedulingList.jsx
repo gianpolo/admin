@@ -1,11 +1,4 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-  TableCellHeader,
-} from "../ui/table/index.jsx";
+import { Table, TableBody, TableCell, TableHeader, TableRow, TableCellHeader } from "../ui/table/index.jsx";
 import { PlayIcon, StopIconCircle, TrashBinIcon } from "../../icons/index.js";
 import Spinner from "../ui/spinner/Spinner.jsx";
 import Badge from "../ui/badge/Badge.jsx";
@@ -18,8 +11,7 @@ export default function SelfSchedulingList({
   onDelete,
   onItemSelection,
 }) {
-  const formatPeriod = (start, end) =>
-    `${(start || "").replace(/-/g, "/")} to ${(end || "").replace(/-/g, "/")}`;
+  const formatPeriod = (start, end) => `${(start || "").replace(/-/g, "/")} to ${(end || "").replace(/-/g, "/")}`;
 
   const renderAction = (ss) => {
     if (ss.isRunning)
@@ -59,6 +51,7 @@ export default function SelfSchedulingList({
           <TableCellHeader>City ID</TableCellHeader>
           <TableCellHeader>Experiences Count</TableCellHeader>
           <TableCellHeader>Guides Count</TableCellHeader>
+          <TableCellHeader>Snapshots Count</TableCellHeader>
           <TableCellHeader>Delete</TableCellHeader>
         </TableRow>
       </TableHeader>
@@ -68,9 +61,7 @@ export default function SelfSchedulingList({
           return (
             <TableRow
               key={ss.selfSchedulingId}
-              className={`cursor-pointer ${
-                ss.id === highlightId ? "bg-blue-50 dark:bg-blue-900/10" : ""
-              } ${
+              className={`cursor-pointer ${ss.id === highlightId ? "bg-blue-50 dark:bg-blue-900/10" : ""} ${
                 ss.isRunning ? " dark:bg-brand-500/12" : ""
               } hover:dark:bg-white/[0.04]`}
               handleClick={(event) => {
@@ -89,11 +80,7 @@ export default function SelfSchedulingList({
                       </Badge>
                     )}
                   </div>
-                  <div
-                    className={`text-theme-xs   ${
-                      ss.isRunning ? "text-gray-400" : "dark:text-gray-400"
-                    }`}
-                  >
+                  <div className={`text-theme-xs   ${ss.isRunning ? "text-gray-400" : "dark:text-gray-400"}`}>
                     {ss.id}
                   </div>
                 </div>
@@ -101,58 +88,51 @@ export default function SelfSchedulingList({
               <TableCell>
                 <div className="flex items-center">
                   <p className="text-gray-500 text-theme-sm dark:text-gray-400">
-                    {formatPeriod(
-                      ss.configuration.schedulingWindow.start,
-                      ss.configuration.schedulingWindow.end
+                    {formatPeriod(ss.schedulingWindow.start, ss.schedulingWindow.end)}
+                  </p>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center">
+                  <p className="text-gray-500 text-theme-sm dark:text-gray-400">
+                    {formatPeriod(ss.toursPeriod.start, ss.toursPeriod.end)}
+                  </p>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center">
+                  <p className="text-gray-500 text-theme-sm dark:text-gray-400">{ss.cityId}</p>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center">
+                  <p className="text-gray-500 text-theme-sm dark:text-gray-400">{ss.experiencesCount}</p>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center">
+                  <p className="text-gray-500 text-theme-sm dark:text-gray-400">{ss.guidesCount}</p>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center">
+                  <p className="text-gray-500 text-theme-sm dark:text-gray-400">
+                    {ss.snapshotsCount > 0 ? (
+                      <Badge variant="solid" color="info">
+                        {ss.snapshotsCount}
+                      </Badge>
+                    ) : (
+                      <span>n/a</span>
                     )}
                   </p>
                 </div>
               </TableCell>
-              <TableCell>
-                <div className="flex items-center">
-                  <p className="text-gray-500 text-theme-sm dark:text-gray-400">
-                    {formatPeriod(
-                      ss.configuration.toursPeriod.start,
-                      ss.configuration.toursPeriod.end
-                    )}
-                  </p>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center">
-                  <p className="text-gray-500 text-theme-sm dark:text-gray-400">
-                    {ss.cityId}
-                  </p>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center">
-                  <p className="text-gray-500 text-theme-sm dark:text-gray-400">
-                    {ss.configuration.subject.experienceIds &&
-                      ss.configuration.subject.experienceIds.length}
-                  </p>
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="flex items-center">
-                  <p className="text-gray-500 text-theme-sm dark:text-gray-400">
-                    {ss.configuration.audience.guideIds &&
-                      ss.configuration.audience.guideIds.length}
-                  </p>
-                </div>
-              </TableCell>
-              <TableCell
-                className="px-6 py-3 whitespace-nowrap"
-                onClick={(e) => e.stopPropagation()}
-              >
+              <TableCell className="px-6 py-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                 {loading ? (
                   <Spinner />
                 ) : (
                   <div className="flex items-center gap-2">
-                    <button
-                      onClick={onDelete}
-                      className="text-gray-500 text-lg hover:text-red-600"
-                    >
+                    <button onClick={onDelete} className="text-gray-500 text-lg hover:text-red-600">
                       <TrashBinIcon className="inline-block" />
                     </button>
                   </div>

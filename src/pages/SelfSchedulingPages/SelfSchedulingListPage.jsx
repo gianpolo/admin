@@ -57,10 +57,10 @@ export default function SelfSchedulingListPage() {
   return (
     <>
       <PageMeta
-        title="Self Scheduling Configurations"
-        description="List of Self Scheduling Configurations"
+        title="Self Schedulings"
+        description="List of Self Schedulings"
       />
-      <PageBreadcrumb pageTitle="Self Scheduling Configurations" />
+      <PageBreadcrumb pageTitle="Self Schedulings" />
       <div className="mb-4">
         <a
           href="/self-schedulings/new"

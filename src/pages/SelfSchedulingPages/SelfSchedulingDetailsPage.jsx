@@ -2,14 +2,10 @@ import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import PageMeta from "../../components/common/PageMeta.jsx";
-import useGoBack from "../../hooks/useGoBack.js";
 import NotificationsWidget from "../../components/notifications/NotificationsWidget.jsx";
 import { ChevronLeftIcon } from "../../icons/index.js";
-import {
-  startSimulation,
-  stopSimulation,
-  checkSimulation,
-} from "../../store/selfschedulingsSlice.js";
+import { fetchEventsLogs } from "../../store/notificationsSlice.js";
+import { startSimulation, stopSimulation, checkSimulation } from "../../store/selfschedulingsSlice.js";
 import {
   fetchSelfSchedulingDetails,
   fetchTourItems,
@@ -21,7 +17,7 @@ import SelfSchedulingInfoCard from "../../components/selfscheduling/SelfScheduli
 import TourItemList from "../../components/selfscheduling/TourItemList.jsx";
 import Spinner from "../../components/ui/spinner/Spinner.jsx";
 import SimulationWidget from "../../components/selfscheduling/SimulationWidget.jsx";
-import Snapshots from "../../components/selfscheduling/Snapshots.jsx";
+import SnapshotsContainer from "../../components/snapshot/SnapshotsContainer.jsx";
 export default function SelfSchedulingDetailsPage() {
   const { id } = useParams();
   //const goBack = useGoBack();
@@ -29,27 +25,26 @@ export default function SelfSchedulingDetailsPage() {
   const navigate = useNavigate();
 
   const { isSimulationRunning } = useSelector((state) => state.selfschedulings);
-  const {
-    selfscheduling,
-    items,
-    status,
-    itemsStatus,
-    slotsStatus,
-    error,
-    itemsError,
-    lastUpdatedId,
-  } = useSelector((state) => state.selfschedulingsDetails);
+  const { selfscheduling, items, status, itemsStatus, slotsStatus, error, itemsError, lastUpdatedId } = useSelector(
+    (state) => state.selfschedulingsDetails
+  );
 
   const [actionLoading, setActionLoading] = useState(false);
   const [highlightId, setHighlightId] = useState(null);
-  const { snapshotStatus, snapshots } = useSelector(
-    (state) => state.selfschedulingsDetails
-  );
+  const [history, setHistory] = useState([]);
+  const { snapshotStatus, snapshots } = useSelector((state) => state.selfschedulingsDetails);
+  const notifications = useSelector((state) => state.notifications.items);
+  const logs = useSelector((state) => state.notifications.logs);
   useEffect(() => {
     dispatch(fetchSelfSchedulingDetails(id));
-    dispatch(fetchTourItems(id));
-    dispatch(checkSimulation({ id }));
+    //dispatch(fetchTourItems(id));
+    //dispatch(checkSimulation({ id }));
+    dispatch(fetchEventsLogs(id));
   }, [dispatch, id]);
+  useEffect(() => {
+    const initialLogs = [...logs];
+    setHistory(initialLogs);
+  }, [logs]);
 
   useEffect(() => {
     if (lastUpdatedId) {
@@ -79,25 +74,14 @@ export default function SelfSchedulingDetailsPage() {
     } else {
       dispatch(startSimulation({ id }));
     }
-  };
-
-  const handleGenerateSlots = async () => {
-    if (!selfscheduling) return;
-    const result = await dispatch(generateSlots(selfscheduling.id));
-    if (generateSlots.fulfilled.match(result)) {
-      dispatch(fetchTourItems(id));
-    }
-  };
+  }; 
 
   const handleItemClick = (id) => {
     navigate(`/self-scheduling-items/${id}`);
   };
   return (
     <>
-      <PageMeta
-        title="SelfScheduling Details"
-        description="SelfScheduling information"
-      />
+      <PageMeta title="SelfScheduling Details" description="SelfScheduling information" />
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <button
@@ -109,17 +93,12 @@ export default function SelfSchedulingDetailsPage() {
           >
             <ChevronLeftIcon className="inline-block" />
           </button>
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-white/90">
-            SelfScheduling Details
-          </h2>
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white/90">SelfScheduling Details</h2>
         </div>
         <nav>
           <ol className="flex items-center gap-1.5">
             <li>
-              <Link
-                className="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400"
-                to="/"
-              >
+              <Link className="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400" to="/">
                 Home
                 <svg
                   className="stroke-current"
@@ -139,9 +118,7 @@ export default function SelfSchedulingDetailsPage() {
                 </svg>
               </Link>
             </li>
-            <li className="text-sm text-gray-800 dark:text-white/90">
-              Configuration Details
-            </li>
+            <li className="text-sm text-gray-800 dark:text-white/90">Configuration Details</li>
           </ol>
         </nav>
       </div>
@@ -169,19 +146,23 @@ export default function SelfSchedulingDetailsPage() {
           </div>
         )
       )}
-      <div className="mt-6">
-        {selfscheduling && snapshots && (
-          <Snapshots
-            activeSnapshotId={selfscheduling.activeSnapshotId}
-            snapshotStatus={snapshotStatus}
-            snapshots={snapshots}
-            selfSchedulingId={id}
-          />
-        )}
-      </div>
+
       <div className="grid grid-cols-12 gap-6 mt-6">
-        <div className="col-span-8">
-          <TourItemList
+        <div className="col-span-12 ">
+          <NotificationsWidget notifications={notifications} logs={logs} history={history} />
+        </div>
+        <div className="col-span-12">
+          <div className="">
+            {selfscheduling && snapshots && (
+              <SnapshotsContainer
+                activeSnapshotId={selfscheduling.activeSnapshotId}
+                snapshotStatus={snapshotStatus}
+                snapshots={snapshots}
+                selfSchedulingId={id}
+              />
+            )}
+          </div>
+          {/* <TourItemList
             onItemSelection={handleItemClick}
             items={items}
             itemsStatus={itemsStatus}
@@ -189,10 +170,7 @@ export default function SelfSchedulingDetailsPage() {
             highlightId={highlightId}
             generateSlots={handleGenerateSlots}
             slotsStatus={slotsStatus}
-          ></TourItemList>
-        </div>
-        <div className="col-span-4 ">
-          <NotificationsWidget />
+          ></TourItemList> */}
         </div>
       </div>
     </>

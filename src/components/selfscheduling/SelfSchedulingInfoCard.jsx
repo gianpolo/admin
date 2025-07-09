@@ -23,14 +23,24 @@ export default function SelfSchedulingInfoCard({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7 2xl:gap-x-32">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
           <CopyableText text={selfscheduling.selfSchedulingId}>
             <div>
               <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-                ID
+                SelfScheduling ID
               </p>
               <div className="text-xs font-medium text-gray-800 dark:text-white/90">
                 <p>{selfscheduling.selfSchedulingId}</p>
+              </div>
+            </div>{" "}
+          </CopyableText>
+          <CopyableText text={selfscheduling.configuration.configurationId}>
+            <div>
+              <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+                Configuration ID
+              </p>
+              <div className="text-xs font-medium text-gray-800 dark:text-white/90">
+                <p>{selfscheduling.configuration.configurationId}</p>
               </div>
             </div>{" "}
           </CopyableText>
@@ -43,28 +53,6 @@ export default function SelfSchedulingInfoCard({
               {selfscheduling.configuration.toursPeriod.end}
             </p>
           </div>
-
-          <div>
-            <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-              Experiences Count
-            </p>
-            <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-              <Badge variant="solid" size="sm">
-                {selfscheduling.configuration.subject.experienceIds?.length ||
-                  0}
-              </Badge>
-            </p>
-          </div>
-
-          <div>
-            <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
-              Description
-            </p>
-            <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-              {selfscheduling.description || "No description provided."}
-            </p>
-          </div>
-
           <div>
             <div className="flex items-center mb-2">
               <div className=" text-xs leading-normal text-gray-500 dark:text-gray-400 mr-5">
@@ -84,7 +72,7 @@ export default function SelfSchedulingInfoCard({
               {selfscheduling.configuration.schedulingWindow.start} to{" "}
               {selfscheduling.configuration.schedulingWindow.end}
             </p>
-            <p className="text-left mt-2">
+            {/* <p className="text-left mt-2">
               {selfscheduling.isRunning ? (
                 <Button
                   variant="outlineRed"
@@ -104,9 +92,19 @@ export default function SelfSchedulingInfoCard({
                   Open
                 </Button>
               )}
+            </p> */}
+          </div>
+          <div>
+            <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+              Experiences Count
+            </p>
+            <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+              <Badge variant="solid" size="sm">
+                {selfscheduling.configuration.subject.experienceIds?.length ||
+                  0}
+              </Badge>
             </p>
           </div>
-
           <div>
             <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
               Guides Count
@@ -115,6 +113,14 @@ export default function SelfSchedulingInfoCard({
               <Badge variant="solid" size="sm">
                 {selfscheduling.configuration.audience.guideIds?.length || 0}
               </Badge>
+            </p>
+          </div>
+          <div>
+            <p className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">
+              Description
+            </p>
+            <p className="text-sm font-medium text-gray-800 dark:text-white/90">
+              {selfscheduling.description || "No description provided."}
             </p>
           </div>
         </div>

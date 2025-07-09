@@ -57,13 +57,10 @@ export const generateSlots = createAsyncThunk(
   "selfschedulingDetails/generateSlots",
   async (selfSchedulingId, { rejectWithValue }) => {
     try {
-      const res = await fetch(
-        `${backend_url}/items/slots/${selfSchedulingId}`,
-        {
-          method: "POST",
-          headers: { Authorization: `Bearer ${getToken()}` },
-        }
-      );
+      const res = await fetch(`${backend_url}/snapshots/slots/${selfSchedulingId}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
       if (!res.ok) {
         const text = await res.text();
         throw new Error(text || "Failed to generate slots");

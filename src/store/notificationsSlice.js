@@ -39,6 +39,8 @@ const registerEventHandlers = (connection, dispatch) => {
     "ConfigurationOpenedIntegrationEvent",
     "ConfigurationClosedIntegrationEvent",
     "ConfigurationCreatedIntegrationEvent",
+    "SnapshotCompletedIntegrationEvent",
+    "SnapshotOperationCompletedIntegrationEvent",
   ];
 
   const slotEvents = [

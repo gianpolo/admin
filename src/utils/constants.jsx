@@ -7,8 +7,7 @@ export const eventsData = {
         <div className="flex flex-col">
           <div>Slots Generation Requested</div>
           <div className="text-xs dark:text-gray-400">
-            Snapshot Date:{" "}
-            {new Date(e.content.snapshotDate).toLocaleDateString()}
+            Snapshot Date: {new Date(e.content.snapshotDate).toLocaleDateString()}
           </div>
         </div>
       ),
@@ -20,12 +19,9 @@ export const eventsData = {
         <div className="flex flex-col">
           <div>Slots Generation Completed</div>
           <div className="text-xs dark:text-gray-400">
-            Snapshot Date:{" "}
-            {new Date(e.content.snapshotDate).toLocaleDateString()}
+            Snapshot Date: {new Date(e.content.snapshotDate).toLocaleDateString()}
           </div>
-          <div className="text-xs dark:text-gray-400">
-            Total Slots: {e.content.totalInitialSlots}
-          </div>
+          <div className="text-xs dark:text-gray-400">Total Slots: {e.content.totalInitialSlots}</div>
           <div className="text-xs dark:text-gray-400">
             Schedulable Tour Items: {e.content.totalSchedulableTourItems}
           </div>
@@ -55,9 +51,7 @@ export const eventsData = {
       render: (e) => (
         <div className="flex flex-col">
           <div>{e.content.initialSlots} Slots Generated</div>
-          <div className="text-xs dark:text-gray-400">
-            ItemId: {e.content.tourItemId}
-          </div>
+          <div className="text-xs dark:text-gray-400">ItemId: {e.content.tourItemId}</div>
         </div>
       ),
     },
@@ -67,9 +61,7 @@ export const eventsData = {
       render: (e) => (
         <div className="flex flex-col">
           <div>Slot Reserved</div>
-          <div className="text-xs dark:text-gray-400">
-            ItemId: {e.content.tourItemId}
-          </div>
+          <div className="text-xs dark:text-gray-400">ItemId: {e.content.tourItemId}</div>
         </div>
       ),
     },
@@ -79,9 +71,7 @@ export const eventsData = {
       render: (e) => (
         <div className="flex flex-col">
           <div>Slot Released</div>
-          <div className="text-xs dark:text-gray-400">
-            ItemId: {e.content.tourItemId}
-          </div>
+          <div className="text-xs dark:text-gray-400">ItemId: {e.content.tourItemId}</div>
         </div>
       ),
     },
@@ -91,9 +81,7 @@ export const eventsData = {
       render: (e) => (
         <div className="flex flex-col">
           <div>Slot Confirmed</div>
-          <div className="text-xs dark:text-gray-400">
-            ItemId: {e.content.tourItemId}
-          </div>
+          <div className="text-xs dark:text-gray-400">ItemId: {e.content.tourItemId}</div>
         </div>
       ),
     },
@@ -103,9 +91,7 @@ export const eventsData = {
       render: (e) => (
         <div className="flex flex-col">
           <div>Slot Reservation Failed</div>
-          <div className="text-xs dark:text-gray-400">
-            ItemId: {e.content.tourItemId}
-          </div>
+          <div className="text-xs dark:text-gray-400">ItemId: {e.content.tourItemId}</div>
         </div>
       ),
     },
@@ -117,12 +103,8 @@ export const eventsData = {
       render: (e) => (
         <div className="flex flex-col">
           <div>Item Added to Basket</div>
-          <div className="text-xs dark:text-gray-400">
-            GuideId: {e.content.guideId}
-          </div>
-          <div className="text-xs dark:text-gray-400">
-            ItemId: {e.content.itemId}
-          </div>
+          <div className="text-xs dark:text-gray-400">GuideId: {e.content.guideId}</div>
+          <div className="text-xs dark:text-gray-400">ItemId: {e.content.itemId}</div>
         </div>
       ),
     },
@@ -132,12 +114,8 @@ export const eventsData = {
       render: (e) => (
         <div className="flex flex-col">
           <div>Add to Basket Failure</div>
-          <div className="text-xs dark:text-gray-400">
-            GuideId: {e.content.guideId}
-          </div>
-          <div className="text-xs dark:text-gray-400">
-            ItemId: {e.content.itemId}
-          </div>
+          <div className="text-xs dark:text-gray-400">GuideId: {e.content.guideId}</div>
+          <div className="text-xs dark:text-gray-400">ItemId: {e.content.itemId}</div>
         </div>
       ),
     },
@@ -148,12 +126,8 @@ export const eventsData = {
       render: (e) => (
         <div className="flex flex-col">
           <div>Item Removed from Basket</div>
-          <div className="text-xs dark:text-gray-400">
-            GuideId: {e.content.guideId}
-          </div>
-          <div className="text-xs dark:text-gray-400">
-            ItemId: {e.content.itemId}
-          </div>
+          <div className="text-xs dark:text-gray-400">GuideId: {e.content.guideId}</div>
+          <div className="text-xs dark:text-gray-400">ItemId: {e.content.itemId}</div>
         </div>
       ),
     },
@@ -164,12 +138,8 @@ export const eventsData = {
       render: (e) => (
         <div className="flex flex-col">
           <div>Item Expired in Basket</div>
-          <div className="text-xs dark:text-gray-400">
-            GuideId: {e.content.guideId}
-          </div>
-          <div className="text-xs dark:text-gray-400">
-            ItemId: {e.content.itemId}
-          </div>
+          <div className="text-xs dark:text-gray-400">GuideId: {e.content.guideId}</div>
+          <div className="text-xs dark:text-gray-400">ItemId: {e.content.itemId}</div>
         </div>
       ),
     },
@@ -179,9 +149,29 @@ export const eventsData = {
       render: (e) => (
         <div className="flex flex-col">
           <div>Basket Confirmed</div>
-          <div className="text-xs dark:text-gray-400">
-            GuideId: {e.content.guideId}
-          </div>
+          <div className="text-xs dark:text-gray-400">GuideId: {e.content.guideId}</div>
+        </div>
+      ),
+    },
+  },
+  Snapshot: {
+    SnapshotCompletedIntegrationEvent: {
+      bg: "bg-indigo-700",
+      icon: "B✔",
+      render: (e) => (
+        <div className="flex flex-col">
+          <div>Snapshot Completed</div>
+          <div className="text-xs dark:text-gray-400">SnapshotId: {e.content.snapshotId}</div>
+        </div>
+      ),
+    },
+    SnapshotOperationCompletedIntegrationEvent: {
+      bg: "bg-indigo-700",
+      icon: "B✔",
+      render: (e) => (
+        <div className="flex flex-col">
+          <div>Snapshot Op Completed</div>
+          <div className="text-xs dark:text-gray-400">SnapshotId: {e.content.snapshotId}</div>
         </div>
       ),
     },

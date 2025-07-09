@@ -1,13 +1,6 @@
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableCellHeader } from "../ui/table/index.jsx";
-
-export default function ForecastTable({ snapshot }) {
-  if (!snapshot) return null;
-  const { forecasts = [], groupSizes = [] } = snapshot;
-  const sizeMap = {};
-  groupSizes.forEach((g) => {
-    sizeMap[g.optionId] = g.groupSize;
-  });
-
+import DateTime from "../common/DateTime";
+export default function SnapshotItemsTable({ snapshotItems }) {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
@@ -19,20 +12,20 @@ export default function ForecastTable({ snapshot }) {
               <TableCellHeader>Tour Date</TableCellHeader>
               <TableCellHeader>Group Size</TableCellHeader>
               <TableCellHeader>Fulfillment</TableCellHeader>
-              <TableCellHeader>Demand</TableCellHeader>
+              <TableCellHeader>Slots</TableCellHeader>
             </TableRow>
           </TableHeader>
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-sm">
-            {forecasts.map((f) => (
-              <TableRow key={`${f.optionId}-${f.tourDate}`}>
-                <TableCell className="px-5 py-2">{f.experienceId}</TableCell>
-                <TableCell className="px-5 py-2">{f.optionId}</TableCell>
-                <TableCell className="px-5 py-2">{f.tourDate}</TableCell>
+            {snapshotItems.map((f) => (
+              <TableRow key={`${f.tour.optionId}-${f.tourDate}`}>
+                <TableCell className="px-5 py-2">{f.tour.experienceId}</TableCell>
+                <TableCell className="px-5 py-2">{f.tour.optionId}</TableCell>
                 <TableCell className="px-5 py-2">
-                  {sizeMap[f.optionId] ?? "-"}
+                  <DateTime date={f.tourDate} time={f.tourStartTime} />
                 </TableCell>
-                <TableCell className="px-5 py-2">{f.fulfillment}</TableCell>
-                <TableCell className="px-5 py-2">{f.demand}</TableCell>
+                <TableCell className="px-5 py-2">{f.groupSize}</TableCell>
+                <TableCell className="px-5 py-2">{f.forecast}</TableCell>
+                <TableCell className="px-5 py-2">{f.slots ?? "-"}</TableCell>
               </TableRow>
             ))}
           </TableBody>

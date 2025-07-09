@@ -9,57 +9,54 @@ import {
 } from "../../store/createSelfSchedulingSlice.js";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb.jsx";
 import PageMeta from "../../components/common/PageMeta.jsx";
-import Form from "../../components/form/Form.jsx";
-import Label from "../../components/form/Label.jsx";
-import Select from "../../components/form/Select.jsx";
-import InputField from "../../components/form/input/InputField.jsx";
-import MyDateRangePicker from "../../components/form/DateRangePicker.jsx";
 import Button from "../../components/ui/button/Button.jsx";
 import Spinner from "../../components/ui/spinner/Spinner.jsx";
-import SelectableListModal from "../../components/common/SelectableListModal.jsx";
 import ComponentCard from "../../components/common/ComponentCard.jsx";
-import {
-  TableCellHeader,
-  TableCell,
-  TableRow,
-} from "../../components/ui/table/index.jsx";
+import AddSelfSchedulingForm from "../../components/selfscheduling/AddSelfSchedulingForm.jsx";
+const testConf = {
+  cityId: 1,
+  description: "test",
+  schedulingWindow: {
+    startDate: new Date("2025-08-01"),
+    endDate: new Date("2025-08-06"),
+  },
+  toursPeriod: {
+    startDate: new Date("2025-09-01"),
+    endDate: new Date("2025-09-16"),
+  },
+  selectedExperienceIds: [11],
+  selectedGuideIds: [3436, 1654, 5738],
+};
 
 export default function AddSelfSchedulingPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { cities, experiences, guides, createStatus, createError } =
-    useSelector((state) => state.selfschedulingForm);
+  const [loadingTemplate, setLoadingTemplate] = useState(false);
+  const { cities, experiences, guides, createStatus, createError } = useSelector((state) => state.selfschedulingForm);
 
   const [cityId, setCityId] = useState("");
   const [description, setDescription] = useState("");
-  const [schedulingRange, setSchedulingRange] = useState({
+  const [schedulingWindow, setSchedulingWindow] = useState({
     startDate: null,
     endDate: null,
   });
-  const [toursRange, setToursRange] = useState({
+  const [toursPeriod, setToursPeriod] = useState({
     startDate: null,
     endDate: null,
   });
   const [selectedExperienceIds, setSelectedExperienceIds] = useState([]);
   const [selectedGuideIds, setSelectedGuideIds] = useState([]);
   const [error, setError] = useState("");
-  const minDate = new Date();
-  minDate.setDate(minDate.getDate() + 1);
-  minDate.setHours(0, 0, 0, 0);
 
   const fetchGuidesForExperiences = (expIds) => {
-    if (!cityId || !toursRange.startDate || !toursRange.endDate) return;
+    if (!cityId || !toursPeriod.startDate || !toursPeriod.endDate) return;
     dispatch(
       fetchGuides({
         cityId: parseInt(cityId),
         experienceIds: expIds.map((id) => parseInt(id)),
         allocationPeriod: {
-          start: toursRange.startDate
-            ? toursRange.startDate.toISOString().split("T")[0]
-            : undefined,
-          end: toursRange.endDate
-            ? toursRange.endDate.toISOString().split("T")[0]
-            : undefined,
+          start: toursPeriod.startDate ? toursPeriod.startDate.toISOString().split("T")[0] : undefined,
+          end: toursPeriod.endDate ? toursPeriod.endDate.toISOString().split("T")[0] : undefined,
         },
       })
     );
@@ -79,11 +76,36 @@ export default function AddSelfSchedulingPage() {
   }, [dispatch]);
 
   useEffect(() => {
-    if (!cityId || !toursRange.startDate || !toursRange.endDate) return;
+    if (!cityId || !toursPeriod.startDate || !toursPeriod.endDate) return;
+
     const city = cities.find((c) => c.id === parseInt(cityId));
+
     const cityNameParam = city?.name || "";
+
     dispatch(fetchExperiences({ cityName: cityNameParam }));
-  }, [dispatch, cityId, cities, toursRange.startDate, toursRange.endDate]);
+  }, [dispatch, cityId, cities, toursPeriod.startDate, toursPeriod.endDate]);
+
+  useEffect(() => {
+    if (cityId && toursPeriod.startDate && toursPeriod.endDate && selectedExperienceIds.length > 0) {
+      dispatch(
+        fetchGuides({
+          cityId: parseInt(cityId, 10),
+          experienceIds: selectedExperienceIds.map((id) => parseInt(id, 10)),
+          allocationPeriod: {
+            start: toursPeriod.startDate.toISOString().split("T")[0],
+            end: toursPeriod.endDate.toISOString().split("T")[0],
+          },
+        })
+      );
+    }
+  }, [dispatch, cityId, toursPeriod.startDate, toursPeriod.endDate, selectedExperienceIds]);
+
+  useEffect(() => {
+    if (loadingTemplate && guides && guides.length > 0) {
+      setSelectedGuideIds(testConf.selectedGuideIds);
+      setLoadingTemplate(false);
+    }
+  }, [loadingTemplate, guides]);
 
   const validate = () => {
     const today = new Date();
@@ -92,10 +114,10 @@ export default function AddSelfSchedulingPage() {
     if (
       !cityId ||
       !description ||
-      !schedulingRange.startDate ||
-      !schedulingRange.endDate ||
-      !toursRange.startDate ||
-      !toursRange.endDate ||
+      !schedulingWindow.startDate ||
+      !schedulingWindow.endDate ||
+      !toursPeriod.startDate ||
+      !toursPeriod.endDate ||
       selectedExperienceIds.length === 0 ||
       selectedGuideIds.length === 0
     ) {
@@ -104,9 +126,9 @@ export default function AddSelfSchedulingPage() {
       return false;
     }
 
-    const schedStartDate = new Date(schedulingRange.startDate);
-    const schedEndDate = new Date(schedulingRange.endDate);
-    const tourStartDate = new Date(toursRange.startDate);
+    const schedStartDate = new Date(schedulingWindow.startDate);
+    const schedEndDate = new Date(schedulingWindow.endDate);
+    const tourStartDate = new Date(toursPeriod.startDate);
 
     if (schedStartDate <= today || schedEndDate <= today) {
       setError("Scheduling window must be in the future");
@@ -127,19 +149,19 @@ export default function AddSelfSchedulingPage() {
     const payload = {
       cityId: parseInt(cityId),
       description,
-      schedulingWindowStart: schedulingRange.startDate
-        ?.toISOString()
-        .split("T")[0],
-      schedulingWindowEnd: schedulingRange.endDate?.toISOString().split("T")[0],
-      toursPeriodStart: toursRange.startDate?.toISOString().split("T")[0],
-      toursPeriodEnd: toursRange.endDate?.toISOString().split("T")[0],
+      schedulingWindowStart: schedulingWindow.startDate?.toISOString().split("T")[0],
+      schedulingWindowEnd: schedulingWindow.endDate?.toISOString().split("T")[0],
+      toursPeriodStart: toursPeriod.startDate?.toISOString().split("T")[0],
+      toursPeriodEnd: toursPeriod.endDate?.toISOString().split("T")[0],
       experienceIds: selectedExperienceIds.map((id) => parseInt(id)),
       guideIds: selectedGuideIds.map((id) => parseInt(id)),
     };
     const res = await dispatch(createSelfSchedulingThunk(payload));
     if (createSelfSchedulingThunk.fulfilled.match(res)) {
-      const newId = res.payload && res.payload.id ? res.payload.id : undefined;
-      navigate(`/self-schedulings/${newId}`);
+      const newId = res.payload && res.payload.value ? res.payload.value : undefined;
+      if (newId !== undefined) {
+        navigate(`/self-schedulings/${newId}`);
+      }
       return;
     } else if (res.payload) {
       setError(res.payload);
@@ -147,13 +169,20 @@ export default function AddSelfSchedulingPage() {
       setError("Failed to create configuration");
     }
   };
+  const loadTemplate = () => {
+    const c = cities.find((c) => c.id === testConf.cityId);
+    if (!c) return;
+    setCityId(String(c.id));
+    setDescription(testConf.description);
+    setSchedulingWindow(testConf.schedulingWindow);
+    setToursPeriod(testConf.toursPeriod);
+    setSelectedExperienceIds(testConf.selectedExperienceIds);
+    setLoadingTemplate(true);
+  };
 
   return (
     <>
-      <PageMeta
-        title="Add Self Scheduling Configuration"
-        description="Create new configuration"
-      />
+      <PageMeta title="Add Self Scheduling Configuration" description="Create new configuration" />
       <PageBreadcrumb pageTitle="Add new Self Scheduling" />
       {error && <p className="text-red-500 mb-3">{error}</p>}
       {createError && <p className="text-red-500 mb-3">{createError}</p>}
@@ -162,153 +191,36 @@ export default function AddSelfSchedulingPage() {
           <Spinner description="Loading Cities" />
         </div>
       ) : (
-        <ComponentCard title={"Configuration"}>
-          <Form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-2 gap-6">
-              <div className="grid-col">
-                <Label>City</Label>
-                <Select
-                  options={cities.map((c) => ({ value: c.id, label: c.name }))}
-                  placeholder="Select city"
-                  onChange={(val) => {
-                    setCityId(val);
-                  }}
-                  disabled={createStatus === "loading"}
-                />
-              </div>
-              <div className="grid-col">
-                <Label htmlFor="desc">Description</Label>
-                <InputField
-                  disabled={createStatus === "loading"}
-                  id="desc"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
-              <div className="grid-col">
-                <MyDateRangePicker
-                  disabled={createStatus === "loading"}
-                  id="schedulingRange"
-                  label="Scheduling Window"
-                  value={schedulingRange}
-                  minDate={minDate}
-                  maxDate={
-                    toursRange.startDate
-                      ? (() => {
-                          const d = new Date(toursRange.startDate);
-                          d.setDate(d.getDate() - 1);
-                          return d;
-                        })()
-                      : undefined
-                  }
-                  onChange={(val) => {
-                    setSchedulingRange(val);
-                  }}
-                />
-              </div>
-              <div className="grid-col">
-                <MyDateRangePicker
-                  disabled={createStatus === "loading"}
-                  id="toursRange"
-                  label="Tours Period"
-                  value={toursRange}
-                  minDate={
-                    schedulingRange.endDate
-                      ? (() => {
-                          const d = new Date(schedulingRange.endDate);
-                          d.setDate(d.getDate() + 1);
-                          return d;
-                        })()
-                      : minDate
-                  }
-                  onChange={(val) => {
-                    setToursRange(val);
-                  }}
-                />
-              </div>
-              <div className="grid-col">
-                <SelectableListModal
-                  disabled={createStatus === "loading"}
-                  title="Experiences"
-                  items={experiences}
-                  selected={selectedExperienceIds}
-                  onChange={handleExperienceChange}
-                  renderLabel={(item) => (
-                    <div className="leading-snug">
-                      <div className="dark:text-white font-medium truncate">
-                        {item.name}
-                      </div>
-                      <div className="text-theme-xs text-gray-400 dark:text-gray-400">
-                        {item.id}
-                      </div>
-                    </div>
-                  )}
-                  renderRow={(item) => (
-                    <TableCell>
-                      <div className="leading-snug">
-                        <div className="dark:text-white font-medium truncate">
-                          {item.name}
-                        </div>
-                        <div className="text-theme-xs text-gray-400 dark:text-gray-400">
-                          {item.id}
-                        </div>
-                      </div>
-                    </TableCell>
-                  )}
-                  renderHeader={() => (
-                    <TableRow>
-                      <TableCellHeader>Name / ID</TableCellHeader>
-                    </TableRow>
-                  )}
-                />
-              </div>
-              <div className="grid-col">
-                <SelectableListModal
-                  disabled={createStatus === "loading"}
-                  title="Guides"
-                  items={guides}
-                  selected={selectedGuideIds}
-                  onChange={handleGuideChange}
-                  renderLabel={(item) => (
-                    <div className="leading-snug">
-                      <div className="dark:text-white font-medium truncate">
-                        {item.name}
-                      </div>
-                      <div className="text-theme-xs text-gray-400 dark:text-gray-400">
-                        {item.id}
-                      </div>
-                    </div>
-                  )}
-                  renderRow={(item) => (
-                    <TableCell>
-                      <div className="leading-snug">
-                        <div className="dark:text-white font-medium truncate">
-                          {item.name}
-                        </div>
-                        <div className="text-theme-xs text-gray-400 dark:text-gray-400">
-                          {item.id}
-                        </div>
-                      </div>
-                    </TableCell>
-                  )}
-                  renderHeader={() => (
-                    <TableRow>
-                      <TableCellHeader>Name / ID</TableCellHeader>
-                    </TableRow>
-                  )}
-                />
+        <ComponentCard
+          title={
+            <div className="flex justify-between items-center">
+              <div className="flex-auto">Configuration</div>
+              <div>
+                <Button size="xs" onClick={loadTemplate}>
+                  Load Template
+                </Button>
               </div>
             </div>
-            <div>
-              <Button
-                disabled={createStatus === "loading"}
-                type="submit"
-                className="bg-brand-500 text-white hover:bg-brand-600"
-              >
-                Create
-              </Button>
-            </div>
-          </Form>
+          }
+        >
+          <AddSelfSchedulingForm
+            cityId={cityId}
+            cities={cities}
+            description={description}
+            setDescription={setDescription}
+            schedulingWindow={schedulingWindow}
+            setSchedulingWindow={setSchedulingWindow}
+            toursPeriod={toursPeriod}
+            setToursPeriod={setToursPeriod}
+            handleSubmit={handleSubmit}
+            selectedExperienceIds={selectedExperienceIds}
+            selectedGuideIds={selectedGuideIds}
+            handleExperienceChange={handleExperienceChange}
+            handleGuideChange={handleGuideChange}
+            loading={createStatus === "loading"}
+            experiences={experiences}
+            guides={guides}
+          />
         </ComponentCard>
       )}
     </>
