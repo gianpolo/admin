@@ -1,32 +1,26 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const getToken = () => localStorage.getItem("token") || "";
-const backend_url =
-  import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
 
-export const fetchCities = createAsyncThunk(
-  "selfschedulingForm/fetchCities",
-  async (_, { rejectWithValue }) => {
-    try {
-      const res = await fetch(`${backend_url}/cities`, {
-        headers: { Authorization: `Bearer ${getToken()}` },
-      });
-      if (!res.ok) throw new Error("Failed to fetch cities");
-      return await res.json();
-    } catch (err) {
-      return rejectWithValue(err.message);
-    }
+export const fetchCities = createAsyncThunk("selfschedulingForm/fetchCities", async (_, { rejectWithValue }) => {
+  try {
+    const res = await fetch(`${backend_url}/cities`, {
+      headers: { Authorization: `Bearer ${getToken()}` },
+    });
+    if (!res.ok) throw new Error("Failed to fetch cities");
+    return await res.json();
+  } catch (err) {
+    return rejectWithValue(err.message);
   }
-);
+});
 
 export const fetchExperiences = createAsyncThunk(
   "selfschedulingForm/fetchExperiences",
   async ({ cityName }, { rejectWithValue }) => {
     try {
       const res = await fetch(
-        `${backend_url}/tours?cityName=${encodeURIComponent(
-          cityName
-        )}&pageSize=20&pageNumber=1`,
+        `${backend_url}/tours?cityName=${encodeURIComponent(cityName)}&pageSize=20&pageNumber=1`,
         { headers: { Authorization: `Bearer ${getToken()}` } }
       );
       if (!res.ok) throw new Error("Failed to fetch experiences");
@@ -40,16 +34,7 @@ export const fetchExperiences = createAsyncThunk(
 
 export const fetchGuides = createAsyncThunk(
   "selfschedulingForm/fetchGuides",
-  async (
-    {
-      cityId,
-      experienceIds = [],
-      allocationPeriod,
-      pageSize = 20,
-      pageNumber = 1,
-    },
-    { rejectWithValue }
-  ) => {
+  async ({ cityId, experienceIds = [], allocationPeriod, pageSize = 20, pageNumber = 1 }, { rejectWithValue }) => {
     try {
       const params = new URLSearchParams();
       if (pageSize) params.append("pageSize", pageSize);
@@ -99,7 +84,7 @@ export const createSelfScheduling = createAsyncThunk(
   }
 );
 
-const createSelfSchedulingSlice = createSlice({
+const selfschedulingFormSlice = createSlice({
   name: "selfschedulingForm",
   initialState: {
     cities: null,
@@ -136,4 +121,4 @@ const createSelfSchedulingSlice = createSlice({
   },
 });
 
-export default createSelfSchedulingSlice.reducer;
+export default selfschedulingFormSlice.reducer;

@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-export default function DateTime({ date, time, separator = "at" }) {
+export default function DateTime({ date, time, separator = "at", size = "md" }) {
+  const sizeStyles = {
+    sm: "text-theme-xs", // Smaller padding and font size
+    md: "text-sm", // Default padding and font size
+  };
+  const sizeClass = sizeStyles[size];
   const [formatted, setFormatted] = useState("-");
   useEffect(() => {
     if (!date && !time) {
@@ -38,5 +43,5 @@ export default function DateTime({ date, time, separator = "at" }) {
     setFormatted(`${d} ${t}`.trim());
   }, [date, time, separator]);
 
-  return <span>{formatted}</span>;
+  return <span className={`${sizeClass}`}>{formatted}</span>;
 }

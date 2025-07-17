@@ -33,9 +33,7 @@ const TableCellHeader = ({ children, className }) => {
   return (
     <TableCell isHeader className={cn}>
       <div className="flex items-center">
-        <p className="text-theme-xs font-medium text-gray-700 dark:text-gray-400">
-          {children}
-        </p>
+        <div className="text-theme-xs font-medium text-gray-700 dark:text-gray-400">{children}</div>
       </div>
     </TableCell>
   );

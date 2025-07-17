@@ -6,18 +6,13 @@ import NotificationsWidget from "../../components/notifications/NotificationsWid
 import { ChevronLeftIcon } from "../../icons/index.js";
 import { fetchEventsLogs } from "../../store/notificationsSlice.js";
 import { startSimulation, stopSimulation, checkSimulation } from "../../store/selfschedulingsSlice.js";
-import {
-  fetchSelfSchedulingDetails,
-  fetchTourItems,
-  performConfigurationAction,
-  clearLastUpdatedId,
-  generateSlots,
-} from "../../store/selfschedulingDetailsSlice.js";
+import { fetchSelfschedulingDetails, performSelfschedulingAction } from "../../store/selfschedulingDetailsSlice.js";
+
 import SelfSchedulingInfoCard from "../../components/selfscheduling/SelfSchedulingInfoCard.jsx";
-import TourItemList from "../../components/selfscheduling/TourItemList.jsx";
 import Spinner from "../../components/ui/spinner/Spinner.jsx";
 import SimulationWidget from "../../components/selfscheduling/SimulationWidget.jsx";
 import SnapshotsContainer from "../../components/snapshot/SnapshotsContainer.jsx";
+import Timeline from "../../components/timeline/Timeline.jsx";
 export default function SelfSchedulingDetailsPage() {
   const { id } = useParams();
   //const goBack = useGoBack();
@@ -25,44 +20,20 @@ export default function SelfSchedulingDetailsPage() {
   const navigate = useNavigate();
 
   const { isSimulationRunning } = useSelector((state) => state.selfschedulings);
-  const { selfscheduling, items, status, itemsStatus, slotsStatus, error, itemsError, lastUpdatedId } = useSelector(
-    (state) => state.selfschedulingsDetails
-  );
-
+  const selfscheduling = useSelector((state) => state.selfschedulingDetails);
+  const { status, error } = selfscheduling;
   const [actionLoading, setActionLoading] = useState(false);
-  const [highlightId, setHighlightId] = useState(null);
-  const [history, setHistory] = useState([]);
-  const { snapshotStatus, snapshots } = useSelector((state) => state.selfschedulingsDetails);
-  const notifications = useSelector((state) => state.notifications.items);
-  const logs = useSelector((state) => state.notifications.logs);
-  useEffect(() => {
-    dispatch(fetchSelfSchedulingDetails(id));
-    //dispatch(fetchTourItems(id));
-    //dispatch(checkSimulation({ id }));
-    dispatch(fetchEventsLogs(id));
-  }, [dispatch, id]);
-  useEffect(() => {
-    const initialLogs = [...logs];
-    setHistory(initialLogs);
-  }, [logs]);
 
+  const snapshots = useSelector((state) => state.snapshots); 
   useEffect(() => {
-    if (lastUpdatedId) {
-      setHighlightId(lastUpdatedId);
-      const t = setTimeout(() => {
-        setHighlightId(null);
-        dispatch(clearLastUpdatedId());
-      }, 2000);
-      return () => clearTimeout(t);
-    }
-  }, [lastUpdatedId, dispatch]);
+    dispatch(fetchSelfschedulingDetails(id));
+  }, [dispatch, id]);
 
   const handleAction = async (action) => {
     setActionLoading(true);
     const result = await dispatch(performConfigurationAction({ id, action }));
-    if (performConfigurationAction.fulfilled.match(result)) {
-      dispatch(fetchSelfSchedulingDetails(id));
-      dispatch(fetchTourItems(id));
+    if (performSelfschedulingAction.fulfilled.match(result)) {
+      dispatch(fetchSelfscheduling(id));
     }
     setActionLoading(false);
   };
@@ -74,7 +45,7 @@ export default function SelfSchedulingDetailsPage() {
     } else {
       dispatch(startSimulation({ id }));
     }
-  }; 
+  };
 
   const handleItemClick = (id) => {
     navigate(`/self-scheduling-items/${id}`);
@@ -127,7 +98,7 @@ export default function SelfSchedulingDetailsPage() {
       {status === "loading" ? (
         <Spinner />
       ) : (
-        selfscheduling && (
+        status === "succeeded" && (
           <div className="grid grid-cols-12 gap-6 mt-6">
             <div className="col-span-8">
               <SelfSchedulingInfoCard
@@ -148,29 +119,26 @@ export default function SelfSchedulingDetailsPage() {
       )}
 
       <div className="grid grid-cols-12 gap-6 mt-6">
-        <div className="col-span-12 ">
-          <NotificationsWidget notifications={notifications} logs={logs} history={history} />
+        {/* <div className="mt-6 col-span-12">
+          <Timeline />
+        </div> */}
+        {/* <div className="col-span-5 "> 
+          <Timeline />
         </div>
+        <div className="col-span-5 ">
+           <NotificationsWidget notifications={notifications} logs={logs} history={history} />  
+        </div> */}
         <div className="col-span-12">
           <div className="">
-            {selfscheduling && snapshots && (
+            {status === "succeeded" && snapshots && (
               <SnapshotsContainer
                 activeSnapshotId={selfscheduling.activeSnapshotId}
-                snapshotStatus={snapshotStatus}
+                snapshotStatus={status === "succeeded"}
                 snapshots={snapshots}
-                selfSchedulingId={id}
+                selfSchedulingId={selfscheduling.selfSchedulingId}
               />
             )}
           </div>
-          {/* <TourItemList
-            onItemSelection={handleItemClick}
-            items={items}
-            itemsStatus={itemsStatus}
-            itemsError={itemsError}
-            highlightId={highlightId}
-            generateSlots={handleGenerateSlots}
-            slotsStatus={slotsStatus}
-          ></TourItemList> */}
         </div>
       </div>
     </>

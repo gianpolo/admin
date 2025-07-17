@@ -3,8 +3,7 @@ import {
   HubConnectionBuilder,
   LogLevel,
   HttpTransportType,
-} from "@microsoft/signalr";
-import { updateAvailableSlots } from "./selfschedulingDetailsSlice.js";
+} from "@microsoft/signalr"; 
 
 let connection = null;
 const getToken = () => localStorage.getItem("token") || "";
@@ -59,8 +58,7 @@ const registerEventHandlers = (connection, dispatch) => {
 
   slotEvents.forEach((event) =>
     connection.on(event, (payload) => {
-      console.log(event, payload);
-      dispatch(updateAvailableSlots(payload));
+      console.log(event, payload); 
       dispatch(addNotification(payload));
     })
   );

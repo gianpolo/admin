@@ -1,31 +1,20 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchSnapshotDetails } from "../../store/selfschedulingDetailsSlice.js";
+import { fetchSnapshotDetails } from "../../store/snapshotsSlice.js";
 import SnapshotOverview from "./SnapshotOverview.jsx";
 import Spinner from "../ui/spinner/Spinner.jsx";
-
-import ComponentCard from "../common/ComponentCard.jsx";
-import SnapshotItemsTable from "./SnapshotItemsTable.jsx";
+import ComponentCard from "../common/ComponentCard";
+import TourSnapshots from "./TourSnapshots";
 import SnapshotDetailsTitle from "./SnapshotDetailsTitle";
 export default function SnapshotDetails({ snapshotId, isActive, loading, onActivateSnapshot, onGenerateSlots }) {
   const dispatch = useDispatch();
-  const [snapshotDate, setSnapshotDate] = useState();
-  const { snapshotsDetails } = useSelector((state) => state.selfschedulingsDetails);
+  const { details, status } = useSelector((state) => state.snapshots);
+  const { snapshotSummary, tours } = details;
+  const { snapshotDate } = snapshotSummary;
   useEffect(() => {
     dispatch(fetchSnapshotDetails(snapshotId));
   }, [snapshotId]);
-  useEffect(() => {
-    if (snapshotsDetails && snapshotsDetails[snapshotId] && snapshotsDetails[snapshotId].loaded) {
-      setSnapshotDate(snapshotsDetails[snapshotId].data.snapshotSummary.snapshotDate);
-    }
-  }, [snapshotsDetails, snapshotId]);
-
-  if (
-    loading ||
-    !snapshotsDetails[snapshotId] ||
-    snapshotsDetails[snapshotId].loading ||
-    !snapshotsDetails[snapshotId].data
-  ) {
+  if (loading && status === "loading") {
     return <Spinner fullscreen />;
   } else {
     return (
@@ -35,17 +24,15 @@ export default function SnapshotDetails({ snapshotId, isActive, loading, onActiv
             <SnapshotDetailsTitle
               snapshotDate={snapshotDate}
               isActive={isActive}
+              createdAt={snapshotSummary.createdAt}
               canGenerateSlots={true}
               onActivateSnapshot={onActivateSnapshot}
               onGenerateSlots={onGenerateSlots}
             />
           }
         >
-          <SnapshotOverview
-            isActive={isActive} 
-            snapshotSummary={snapshotsDetails[snapshotId].data.snapshotSummary}
-          ></SnapshotOverview>
-          <SnapshotItemsTable snapshotItems={snapshotsDetails[snapshotId].data.items} />
+          <SnapshotOverview isActive={isActive} snapshotSummary={snapshotSummary}></SnapshotOverview>
+          <TourSnapshots tours={tours} />
         </ComponentCard>
       </>
     );

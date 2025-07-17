@@ -6,6 +6,7 @@ import SnapshotDetails from "./SnapshotDetails.jsx";
 import Spinner from "../ui/spinner/Spinner.jsx";
 import InputField from "../form/input/InputField.jsx";
 import Label from "../form/Label.jsx";
+import DateTime from "../common/DateTime.jsx";
 export default function SnapshotList({
   snapshots,
   activeSnapshotId,
@@ -18,22 +19,20 @@ export default function SnapshotList({
   const [tabsData, setTabsData] = useState(null);
   const [snapshotLabel, setSnapshotLabel] = useState("Generated from Dashboard");
   useEffect(() => {
-    if (!snapshots?.length) return;
+    if (!snapshots?.length) return; 
 
-    const active = snapshots.find((s) => s.snapshotId === activeSnapshotId);
-    // const others = snapshots.filter((s) => s.snapshotId !== activeSnapshotId);
-    // const ordered = active ? [active, ...others] : snapshots;
-
-    const tabs = snapshots.map((s) => {
+    const tabs = snapshots.map((x) => {
+      const s = x[1];
       const isActive = s.snapshotId === activeSnapshotId;
+      const { snapshotDate, label, createdAt } = s;
       return {
         isActive,
         label: (
           <div className="flex flex-row w-full justify-between items-center">
             <div className="flex-auto text-left">
-              <div className="text-sm">{s.snapshotDate}</div>
-              <div className="text-xs">{s.label}</div>
-              <div className="text-xs">{new Date(s.createdAt).toLocaleString()}</div>
+              <div className="text-sm">{snapshotDate}</div>
+              <div className="text-xs">{label}</div>
+              <div className="text-xs"><DateTime date={createdAt} /></div>
             </div>
             {isActive && (
               <div className="text-right text-lg">

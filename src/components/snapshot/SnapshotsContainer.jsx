@@ -1,11 +1,8 @@
 import ComponentCard from "../common/ComponentCard.jsx";
 import { useDispatch } from "react-redux";
-import {
-  activateSnapshot,
-  createSnapshot,
-  fetchSelfSchedulingDetails,
-  generateSlots,
-} from "../../store/selfschedulingDetailsSlice.js";
+import { activateSnapshot, createSnapshot } from "../../store/snapshotsSlice.js";
+import { generateSlots } from "../../store/slotsSlice.js";
+import { fetchSelfschedulingDetails } from "../../store/selfschedulingDetailsSlice.js";
 import EmptySnapshot from "./EmptySnapshot.jsx";
 import SnapshotList from "./SnapshotList.jsx";
 
@@ -15,7 +12,7 @@ export default function SnapshotsContainer({ snapshots, activeSnapshotId, snapsh
     if (!selfSchedulingId) return;
     const result = await dispatch(createSnapshot({ selfSchedulingId, label }));
     if (createSnapshot.fulfilled.match(result)) {
-      dispatch(fetchSelfSchedulingDetails(selfSchedulingId));
+      dispatch(fetchSelfschedulingDetails(selfSchedulingId));
     }
   };
   const handleActivateSnapshot = async (snapshotId) => {
@@ -29,7 +26,7 @@ export default function SnapshotsContainer({ snapshots, activeSnapshotId, snapsh
     if (!selfSchedulingId) return;
     const result = await dispatch(generateSlots(snapshotId));
     if (generateSlots.fulfilled.match(result)) {
-      dispatch(fetchSelfSchedulingDetails(selfSchedulingId));
+      dispatch(fetchSelfschedulingDetails(selfSchedulingId));
     }
   };
   return (
@@ -46,7 +43,7 @@ export default function SnapshotsContainer({ snapshots, activeSnapshotId, snapsh
         ) : (
           <SnapshotList
             loading={snapshotStatus === "loading"}
-            snapshots={snapshots}
+            snapshots={snapshots.list}
             activeSnapshotId={activeSnapshotId}
             onAddSnapshot={handleAddSnapshot}
             onActivateSnapshot={handleActivateSnapshot}

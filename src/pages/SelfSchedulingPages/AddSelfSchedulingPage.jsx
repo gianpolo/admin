@@ -6,7 +6,7 @@ import {
   fetchExperiences,
   fetchGuides,
   createSelfScheduling as createSelfSchedulingThunk,
-} from "../../store/createSelfSchedulingSlice.js";
+} from "../../store/selfschedulingFormSlice.js";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb.jsx";
 import PageMeta from "../../components/common/PageMeta.jsx";
 import Button from "../../components/ui/button/Button.jsx";

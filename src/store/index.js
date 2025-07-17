@@ -1,19 +1,20 @@
 import { configureStore } from "@reduxjs/toolkit";
 import selfschedulingsReducer from "./selfschedulingsSlice.js";
 import authReducer from "./authSlice.js";
-import configDetailsReducer from "./selfschedulingDetailsSlice.js";
-import createConfigReducer from "./createSelfSchedulingSlice.js";
+import selfschedulingDetailsReducer from "./selfschedulingDetailsSlice.js";
+import selfschedulingFormReducer from "./selfschedulingFormSlice.js";
+import snapshotsReducer from "./snapshotsSlice.js";
 import notificationsReducer from "./notificationsSlice.js";
-import itemsReducer from "./itemSlice.js";
-
+import slotReducer from "./slotsSlice.js";
 const store = configureStore({
   reducer: {
-    selfschedulings: selfschedulingsReducer,
     auth: authReducer,
-    selfschedulingsDetails: configDetailsReducer,
-    selfschedulingForm: createConfigReducer,
+    selfschedulings: selfschedulingsReducer,
+    selfschedulingDetails: selfschedulingDetailsReducer,
+    selfschedulingForm: selfschedulingFormReducer,
+    snapshots: snapshotsReducer,
     notifications: notificationsReducer,
-    items: itemsReducer,
+    slots: slotReducer,
   },
 });
 

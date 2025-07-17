@@ -1,52 +1,34 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const getToken = () => localStorage.getItem("token") || "";
-const backend_url =
-  import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
 
-export const fetchSelfSchedulingDetails = createAsyncThunk(
-  "selfschedulingDetails/fetchSelfSchedulingDetails",
+export const fetchSelfschedulingDetails = createAsyncThunk(
+  "selfschedulingDetails/fetchSelfscheduling",
   async (id, { rejectWithValue }) => {
     try {
       const res = await fetch(`${backend_url}/selfschedulings/${id}`, {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
       if (!res.ok) throw new Error("Failed to fetch selfscheduling");
-      return await res.json();
+      const { selfScheduling, snapshot } = await res.json();
+      return { selfscheduling: selfScheduling, snapshot };
     } catch (err) {
       return rejectWithValue(err.message);
     }
   }
 );
 
-export const fetchTourItems = createAsyncThunk(
-  "selfschedulingDetails/fetchTourItems",
-  async (id, { rejectWithValue }) => {
-    try {
-      const res = await fetch(`${backend_url}/items?selfSchedulingId=${id}`, {
-        headers: { Authorization: `Bearer ${getToken()}` },
-      });
-      if (!res.ok) throw new Error("Failed to fetch tour items");
-      const data = await res.json();
-      return Array.isArray(data) ? data : data.items || [];
-    } catch (err) {
-      return rejectWithValue(err.message);
-    }
-  }
-);
-
-export const performConfigurationAction = createAsyncThunk(
-  "selfschedulingDetails/performConfigurationAction",
+export const performSelfschedulingAction = createAsyncThunk(
+  "selfschedulingDetails/performSelfschedulingAction",
   async ({ id, action }, { rejectWithValue }) => {
     try {
-      const res = await fetch(
-        `${backend_url}/selfschedulings/${id}/${action}`,
-        {
-          method: "POST",
-          headers: { Authorization: `Bearer ${getToken()}` },
-        }
-      );
+      const res = await fetch(`${backend_url}/selfschedulings/${id}/${action}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
       if (!res.ok) throw new Error("Action failed");
+      return await res.json();
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -72,11 +54,34 @@ export const generateSlots = createAsyncThunk(
   }
 );
 
-export const createSnapshot = createAsyncThunk(
-  "selfschedulingDetails/createSnapshot",
+// export const createSnapshot = createAsyncThunk(
+//   "selfschedulingDetails/createSnapshot",
+//   async (payload, { rejectWithValue }) => {
+//     try {
+//       const res = await fetch(`${backend_url}/snapshots`, {
+//         method: "POST",
+//         headers: {
+//           Authorization: `Bearer ${getToken()}`,
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify(payload),
+//       });
+//       if (!res.ok) {
+//         const text = await res.text();
+//         throw new Error(text || "Failed to create snapshot");
+//       }
+//       return true;
+//     } catch (err) {
+//       return rejectWithValue(err.message);
+//     }
+//   }
+// );
+
+export const activateSnapshot = createAsyncThunk(
+  "selfschedulingDetails/activateSnapshot",
   async (payload, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${backend_url}/snapshots`, {
+      const res = await fetch(`${backend_url}/selfschedulings/${payload.selfSchedulingId}/active-snapshot`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${getToken()}`,
@@ -86,135 +91,47 @@ export const createSnapshot = createAsyncThunk(
       });
       if (!res.ok) {
         const text = await res.text();
-        throw new Error(text || "Failed to create snapshot");
+        throw new Error(text || "Failed to activate snapshot");
       }
       return true;
     } catch (err) {
       return rejectWithValue(err.message);
     }
-  }
-);
-export const activateSnapshot = createAsyncThunk(
-  "selfschedulingDetails/activateSnapshot",
-  async (payload, { rejectWithValue }) => {
-    try {
-      const res = await fetch(
-        `${backend_url}/selfschedulings/${payload.selfSchedulingId}/active-snapshot`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${getToken()}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        }
-      );
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || "Failed to create snapshot");
-      }
-      return true;
-    } catch (err) {
-      return rejectWithValue(err.message);
-    }
-  }
-);
-
-export const fetchSnapshotDetails = createAsyncThunk(
-  "selfScheduling/fetchSnapshotDetails",
-  async (snapshotId, { rejectWithValue }) => {
-    try {
-      const res = await fetch(`${backend_url}/snapshots/${snapshotId}`, {
-        headers: { Authorization: `Bearer ${getToken()}` },
-      });
-      if (!res.ok) throw new Error("Failed to fetch tour items");
-      const data = await res.json();
-      return { snapshotId, data: data };
-    } catch (err) {
-      return rejectWithValue({ snapshotId });
-    }
-  },
-  {
-    condition: (snapshotId, { getState }) => {
-      const { snapshotsDetails } = getState().selfschedulingsDetails;
-      const entry = snapshotsDetails[snapshotId];
-      // if already loaded *or* currently loading, skip fetch
-      return !(entry?.loaded || entry?.loading);
-    },
   }
 );
 
 const selfschedulingDetailsSlice = createSlice({
-  name: "selfschedulingsDetails",
+  name: "selfschedulingDetails",
   initialState: {
-    selfscheduling: null,
-    items: [],
-    status: "idle",
-    itemsStatus: "idle",
-    slotsStatus: "idle",
-    snapshotStatus: "idle",
-    error: "",
-    itemsError: "",
-    slotsError: "",
-    snapshotError: "",
-    lastUpdatedId: null,
-    snapshotsDetails: {},
     snapshots: [],
+    status: "idle",
+    error: "",
   },
-  reducers: {
-    updateAvailableSlots(state, action) {
-      const { itemId, initialSlots, reserved, confirmed, createdOn } =
-        action.payload;
-      state.items = state.items.map((it) =>
-        it.id === itemId
-          ? {
-              ...it,
-              initialSlots,
-              reserved,
-              confirmed,
-              updatedAt: createdOn || new Date().toISOString(),
-            }
-          : it
-      );
-      state.lastUpdatedId = itemId;
-    },
-    clearLastUpdatedId(state) {
-      state.lastUpdatedId = null;
-    },
-  },
-  extraReducers: (builder) => {
+  reducers: {},
+  extraReducers: (builder) =>
     builder
-      .addCase(fetchSelfSchedulingDetails.pending, (state) => {
+      .addCase(fetchSelfschedulingDetails.pending, (state) => {
         state.status = "loading";
         state.error = "";
       })
-      .addCase(fetchSelfSchedulingDetails.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.selfscheduling = action.payload;
-        state.snapshots = action.payload.snapshots;
-        action.payload.snapshots.forEach((s) => {
-          state.snapshotsDetails[s.snapshotId] = {
-            loading: false,
-            loaded: false,
-          };
-        });
+      .addCase(fetchSelfschedulingDetails.fulfilled, (state, { payload }) => {
+        return {
+          ...state,
+          status: "succeeded",
+          ...payload.selfscheduling,
+        };
+        // state.status = "succeeded";
+        // state.selfscheduling = payload.selfscheduling; // not inside the state.selfscheduling property but state = payload.selfscheduling won't work
+        // state.snapshots = payload.selfscheduling.snapshots || [];
+        // state.activeSnapshot = payload.selfscheduling.activeSnapshotId;
+        // state.snapshotStatus = "succeeded";
+        // state.snapshotError = "";
       })
-      .addCase(fetchSelfSchedulingDetails.rejected, (state, action) => {
+      .addCase(fetchSelfschedulingDetails.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })
-      .addCase(fetchTourItems.pending, (state) => {
-        state.itemsStatus = "loading";
-        state.itemsError = "";
-      })
-      .addCase(fetchTourItems.fulfilled, (state, action) => {
-        state.itemsStatus = "succeeded";
-        state.items = action.payload;
-      })
-      .addCase(fetchTourItems.rejected, (state, action) => {
-        state.itemsStatus = "failed";
-        state.itemsError = action.payload;
-      })
+
       .addCase(generateSlots.pending, (state) => {
         state.slotsStatus = "loading";
         state.slotsError = "";
@@ -226,17 +143,17 @@ const selfschedulingDetailsSlice = createSlice({
         state.slotsStatus = "failed";
         state.slotsError = action.payload;
       })
-      .addCase(createSnapshot.pending, (state) => {
-        state.snapshotStatus = "loading";
-        state.snapshotError = "";
-      })
-      .addCase(createSnapshot.fulfilled, (state) => {
-        state.snapshotStatus = "succeeded";
-      })
-      .addCase(createSnapshot.rejected, (state, action) => {
-        state.snapshotStatus = "failed";
-        state.snapshotError = action.payload;
-      })
+      // .addCase(createSnapshot.pending, (state) => {
+      //   state.snapshotStatus = "loading";
+      //   state.snapshotError = "";
+      // })
+      // .addCase(createSnapshot.fulfilled, (state) => {
+      //   state.snapshotStatus = "succeeded";
+      // })
+      // .addCase(createSnapshot.rejected, (state, action) => {
+      //   state.snapshotStatus = "failed";
+      //   state.snapshotError = action.payload;
+      // })
       .addCase(activateSnapshot.pending, (state) => {
         state.snapshotStatus = "loading";
         state.snapshotError = "";
@@ -248,33 +165,29 @@ const selfschedulingDetailsSlice = createSlice({
         state.snapshotStatus = "failed";
         state.snapshotError = action.payload;
       })
-      .addCase(performConfigurationAction.fulfilled, (state, action) => {
-        state.config = action.payload;
-      })
-      .addCase(fetchSnapshotDetails.pending, (state, { meta }) => {
-        state.snapshotsDetails[meta.arg] = {
-          loading: true,
-          loaded: false,
-          data: state.snapshotsDetails[meta.arg]?.data,
-        };
-      })
-      .addCase(fetchSnapshotDetails.fulfilled, (state, { payload }) => {
-        state.snapshotsDetails[payload.snapshotId] = {
-          loading: false,
-          loaded: true,
-          data: payload.data,
-        };
-      })
-      .addCase(fetchSnapshotDetails.rejected, (state, { meta }) => {
-        state.snapshotsDetails[meta.arg] = {
-          loading: false,
-          loaded: false,
-          data: undefined,
-        };
-      });
-  },
+      .addCase(performSelfschedulingAction.fulfilled, (state, { payload }) => {
+        state.config = payload;
+      }),
+  // .addCase(fetchSnapshotDetails.pending, (state, { meta }) => {
+  //   state.snapshotsDetails[meta.arg] = {
+  //     loading: true,
+  //     loaded: false,
+  //     data: state.snapshotsDetails[meta.arg]?.data,
+  //   };
+  // })
+  // .addCase(fetchSnapshotDetails.fulfilled, (state, { payload }) => {
+  //   state.snapshotsDetails[payload.snapshotId] = {
+  //     loading: false,
+  //     loaded: true,
+  //     data: payload.data,
+  //   };
+  // })
+  // .addCase(fetchSnapshotDetails.rejected, (state, { meta }) => {
+  //   state.snapshotsDetails[meta.arg] = {
+  //     loading: false,
+  //     loaded: false,
+  //     data: undefined,
+  //   };
+  // }),
 });
-
-export const { updateAvailableSlots, clearLastUpdatedId } =
-  selfschedulingDetailsSlice.actions;
 export default selfschedulingDetailsSlice.reducer;

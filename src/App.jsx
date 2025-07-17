@@ -3,7 +3,6 @@ import NotFound from "./pages/OtherPage/NotFound";
 import SelfSchedulingListPage from "./pages/SelfSchedulingPages/SelfSchedulingListPage.jsx";
 import AddSelfSchedulingPage from "./pages/SelfSchedulingPages/AddSelfSchedulingPage.jsx";
 import SelfSchedulingDetailsPage from "./pages/SelfSchedulingPages/SelfSchedulingDetailsPage.jsx";
-import SelfSchedulingItemDetails from "./pages/SelfSchedulingPages/SelfSchedulingItemDetails.jsx";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
@@ -24,22 +23,9 @@ export default function App() {
             }
           >
             <Route index path="/" element={<Home />} />
-            <Route
-              path="/self-schedulings"
-              element={<SelfSchedulingListPage />}
-            />
-            <Route
-              path="/self-schedulings/new"
-              element={<AddSelfSchedulingPage />}
-            />
-            <Route
-              path="/self-schedulings/:id"
-              element={<SelfSchedulingDetailsPage />}
-            />
-            <Route
-              path="/self-scheduling-items/:id"
-              element={<SelfSchedulingItemDetails />}
-            />
+            <Route path="/self-schedulings" element={<SelfSchedulingListPage />} />
+            <Route path="/self-schedulings/new" element={<AddSelfSchedulingPage />} />
+            <Route path="/self-schedulings/:id" element={<SelfSchedulingDetailsPage />} />
           </Route>
           <Route path="/signin" element={<SignIn />} />
           {/* Fallback Route */}
