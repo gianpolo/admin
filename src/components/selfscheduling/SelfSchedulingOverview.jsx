@@ -7,6 +7,13 @@ import DateRange from "../common/DateRange";
 export default function SelfSchedulingOverview({ selfscheduling, onAction, actionLoading = false }) {
   const { configuration: config, selfSchedulingId: id } = selfscheduling || {};
   const { toursPeriod, schedulingWindow, configurationId: configId } = config || {};
+  console.log(selfscheduling);
+  const getDaysLeft = (date) => {
+    const today = new Date();
+    const target = new Date(date);
+    const diffMs = target - today;
+    return Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+  };
   return (
     <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
       <div className="flex flex-col gap-4">
@@ -32,7 +39,7 @@ export default function SelfSchedulingOverview({ selfscheduling, onAction, actio
               <div className="text-xs font-medium text-gray-800 dark:text-white/90">
                 <div>{configId}</div>
               </div>
-            </div>{" "}
+            </div>
           </CopyableText>
 
           <div>
@@ -45,8 +52,8 @@ export default function SelfSchedulingOverview({ selfscheduling, onAction, actio
             <div className="flex items-center mb-2">
               <div className=" text-xs leading-normal text-gray-500 dark:text-gray-400 mr-5">Scheduling Window</div>
               <div>
-                <Badge variant="light" size="sm" color={selfscheduling.isRunning ? "success" : "warning"}>
-                  {selfscheduling.isRunning ? "Running" : "Pending"}
+                <Badge variant="light" size="sm" color={selfscheduling.isRunning ? "success" : "info"}>
+                  {selfscheduling.isRunning ? "Running" : getDaysLeft(schedulingWindow.start) + " days left"}
                 </Badge>
               </div>
             </div>
@@ -56,20 +63,30 @@ export default function SelfSchedulingOverview({ selfscheduling, onAction, actio
               <DateTime date={schedulingWindow.end} />
             </p>
           </div>
-          <div>
-            <div className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Experiences Count</div>
-            <div className="text-sm font-medium text-gray-800 dark:text-white/90">
-              <Badge variant="solid" size="sm">
-                {config.subject.experienceIds?.length || 0}
-              </Badge>
+          <div className="grid grid-cols-3 col-span-2">
+            <div>
+              <div className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Experiences Count</div>
+              <div className="text-sm font-medium text-gray-800 dark:text-white/90">
+                <Badge variant="solid" size="sm">
+                  {config.subject.experienceIds?.length || 0}
+                </Badge>
+              </div>
             </div>
-          </div>
-          <div>
-            <div className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Guides Count</div>
-            <div className="text-sm font-medium text-gray-800 dark:text-white/90">
-              <Badge variant="solid" size="sm">
-                {config.audience.guideIds?.length || 0}
-              </Badge>
+            <div>
+              <div className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Guides Count</div>
+              <div className="text-sm font-medium text-gray-800 dark:text-white/90">
+                <Badge variant="solid" size="sm">
+                  {config.audience.guideIds?.length || 0}
+                </Badge>
+              </div>
+            </div>
+            <div>
+              <div className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Snapshots Count</div>
+              <div className="text-sm font-medium text-gray-800 dark:text-white/90">
+                <Badge variant="solid" size="sm">
+                  {selfscheduling.snapshots?.length}
+                </Badge>
+              </div>
             </div>
           </div>
           <div>
