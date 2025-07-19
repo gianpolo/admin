@@ -7,7 +7,7 @@ import { fetchSelfschedulingDetails } from "../../store/selfschedulingDetailsSli
 import EmptySnapshotWidget from "./EmptySnapshotWidget.jsx";
 import SnapshotList from "./list/SnapshotList.jsx";
 
-export default function SnapshotsContainer({ snapshots, activeSnapshotId, snapshotStatus, selfSchedulingId }) {
+export default function SnapshotsContainer({ snapshotList, activeSnapshotId, snapshotStatus, selfSchedulingId }) {
   const dispatch = useDispatch();
 
   const handleAddSnapshot = async (label) => {
@@ -21,7 +21,7 @@ export default function SnapshotsContainer({ snapshots, activeSnapshotId, snapsh
     if (!selfSchedulingId) return;
     const result = await dispatch(activateSnapshot({ selfSchedulingId, snapshotId }));
     if (activateSnapshot.fulfilled.match(result)) {
-      dispatch(fetchSelfSchedulingDetails(selfSchedulingId));
+      dispatch(fetchSelfschedulingDetails(selfSchedulingId));
     }
   };
   const handleGenerateSlots = async (snapshotId) => {
@@ -40,13 +40,13 @@ export default function SnapshotsContainer({ snapshots, activeSnapshotId, snapsh
         </div>
       }
     >
-      {snapshots &&
-        (snapshots.length === 0 ? (
+      {snapshotList &&
+        (snapshotList.length === 0 ? (
           <EmptySnapshotWidget onAddSnapshot={handleAddSnapshot} />
         ) : (
           <SnapshotList
             loading={snapshotStatus === "loading"}
-            snapshots={snapshots.list}
+            snapshots={snapshotList}
             activeSnapshotId={activeSnapshotId}
             onAddSnapshot={handleAddSnapshot}
             onActivateSnapshot={handleActivateSnapshot}

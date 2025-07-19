@@ -103,7 +103,7 @@ export const activateSnapshot = createAsyncThunk(
 const selfschedulingDetailsSlice = createSlice({
   name: "selfschedulingDetails",
   initialState: {
-    snapshots: [],
+    selfscheduling: null,
     status: "idle",
     error: "",
   },
@@ -115,17 +115,8 @@ const selfschedulingDetailsSlice = createSlice({
         state.error = "";
       })
       .addCase(fetchSelfschedulingDetails.fulfilled, (state, { payload }) => {
-        return {
-          ...state,
-          status: "succeeded",
-          ...payload.selfscheduling,
-        };
-        // state.status = "succeeded";
-        // state.selfscheduling = payload.selfscheduling; // not inside the state.selfscheduling property but state = payload.selfscheduling won't work
-        // state.snapshots = payload.selfscheduling.snapshots || [];
-        // state.activeSnapshot = payload.selfscheduling.activeSnapshotId;
-        // state.snapshotStatus = "succeeded";
-        // state.snapshotError = "";
+        state.status = "succeeded";
+        state.selfscheduling = payload.selfscheduling;
       })
       .addCase(fetchSelfschedulingDetails.rejected, (state, action) => {
         state.status = "failed";
