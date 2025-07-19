@@ -18,6 +18,7 @@ export default function AddSelfSchedulingForm({
   setSchedulingWindow,
   toursPeriod,
   setToursPeriod,
+  setCityId,
   handleExperienceChange,
   handleGuideChange,
   selectedExperienceIds,

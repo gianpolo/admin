@@ -6,10 +6,18 @@ import Spinner from "../../ui/spinner/Spinner.jsx";
 import ComponentCard from "../../common/ComponentCard.jsx";
 import TourSnapshots from "./tabs/TourSnapshots.jsx";
 import ForecastSnapshots from "./tabs/ForecastSnapshots.jsx";
+import ItemsSnapshots from "./tabs/ItemsSnapshots.jsx";
 import SnapshotDetailsTitle from "./SnapshotDetailsTitle.jsx";
 import Tabs from "../../common/Tabs.jsx";
 
-export default function SnapshotDetails({ snapshotId, isActive, loading, onActivateSnapshot, onGenerateSlots }) {
+export default function SnapshotDetails({
+  snapshotId,
+  isActive,
+  loading,
+  onActivateSnapshot,
+  onGenerateSlots,
+  onGenerateItems,
+}) {
   const dispatch = useDispatch();
   const [tabs, setTabs] = useState(null);
   const { details, status } = useSelector((state) => state.snapshots);
@@ -23,7 +31,7 @@ export default function SnapshotDetails({ snapshotId, isActive, loading, onActiv
 
   useEffect(() => {
     if (!snapshotData) return;
-    const { tours } = snapshotData;
+    const { tours, items } = snapshotData;
     const tabs = [
       {
         label: "Tours",
@@ -32,6 +40,10 @@ export default function SnapshotDetails({ snapshotId, isActive, loading, onActiv
       {
         label: "Forecasting",
         content: <ForecastSnapshots tours={tours} />,
+      },
+      {
+        label: "Items",
+        content: <ItemsSnapshots items={items || []} />,
       },
       {
         label: "Guides",
@@ -65,6 +77,7 @@ export default function SnapshotDetails({ snapshotId, isActive, loading, onActiv
             canGenerateSlots={true}
             onActivateSnapshot={onActivateSnapshot}
             onGenerateSlots={onGenerateSlots}
+            onGenerateItems={onGenerateItems}
           />
         }
       >

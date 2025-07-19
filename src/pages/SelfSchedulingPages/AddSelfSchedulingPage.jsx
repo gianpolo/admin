@@ -206,6 +206,7 @@ export default function AddSelfSchedulingPage() {
           <AddSelfSchedulingForm
             cityId={cityId}
             cities={cities}
+            setCityId={setCityId}
             description={description}
             setDescription={setDescription}
             schedulingWindow={schedulingWindow}

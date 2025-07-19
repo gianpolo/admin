@@ -4,7 +4,7 @@ import ComponentCard from "../common/ComponentCard";
 import { eventsData } from "../../utils/constants";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table/index";
 
-export default function NotificationsWidget({ notifications, logs, history }) {
+export default function NotificationsWidget({ notifications, logs, history, setHistory = () => {} }) {
   const { id } = useParams();
 
   useEffect(() => {

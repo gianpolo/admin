@@ -16,6 +16,7 @@ export default function SnapshotList({
   loading,
   onActivateSnapshot,
   onGenerateSlots,
+  onGenerateItems,
 }) {
   const [tabsData, setTabsData] = useState(null);
   const [snapshotLabel, setSnapshotLabel] = useState("Generated from Dashboard");
@@ -50,6 +51,7 @@ export default function SnapshotList({
             loading={loading}
             onActivateSnapshot={() => onActivateSnapshot(s.snapshotId)}
             onGenerateSlots={() => onGenerateSlots(s.snapshotId)}
+            onGenerateItems={() => onGenerateItems(s.snapshotId)}
             isActive={isActive}
             snapshotId={s.snapshotId}
           />

@@ -59,6 +59,26 @@ export const fetchSnapshotDetails = createAsyncThunk(
   }
 );
 
+export const processSnapshot = createAsyncThunk(
+  "snapshots/processSnapshot",
+  async (snapshotId, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`${backend_url}/snapshots/${snapshotId}/process`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Failed to process snapshot");
+      }
+      const data = await res.json();
+      return { snapshotId, items: data };
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
 const snapshotsSlice = createSlice({
   name: "snapshots",
   initialState: {
@@ -117,6 +137,22 @@ const snapshotsSlice = createSlice({
         state.status = "succeeded";
       })
       .addCase(activateSnapshot.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(processSnapshot.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(processSnapshot.fulfilled, (state, { payload }) => {
+        state.status = "succeeded";
+        if (payload && payload.snapshotId) {
+          if (!state.details[payload.snapshotId]) {
+            state.details[payload.snapshotId] = {};
+          }
+          state.details[payload.snapshotId].items = payload.items;
+        }
+      })
+      .addCase(processSnapshot.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

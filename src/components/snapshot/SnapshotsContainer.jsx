@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import ComponentCard from "../common/ComponentCard";
 import { useDispatch } from "react-redux";
-import { activateSnapshot, createSnapshot } from "../../store/snapshotsSlice.js";
+import { activateSnapshot, createSnapshot, processSnapshot } from "../../store/snapshotsSlice.js";
 import { generateSlots } from "../../store/slotsSlice.js";
 import { fetchSelfschedulingDetails } from "../../store/selfschedulingDetailsSlice.js";
 import EmptySnapshotWidget from "./EmptySnapshotWidget.jsx";
@@ -32,6 +32,13 @@ export default function SnapshotsContainer({ snapshotList, activeSnapshotId, sna
       dispatch(fetchSelfschedulingDetails(selfSchedulingId));
     }
   };
+  const handleGenerateItems = async (snapshotId) => {
+    if (!snapshotId) return;
+    const result = await dispatch(processSnapshot(snapshotId));
+    if (processSnapshot.fulfilled.match(result)) {
+      dispatch(fetchSelfschedulingDetails(selfSchedulingId));
+    }
+  };
   return (
     <ComponentCard
       title={
@@ -51,6 +58,7 @@ export default function SnapshotsContainer({ snapshotList, activeSnapshotId, sna
             onAddSnapshot={handleAddSnapshot}
             onActivateSnapshot={handleActivateSnapshot}
             onGenerateSlots={handleGenerateSlots}
+            onGenerateItems={handleGenerateItems}
             canAddSnapshot={snapshotStatus !== "loading"}
           />
         ))}

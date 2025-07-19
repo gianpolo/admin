@@ -6,6 +6,7 @@ export default function SnapshotDetailsTitle({
   canGenerateSlots,
   onActivateSnapshot,
   onGenerateSlots,
+  onGenerateItems,
 }) {
   return (
     <div className="flex justify-between">
@@ -19,6 +20,7 @@ export default function SnapshotDetailsTitle({
         menuItems={[
           { label: "Activate", action: onActivateSnapshot, disabled: !isActive },
           { label: "Generate Slots", action: onGenerateSlots, disabled: !canGenerateSlots },
+          { label: "Generate Items", action: onGenerateItems },
         ]}
       />
     </div>
