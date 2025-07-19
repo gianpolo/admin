@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 // import { ChevronDown, ChevronLeft, ChevronRight, Calendar, CheckCircle } from "lucide-react";
 import ComponentCard from "../common/ComponentCard";
-import Badge from "../ui/badge/Badge.jsx";
-import { events } from "./data.jsx";
+import Badge from "../ui/badge/Badge";
+import { events } from "./data";
 import { ChevronDownIcon, ChevronLeftIcon, CalenderIcon, CheckCircleIcon } from "../../icons/index.js";
 const height = "30rem";
 

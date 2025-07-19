@@ -4,7 +4,7 @@ const getToken = () => localStorage.getItem("token") || "";
 const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
 
 export const fetchSelfschedulingDetails = createAsyncThunk(
-  "selfschedulingDetails/fetchSelfscheduling",
+  "selfschedulingDetails/fetchSelfschedulingDetails",
   async (id, { rejectWithValue }) => {
     try {
       const res = await fetch(`${backend_url}/selfschedulings/${id}`, {

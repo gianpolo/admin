@@ -4,10 +4,8 @@ import Form from "../form/Form.jsx";
 import Button from "../ui/button/Button.jsx";
 import { PlusIcon } from "../../icons/index.js";
 import Spinner from "../ui/spinner/Spinner.jsx";
-export default function EmptySnapshot({ loading, onAddSnapshot }) {
-  const [snapshotLabel, setSnapshotLabel] = useState(
-    "Generated from Dashboard"
-  );
+export default function EmptySnapshotWidget({ loading, onAddSnapshot }) {
+  const [snapshotLabel, setSnapshotLabel] = useState("Generated from Dashboard");
   return (
     <div className="mx-auto w-full max-w-[560px] text-center">
       <div className="flex flex-col h-full justify-between border border-gray-200 dark:border-gray-800 max-h-full rounded-2xl bg-white p-6 text-center dark:bg-white/[0.03]">
@@ -18,8 +16,7 @@ export default function EmptySnapshot({ loading, onAddSnapshot }) {
         </div>
         <div className="flex  ">
           <p className="text-base text-gray-500 mb-9 text-center dark:text-gray-400 w-full h-full">
-            Capture the current forecasting and tours data for this SelfScheduling by taking a
-            snapshot now.
+            Capture the current forecasting and tours data for this SelfScheduling by taking a snapshot now.
           </p>
         </div>
         <Form onSubmit={(e) => e.preventDefault()}>

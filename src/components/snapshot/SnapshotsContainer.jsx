@@ -1,13 +1,15 @@
-import ComponentCard from "../common/ComponentCard.jsx";
+import { useState, useEffect } from "react";
+import ComponentCard from "../common/ComponentCard";
 import { useDispatch } from "react-redux";
 import { activateSnapshot, createSnapshot } from "../../store/snapshotsSlice.js";
 import { generateSlots } from "../../store/slotsSlice.js";
 import { fetchSelfschedulingDetails } from "../../store/selfschedulingDetailsSlice.js";
-import EmptySnapshot from "./EmptySnapshot.jsx";
-import SnapshotList from "./SnapshotList.jsx";
+import EmptySnapshotWidget from "./EmptySnapshotWidget.jsx";
+import SnapshotList from "./list/SnapshotList.jsx";
 
 export default function SnapshotsContainer({ snapshots, activeSnapshotId, snapshotStatus, selfSchedulingId }) {
   const dispatch = useDispatch();
+
   const handleAddSnapshot = async (label) => {
     if (!selfSchedulingId) return;
     const result = await dispatch(createSnapshot({ selfSchedulingId, label }));
@@ -15,7 +17,7 @@ export default function SnapshotsContainer({ snapshots, activeSnapshotId, snapsh
       dispatch(fetchSelfschedulingDetails(selfSchedulingId));
     }
   };
-  const handleActivateSnapshot = async (snapshotId) => {
+  const handleActivateSnapshot = async (snapshotId) => { 
     if (!selfSchedulingId) return;
     const result = await dispatch(activateSnapshot({ selfSchedulingId, snapshotId }));
     if (activateSnapshot.fulfilled.match(result)) {
@@ -23,7 +25,8 @@ export default function SnapshotsContainer({ snapshots, activeSnapshotId, snapsh
     }
   };
   const handleGenerateSlots = async (snapshotId) => {
-    if (!selfSchedulingId) return;
+    debugger;
+    if (!snapshotId) return;
     const result = await dispatch(generateSlots(snapshotId));
     if (generateSlots.fulfilled.match(result)) {
       dispatch(fetchSelfschedulingDetails(selfSchedulingId));
@@ -39,7 +42,7 @@ export default function SnapshotsContainer({ snapshots, activeSnapshotId, snapsh
     >
       {snapshots &&
         (snapshots.length === 0 ? (
-          <EmptySnapshot onAddSnapshot={handleAddSnapshot} />
+          <EmptySnapshotWidget onAddSnapshot={handleAddSnapshot} />
         ) : (
           <SnapshotList
             loading={snapshotStatus === "loading"}

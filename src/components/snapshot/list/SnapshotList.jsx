@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
-import Button from "../ui/button/Button.jsx";
-import VerticalTabs from "../common/VerticalTabs.jsx";
-import { CheckCircleIcon, PlusIcon } from "../../icons/index.js";
-import SnapshotDetails from "./SnapshotDetails.jsx";
-import Spinner from "../ui/spinner/Spinner.jsx";
-import InputField from "../form/input/InputField.jsx";
-import Label from "../form/Label.jsx";
-import DateTime from "../common/DateTime.jsx";
+import { useSelector } from "react-redux";
+import Button from "../../ui/button/Button.jsx";
+import VerticalTabs from "../../common/VerticalTabs.jsx";
+import { CheckCircleIcon, PlusIcon } from "../../../icons/index.js";
+import SnapshotDetails from "../selectedSnapshot/SnapshotDetails.jsx";
+import Spinner from "../../ui/spinner/Spinner.jsx";
+import InputField from "../../form/input/InputField.jsx";
+import Label from "../../form/Label.jsx";
+import DateTime from "../../common/DateTime.jsx";
 export default function SnapshotList({
   snapshots,
   activeSnapshotId,
@@ -18,9 +19,11 @@ export default function SnapshotList({
 }) {
   const [tabsData, setTabsData] = useState(null);
   const [snapshotLabel, setSnapshotLabel] = useState("Generated from Dashboard");
+  const [currentTabIndex, setCurrentTabIndex] = useState(0);
+  //const { details, status } = useSelector((state) => state.snapshots);
   useEffect(() => {
-    if (!snapshots?.length) return; 
-
+    if (!snapshots?.length) return;
+    console.log("SnapshotList useEffect - snapshots:", snapshots);
     const tabs = snapshots.map((x) => {
       const s = x[1];
       const isActive = s.snapshotId === activeSnapshotId;
@@ -32,7 +35,9 @@ export default function SnapshotList({
             <div className="flex-auto text-left">
               <div className="text-sm">{snapshotDate}</div>
               <div className="text-xs">{label}</div>
-              <div className="text-xs"><DateTime date={createdAt} /></div>
+              <div className="text-xs">
+                <DateTime date={createdAt} />
+              </div>
             </div>
             {isActive && (
               <div className="text-right text-lg">
@@ -52,9 +57,9 @@ export default function SnapshotList({
         ),
       };
     });
-
+    console.log("SnapshotList useEffect - tabsData:", tabs);
     setTabsData(tabs);
-  }, [snapshots, activeSnapshotId, loading]);
+  }, [snapshots, activeSnapshotId, loading, currentTabIndex]);
 
   const addOn = (
     <>
@@ -83,5 +88,16 @@ export default function SnapshotList({
       </div>
     </>
   );
-  return <>{tabsData && <VerticalTabs tabsData={tabsData} addOn={addOn}></VerticalTabs>}</>;
+  return (
+    <>
+      {tabsData && !loading && (
+        <VerticalTabs
+          currentTabIndex={currentTabIndex}
+          tabsData={tabsData}
+          addOn={addOn}
+          onChangeTab={(idx) => setCurrentTabIndex(idx)}
+        ></VerticalTabs>
+      )}
+    </>
+  );
 }

@@ -41,6 +41,7 @@ export const fetchSnapshotDetails = createAsyncThunk(
   "snapshots/fetchSnapshotDetails",
   async (snapshotId, { rejectWithValue }) => {
     try {
+      debugger;
       const res = await fetch(`${backend_url}/snapshots/${snapshotId}`, {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
@@ -53,7 +54,8 @@ export const fetchSnapshotDetails = createAsyncThunk(
   },
   {
     condition: (snapshotId, { getState }) => {
-      const entry = getState().snapshots.details[snapshotId];
+      console.log(getState().snapshots.list[snapshotId]);
+      const entry = getState().snapshots.list[snapshotId];
       return !(entry?.loaded || entry?.loading);
     },
   }
@@ -61,27 +63,46 @@ export const fetchSnapshotDetails = createAsyncThunk(
 
 const snapshotsSlice = createSlice({
   name: "snapshots",
-  initialState: { list: {}, details: {}, status: "idle", error: null },
+  initialState: {
+    list: {},
+    details: {},
+    status: "idle",
+    error: null,
+    currentSnapshotIndex: 0,
+  },
   reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchSelfschedulingDetails.pending, (state) => {
+        console.log("Fetching self-scheduling details...");
         state.status = "loading";
         state.error = "";
         state.list = [];
       })
       .addCase(fetchSelfschedulingDetails.fulfilled, (state, { payload }) => {
-        state.status = "succeeded"; 
+        state.status = "succeeded";
         state.list = payload.selfscheduling.snapshots.map((s) => [
           s.snapshotId,
           { ...s, loading: false, loaded: false },
-          
-        ]);
-        state.details = payload.snapshot ? { ...payload.snapshot } : {};
+        ]); 
+        const id = payload.snapshot?.snapshotSummary?.snapshotId;
+        if (id) {
+          state.details[id] = payload.snapshot;
+        }
       })
       .addCase(fetchSelfschedulingDetails.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
+      })
+      .addCase(fetchSnapshotDetails.fulfilled, (state, { payload }) => {
+        state.list[payload.snapshotId] = { loading: false, loaded: true };
+        state.details[payload.snapshotId] = { ...payload.data };
+      })
+      .addCase(fetchSnapshotDetails.pending, (state, { meta }) => {
+        state.list[meta.snapshotId] = { loading: true, loaded: false };
+      })
+      .addCase(fetchSnapshotDetails.rejected, (state, { payload }) => {
+        state.list[payload.snapshotId] = { loading: false, loaded: false, error: payload.error };
       })
       .addCase(createSnapshot.pending, (state) => {
         state.status = "loading";
@@ -104,15 +125,6 @@ const snapshotsSlice = createSlice({
       .addCase(activateSnapshot.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
-      })
-      .addCase(fetchSnapshotDetails.pending, (state, { meta }) => {
-        state.details[meta.arg] = { loading: true, loaded: false, data: state.details[meta.arg]?.data };
-      })
-      .addCase(fetchSnapshotDetails.fulfilled, (state, { payload }) => {
-        state.details[payload.snapshotId] = { loading: false, loaded: true, data: payload.data };
-      })
-      .addCase(fetchSnapshotDetails.rejected, (state, { payload }) => {
-        state.details[payload.snapshotId] = { loading: false, loaded: false, error: payload.error };
       });
   },
 });

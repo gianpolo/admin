@@ -1,21 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import PageMeta from "../../components/common/PageMeta.jsx";
-import NotificationsWidget from "../../components/notifications/NotificationsWidget.jsx";
+import PageMeta from "../../components/common/PageMeta";
 import { ChevronLeftIcon } from "../../icons/index.js";
-import { fetchEventsLogs } from "../../store/notificationsSlice.js";
-import { startSimulation, stopSimulation, checkSimulation } from "../../store/selfschedulingsSlice.js";
+import { startSimulation, stopSimulation } from "../../store/selfschedulingsSlice.js";
 import { fetchSelfschedulingDetails, performSelfschedulingAction } from "../../store/selfschedulingDetailsSlice.js";
+import SelfSchedulingOverview from "../../components/selfscheduling/SelfSchedulingOverview";
+import Spinner from "../../components/ui/spinner/Spinner";
+import SimulationWidget from "../../components/selfscheduling/SimulationWidget";
+import SnapshotsContainer from "../../components/snapshot/SnapshotsContainer";
 
-import SelfSchedulingInfoCard from "../../components/selfscheduling/SelfSchedulingInfoCard.jsx";
-import Spinner from "../../components/ui/spinner/Spinner.jsx";
-import SimulationWidget from "../../components/selfscheduling/SimulationWidget.jsx";
-import SnapshotsContainer from "../../components/snapshot/SnapshotsContainer.jsx";
-import Timeline from "../../components/timeline/Timeline.jsx";
 export default function SelfSchedulingDetailsPage() {
   const { id } = useParams();
-  //const goBack = useGoBack();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -24,7 +20,7 @@ export default function SelfSchedulingDetailsPage() {
   const { status, error } = selfscheduling;
   const [actionLoading, setActionLoading] = useState(false);
 
-  const snapshots = useSelector((state) => state.snapshots); 
+  const snapshots = useSelector((state) => state.snapshots);
   useEffect(() => {
     dispatch(fetchSelfschedulingDetails(id));
   }, [dispatch, id]);
@@ -101,7 +97,7 @@ export default function SelfSchedulingDetailsPage() {
         status === "succeeded" && (
           <div className="grid grid-cols-12 gap-6 mt-6">
             <div className="col-span-8">
-              <SelfSchedulingInfoCard
+              <SelfSchedulingOverview
                 selfscheduling={selfscheduling}
                 onAction={handleAction}
                 actionLoading={actionLoading}

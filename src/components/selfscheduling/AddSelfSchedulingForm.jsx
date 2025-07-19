@@ -1,10 +1,10 @@
-import Form from "../form/Form.jsx";
-import Label from "../form/Label.jsx";
-import Select from "../form/Select.jsx";
-import InputField from "../form/input/InputField.jsx";
-import MyDateRangePicker from "../form/DateRangePicker.jsx";
-import SelectableListModal from "../common/SelectableListModal.jsx";
-import Button from "../ui/button/Button.jsx";
+import Form from "../form/Form";
+import Label from "../form/Label";
+import Select from "../form/Select";
+import InputField from "../form/input/InputField";
+import MyDateRangePicker from "../form/DateRangePicker";
+import SelectableListModal from "../common/SelectableListModal";
+import Button from "../ui/button/Button";
 import { TableRow, TableCell, TableCellHeader } from "../ui/table";
 export default function AddSelfSchedulingForm({
   handleSubmit,
@@ -103,23 +103,15 @@ export default function AddSelfSchedulingForm({
             onChange={handleExperienceChange}
             renderLabel={(item) => (
               <div className="leading-snug">
-                <div className="dark:text-white font-medium truncate">
-                  {item.name}
-                </div>
-                <div className="text-theme-xs text-gray-400 dark:text-gray-400">
-                  {item.id}
-                </div>
+                <div className="dark:text-white font-medium truncate">{item.name}</div>
+                <div className="text-theme-xs text-gray-400 dark:text-gray-400">{item.id}</div>
               </div>
             )}
             renderRow={(item) => (
               <TableCell>
                 <div className="leading-snug">
-                  <div className="dark:text-white font-medium truncate">
-                    {item.name}
-                  </div>
-                  <div className="text-theme-xs text-gray-400 dark:text-gray-400">
-                    {item.id}
-                  </div>
+                  <div className="dark:text-white font-medium truncate">{item.name}</div>
+                  <div className="text-theme-xs text-gray-400 dark:text-gray-400">{item.id}</div>
                 </div>
               </TableCell>
             )}
@@ -139,23 +131,15 @@ export default function AddSelfSchedulingForm({
             onChange={handleGuideChange}
             renderLabel={(item) => (
               <div className="leading-snug">
-                <div className="dark:text-white font-medium truncate">
-                  {item.name}
-                </div>
-                <div className="text-theme-xs text-gray-400 dark:text-gray-400">
-                  {item.id}
-                </div>
+                <div className="dark:text-white font-medium truncate">{item.name}</div>
+                <div className="text-theme-xs text-gray-400 dark:text-gray-400">{item.id}</div>
               </div>
             )}
             renderRow={(item) => (
               <TableCell>
                 <div className="leading-snug">
-                  <div className="dark:text-white font-medium truncate">
-                    {item.name}
-                  </div>
-                  <div className="text-theme-xs text-gray-400 dark:text-gray-400">
-                    {item.id}
-                  </div>
+                  <div className="dark:text-white font-medium truncate">{item.name}</div>
+                  <div className="text-theme-xs text-gray-400 dark:text-gray-400">{item.id}</div>
                 </div>
               </TableCell>
             )}
@@ -168,11 +152,7 @@ export default function AddSelfSchedulingForm({
         </div>
       </div>
       <div>
-        <Button
-          disabled={loading}
-          type="submit"
-          className="bg-brand-500 text-white hover:bg-brand-600"
-        >
+        <Button disabled={loading} type="submit" className="bg-brand-500 text-white hover:bg-brand-600">
           Create
         </Button>
       </div>

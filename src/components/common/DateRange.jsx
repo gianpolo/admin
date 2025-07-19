@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import Badge from "../ui/badge/Badge.jsx";
-import DateTime from "./DateTime.jsx";
+import Badge from "../ui/badge/Badge";
+import DateTime from "./DateTime";
 export default function DateRange({ from, to, separator = "-", includeDaysCount = false, size = "md" }) {
   const getDaysCount = (from, to) => {
     const fromDate = new Date(from);
@@ -33,3 +33,5 @@ export default function DateRange({ from, to, separator = "-", includeDaysCount 
     </>
   );
 }
+
+

@@ -7,12 +7,12 @@ import {
   fetchGuides,
   createSelfScheduling as createSelfSchedulingThunk,
 } from "../../store/selfschedulingFormSlice.js";
-import PageBreadcrumb from "../../components/common/PageBreadCrumb.jsx";
-import PageMeta from "../../components/common/PageMeta.jsx";
-import Button from "../../components/ui/button/Button.jsx";
-import Spinner from "../../components/ui/spinner/Spinner.jsx";
-import ComponentCard from "../../components/common/ComponentCard.jsx";
-import AddSelfSchedulingForm from "../../components/selfscheduling/AddSelfSchedulingForm.jsx";
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+import PageMeta from "../../components/common/PageMeta";
+import Button from "../../components/ui/button/Button";
+import Spinner from "../../components/ui/spinner/Spinner";
+import ComponentCard from "../../components/common/ComponentCard";
+import AddSelfSchedulingForm from "../../components/selfscheduling/AddSelfSchedulingForm";
 const testConf = {
   cityId: 1,
   description: "test",

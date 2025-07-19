@@ -1,29 +1,16 @@
-import ComponentCard from "../common/ComponentCard.jsx"; 
-import CopyableText from "../common/CopyableText.jsx"; 
-import DateTime from "../common/DateTime";
+import ComponentCard from "../../common/ComponentCard";
+import CopyableText from "../../common/CopyableText";
+import DateTime from "../../common/DateTime";
 export default function SnapshotOverview({ snapshotSummary, isActive, onActivateSnapshot }) {
   const title = (
     <div className="flex relative items-center">
       <div className="flex-1 h-[32px]">{snapshotSummary.label}</div>
-      {/* {isActive ? (
-        <Ribbon>active snapshot</Ribbon>
-      ) : (
-        <Button
-          size="xs"
-          variant="outline"
-          onClick={(event) => {
-            event.preventDefault();
-            onActivateSnapshot();
-          }}
-          endIcon={<CheckCircleIcon />}
-        >
-          Activate
-        </Button>
-      )} */}
     </div>
   );
+  const defaultClass = "border rounded-2xl dark:bg-transparent";
+  const isActiveClass = isActive ? " border-green-500" : "border border-transparent";
   return (
-    <ComponentCard title={title} className={`${isActive ? "border border-green-500!" : "border-transparent!"}`}>
+    <ComponentCard title={title} className={`${defaultClass} ${isActiveClass}`}>
       <>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-7 2xl:gap-x-32">
           <CopyableText text={snapshotSummary.snapshotId}>

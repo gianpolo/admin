@@ -1,7 +1,7 @@
-import { Table, TableBody, TableCell, TableHeader, TableRow, TableCellHeader } from "../ui/table/index.jsx";
+import { Table, TableBody, TableCell, TableHeader, TableRow, TableCellHeader } from "../ui/table/index";
 import { PlayIcon, StopIconCircle, TrashBinIcon } from "../../icons/index.js";
-import Spinner from "../ui/spinner/Spinner.jsx";
-import Badge from "../ui/badge/Badge.jsx";
+import Spinner from "../ui/spinner/Spinner";
+import Badge from "../ui/badge/Badge";
 export default function SelfSchedulingList({
   list,
   actionStatus,
