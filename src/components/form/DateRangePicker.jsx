@@ -18,15 +18,16 @@ export default function MyDateRangePicker({
       flatPickr.current = flatpickr(node, {
         mode: "range",
         dateFormat: "Y-m-d",
+        locale: null,
         static: true,
         defaultDate: [value.startDate, value.endDate],
         minDate: minDate ? minDate.toISOString().split("T")[0] : undefined,
         maxDate: maxDate ? maxDate.toISOString().split("T")[0] : undefined,
         showMonths: 2,
         closeOnSelect: false,
-        onChange: (selectedDates, dateStr) => {
-          const [start, end] = selectedDates;
-          onChange?.({ startDate: start, endDate: end }, dateStr);
+        onChange: (selectedDates, dateStr) => { 
+          const utcMidnights = selectedDates.map((d) => new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())));
+          onChange?.({ startDate: utcMidnights[0], endDate: utcMidnights[1] }, dateStr);
           if (selectedDates.length === 2) {
             flatPickr.current.close();
           }
@@ -36,14 +37,10 @@ export default function MyDateRangePicker({
   }, []);
   useEffect(() => {
     if (flatPickr.current) {
-      flatPickr.current.setDate(
-        [parseDate(value.startDate), parseDate(value.endDate)],
-        false
-      );
+      flatPickr.current.setDate([parseDate(value.startDate), parseDate(value.endDate)], false);
     }
   }, [value.startDate, value.endDate]);
-  const formatDate = (date) =>
-    date instanceof Date ? date.toISOString().split("T")[0] : "";
+  const formatDate = (date) => (date instanceof Date ? date.toISOString().split("T")[0] : "");
 
   const parseDate = (str) => (str ? new Date(str) : null);
 
