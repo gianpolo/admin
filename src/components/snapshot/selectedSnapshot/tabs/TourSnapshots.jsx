@@ -22,14 +22,14 @@ export default function TourSnapshots({ tours }) {
                   <div>[ExpId-OptId] - Experience</div>
                   <div>Option</div>
                 </div>
-              </TableCellHeader>
+              </TableCellHeader> 
+              <TableCellHeader>Group Size</TableCellHeader>
               <TableCellHeader>
                 <div className="flex flex-col items-start">
                   <div>Occurrences overlapping SelfScheduling Tours Period </div>
                   <div>From - To</div>
                 </div>
               </TableCellHeader>
-              <TableCellHeader>Group Size</TableCellHeader>
             </TableRow>
           </TableHeader>
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-sm">
@@ -41,8 +41,8 @@ export default function TourSnapshots({ tours }) {
                   </div>
                   <div className="font-medium text-gray-800 dark:text-white/90">{t.name.optionName}</div>
                 </TableCell>
-                <TableCell className="px-5 py-2">{renderOccurrences(t.tourOccurrences)}</TableCell>
                 <TableCell className="px-5 py-2">{t.groupSize}</TableCell>
+                <TableCell className="px-5 py-2">{renderOccurrences(t.tourOccurrences)}</TableCell>
               </TableRow>
             ))}
           </TableBody>
