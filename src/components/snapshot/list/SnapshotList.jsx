@@ -24,8 +24,7 @@ export default function SnapshotList({
   useEffect(() => {
     if (!snapshots?.length) return;
     console.log("SnapshotList useEffect - snapshots:", snapshots);
-    const tabs = snapshots.map((x) => {
-      const s = x[1];
+    const tabs = snapshots.map((s) => {
       const isActive = s.snapshotId === activeSnapshotId;
       const { snapshotDate, label, createdAt } = s;
       return {

@@ -16,8 +16,8 @@ export default function SelfSchedulingDetailsPage() {
   const navigate = useNavigate();
 
   const { isSimulationRunning } = useSelector((state) => state.selfschedulings);
-  const selfscheduling = useSelector((state) => state.selfschedulingDetails);
-  const { status, error } = selfscheduling;
+  const selfschedulingState = useSelector((state) => state.selfschedulingDetails);
+  const { status, error, selfscheduling } = selfschedulingState;
   const [actionLoading, setActionLoading] = useState(false);
 
   const snapshots = useSelector((state) => state.snapshots);
@@ -27,9 +27,9 @@ export default function SelfSchedulingDetailsPage() {
 
   const handleAction = async (action) => {
     setActionLoading(true);
-    const result = await dispatch(performConfigurationAction({ id, action }));
+    const result = await dispatch(performSelfschedulingAction({ id, action }));
     if (performSelfschedulingAction.fulfilled.match(result)) {
-      dispatch(fetchSelfscheduling(id));
+      dispatch(fetchSelfschedulingDetails(id));
     }
     setActionLoading(false);
   };
@@ -129,8 +129,8 @@ export default function SelfSchedulingDetailsPage() {
             {status === "succeeded" && snapshots && (
               <SnapshotsContainer
                 activeSnapshotId={selfscheduling.activeSnapshotId}
-                snapshotStatus={status === "succeeded"}
-                snapshots={snapshots}
+                snapshotStatus={snapshots.status}
+                snapshotList={snapshots.list}
                 selfSchedulingId={selfscheduling.selfSchedulingId}
               />
             )}

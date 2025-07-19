@@ -10,20 +10,20 @@ import SnapshotDetailsTitle from "./SnapshotDetailsTitle.jsx";
 import Tabs from "../../common/Tabs.jsx";
 
 export default function SnapshotDetails({ snapshotId, isActive, loading, onActivateSnapshot, onGenerateSlots }) {
-  useEffect(() => {
-    console.log("SnapshotDetails useEffect", snapshotId);
-    if (snapshotId) {
-      dispatch(fetchSnapshotDetails(snapshotId));
-    }
-  }, [snapshotId]);
   const dispatch = useDispatch();
   const [tabs, setTabs] = useState(null);
   const { details, status } = useSelector((state) => state.snapshots);
-  const { snapshotSummary, tours } = details;
-  const { snapshotDate } = snapshotSummary;
+  const snapshotData = details ? details[snapshotId] : null;
+
   useEffect(() => {
-    console.log("SnapshotDetails useEffect - fetching details for snapshotId:", snapshotId);
-    dispatch(fetchSnapshotDetails(snapshotId));
+    if (snapshotId) {
+      dispatch(fetchSnapshotDetails(snapshotId));
+    }
+  }, [snapshotId, dispatch]);
+
+  useEffect(() => {
+    if (!snapshotData) return;
+    const { tours } = snapshotData;
     const tabs = [
       {
         label: "Tours",
@@ -43,29 +43,34 @@ export default function SnapshotDetails({ snapshotId, isActive, loading, onActiv
       },
     ];
     setTabs(tabs);
-  }, [snapshotId]);
+  }, [snapshotData]);
 
-  if (loading && status === "loading") {
+  if (loading && status === "loading" && !snapshotData) {
     return <Spinner fullscreen />;
-  } else {
-    return (
-      <>
-        <ComponentCard
-          title={
-            <SnapshotDetailsTitle
-              snapshotDate={snapshotDate}
-              isActive={isActive}
-              createdAt={snapshotSummary.createdAt}
-              canGenerateSlots={true}
-              onActivateSnapshot={onActivateSnapshot}
-              onGenerateSlots={onGenerateSlots}
-            />
-          }
-        >
-          <SnapshotOverview isActive={isActive} snapshotSummary={snapshotSummary}></SnapshotOverview>
-          {tabs && <Tabs tabsData={tabs} className="mt-4"></Tabs>}
-        </ComponentCard>
-      </>
-    );
   }
+
+  if (!snapshotData) return null;
+
+  const { snapshotSummary } = snapshotData;
+  const { snapshotDate } = snapshotSummary;
+
+  return (
+    <>
+      <ComponentCard
+        title={
+          <SnapshotDetailsTitle
+            snapshotDate={snapshotDate}
+            isActive={isActive}
+            createdAt={snapshotSummary.createdAt}
+            canGenerateSlots={true}
+            onActivateSnapshot={onActivateSnapshot}
+            onGenerateSlots={onGenerateSlots}
+          />
+        }
+      >
+        <SnapshotOverview isActive={isActive} snapshotSummary={snapshotSummary}></SnapshotOverview>
+        {tabs && <Tabs tabsData={tabs} className="mt-4"></Tabs>}
+      </ComponentCard>
+    </>
+  );
 }

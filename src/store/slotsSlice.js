@@ -1,5 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
+const getToken = () => localStorage.getItem("token") || "";
+const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+
 export const generateSlots = createAsyncThunk("slots/generateSlots", async (selfSchedulingId, { rejectWithValue }) => {
   try {
     const res = await fetch(`${backend_url}/snapshots/slots/${selfSchedulingId}`, {
