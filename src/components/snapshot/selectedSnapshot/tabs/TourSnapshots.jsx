@@ -1,17 +1,8 @@
-import { useEffect } from "react";
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableCellHeader } from "../../../ui/table/index";
 import DateRange from "../../../common/DateRange";
 import TourId from "../../../common/TourId";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchTourSnapshots } from "../../../../store/snapshotsSlice";
+import { useSelector } from "react-redux";
 export default function TourSnapshots({ snapshotId }) {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    if (snapshotId) {
-      console.log("here");
-        dispatch(fetchTourSnapshots(snapshotId));
-    }
-  }, [snapshotId]);
   const { details, status } = useSelector((state) => state.snapshots);
   const tours = details[snapshotId] ? details[snapshotId].tours : null;
   const renderOccurrences = (occurrences) => {

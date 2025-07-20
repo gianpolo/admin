@@ -11,7 +11,6 @@ export default function SelfSchedulingItems({ snapshotId }) {
   }, [snapshotId]);
   const items = useSelector((state) => state.snapshots.details[snapshotId].items) || [];
   const status = useSelector((state) => state.snapshots.status);
-  console.log(items);
   return status === "succeeded" ? (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">

@@ -39,11 +39,10 @@ export default function SnapshotDetails({ snapshotId, isActive, loading, onActiv
       //   content: <span>Allocations</span>,
       // },
     ];
-    console.log("snapshotid changed")
     setTabs(tabs);
   }, [snapshotId]);
 
-  if (loading && status === "loading" && !snapshotData) {
+  if (loading && status === "loading" && !snapshot) {
     return <Spinner fullscreen />;
   }
 

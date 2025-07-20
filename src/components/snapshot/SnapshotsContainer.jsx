@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ComponentCard from "../common/ComponentCard";
-import { useDispatch } from "react-redux";
-import { activateSnapshot, createSnapshot, processSnapshot } from "../../store/snapshotsSlice.js";
+import { useDispatch, useSelector } from "react-redux";
+import { activateSnapshot, createSnapshot, processSnapshot, fetchTourSnapshots } from "../../store/snapshotsSlice.js";
 import { generateSlots } from "../../store/slotsSlice.js";
 import { fetchSelfschedulingDetails } from "../../store/selfschedulingDetailsSlice.js";
 import EmptySnapshotWidget from "./EmptySnapshotWidget.jsx";
@@ -9,8 +9,23 @@ import SnapshotList from "./list/SnapshotList.jsx";
 
 export default function SnapshotsContainer({ snapshotList, activeSnapshotId, snapshotStatus, selfSchedulingId }) {
   const dispatch = useDispatch();
-  debugger;
   const [selectedSnapshot, setSelectedSnasphot] = useState(activeSnapshotId || null);
+
+  // Keep selected snapshot in sync with active snapshot id
+  useEffect(() => {
+    setSelectedSnasphot(activeSnapshotId || null);
+  }, [activeSnapshotId]);
+
+  // Fetch tours for the currently selected snapshot if not loaded yet
+  const tours = useSelector((state) =>
+    selectedSnapshot ? state.snapshots.details[selectedSnapshot]?.tours : null
+  );
+  const status = useSelector((state) => state.snapshots.status);
+  useEffect(() => {
+    if (selectedSnapshot && !tours && status !== "loading") {
+      dispatch(fetchTourSnapshots(selectedSnapshot));
+    }
+  }, [dispatch, selectedSnapshot, tours, status]);
   const handleAddSnapshot = async (label) => {
     if (!selfSchedulingId) return;
     const result = await dispatch(createSnapshot({ selfSchedulingId, label }));
@@ -26,7 +41,6 @@ export default function SnapshotsContainer({ snapshotList, activeSnapshotId, sna
     }
   };
   const handleGenerateSlots = async (snapshotId) => {
-    debugger;
     if (!snapshotId) return;
     const result = await dispatch(generateSlots(snapshotId));
     if (generateSlots.fulfilled.match(result)) {

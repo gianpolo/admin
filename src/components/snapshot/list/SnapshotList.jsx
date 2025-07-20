@@ -64,7 +64,6 @@ export default function SnapshotList({
         ),
       };
     });
-    console.log("here");
     setTabsData(tabs);
   }, [activeSnapshotId, loading]);
 
