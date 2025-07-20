@@ -37,28 +37,6 @@ export const activateSnapshot = createAsyncThunk("snapshots/activateSnapshot", a
   }
 });
 
-export const fetchSnapshotDetails = createAsyncThunk(
-  "snapshots/fetchSnapshotDetails",
-  async (snapshotId, { rejectWithValue }) => {
-    try {
-      const res = await fetch(`${backend_url}/snapshots/${snapshotId}`, {
-        headers: { Authorization: `Bearer ${getToken()}` },
-      });
-      if (!res.ok) throw new Error("Failed to fetch snapshot details");
-      const data = await res.json();
-      return { snapshotId, data };
-    } catch (err) {
-      return rejectWithValue({ snapshotId, error: err.message });
-    }
-  },
-  {
-    condition: (snapshotId, { getState }) => {
-      const entry = getState().snapshots.details[snapshotId];
-      return !entry;
-    },
-  }
-);
-
 export const processSnapshot = createAsyncThunk(
   "snapshots/processSnapshot",
   async (snapshotId, { rejectWithValue }) => {
@@ -79,6 +57,42 @@ export const processSnapshot = createAsyncThunk(
   }
 );
 
+export const fetchItems = createAsyncThunk("snapshots/fetchItems", async (snapshotId, { rejectWithValue }) => {
+  try {
+    const res = await fetch(`${backend_url}/items/${snapshotId}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${getToken()}` },
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(text || "Failed to process snapshot");
+    }
+    const data = await res.json();
+    return { snapshotId, items: data };
+  } catch (err) {
+    return rejectWithValue(err.message);
+  }
+});
+
+export const fetchTourSnapshots = createAsyncThunk(
+  "snapshots/fetchTourSnapshots",
+  async (snapshotId, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`${backend_url}/snapshots/${snapshotId}/tours`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Failed to process snapshot");
+      }
+      const data = await res.json();
+      return { snapshotId, tours: data };
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
 const snapshotsSlice = createSlice({
   name: "snapshots",
   initialState: {
@@ -106,17 +120,6 @@ const snapshotsSlice = createSlice({
       .addCase(fetchSelfschedulingDetails.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
-      })
-      .addCase(fetchSnapshotDetails.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(fetchSnapshotDetails.fulfilled, (state, { payload }) => {
-        state.status = "succeeded";
-        state.details[payload.snapshotId] = { ...payload.data };
-      })
-      .addCase(fetchSnapshotDetails.rejected, (state, { payload }) => {
-        state.status = "failed";
-        state.error = payload.error;
       })
       .addCase(createSnapshot.pending, (state) => {
         state.status = "loading";
@@ -153,6 +156,33 @@ const snapshotsSlice = createSlice({
         }
       })
       .addCase(processSnapshot.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(fetchTourSnapshots.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchTourSnapshots.fulfilled, (state, { payload }) => {
+        state.status = "succeeded";
+        state.details[payload.snapshotId].tours = payload.tours;
+      })
+      .addCase(fetchTourSnapshots.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      })
+      .addCase(fetchItems.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(fetchItems.fulfilled, (state, { payload }) => {
+        state.status = "succeeded";
+        if (payload && payload.snapshotId) {
+          if (!state.details[payload.snapshotId]) {
+            state.details[payload.snapshotId] = {};
+          }
+          state.details[payload.snapshotId].items = payload.items;
+        }
+      })
+      .addCase(fetchItems.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       });

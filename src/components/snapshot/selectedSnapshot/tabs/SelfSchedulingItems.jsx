@@ -1,8 +1,18 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableCellHeader } from "../../../ui/table/index";
+import { fetchItems } from "../../../../store/snapshotsSlice";
 import TourId from "../../../common/TourId";
-export default function ItemsSnapshots({ items }) {
-  if (!items) return null;
-  return (
+
+export default function SelfSchedulingItems({ snapshotId }) {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchItems(snapshotId));
+  }, [snapshotId]);
+  const items = useSelector((state) => state.snapshots.details[snapshotId].items) || [];
+  const status = useSelector((state) => state.snapshots.status);
+  console.log(items);
+  return status === "succeeded" ? (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
         <Table>
@@ -39,5 +49,7 @@ export default function ItemsSnapshots({ items }) {
         </Table>
       </div>
     </div>
+  ) : (
+    <span>x</span>
   );
 }

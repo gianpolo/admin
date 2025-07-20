@@ -1,7 +1,19 @@
+import { useEffect } from "react";
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableCellHeader } from "../../../ui/table/index";
 import DateRange from "../../../common/DateRange";
 import TourId from "../../../common/TourId";
-export default function TourSnapshots({ tours }) {
+import { useDispatch, useSelector } from "react-redux";
+import { fetchTourSnapshots } from "../../../../store/snapshotsSlice";
+export default function TourSnapshots({ snapshotId }) {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (snapshotId) {
+      console.log("here");
+        dispatch(fetchTourSnapshots(snapshotId));
+    }
+  }, [snapshotId]);
+  const { details, status } = useSelector((state) => state.snapshots);
+  const tours = details[snapshotId] ? details[snapshotId].tours : null;
   const renderOccurrences = (occurrences) => {
     return occurrences.map((o) => {
       return (
@@ -22,7 +34,7 @@ export default function TourSnapshots({ tours }) {
                   <div>[ExpId-OptId] - Experience</div>
                   <div>Option</div>
                 </div>
-              </TableCellHeader> 
+              </TableCellHeader>
               <TableCellHeader>Group Size</TableCellHeader>
               <TableCellHeader>
                 <div className="flex flex-col items-start">
@@ -33,18 +45,20 @@ export default function TourSnapshots({ tours }) {
             </TableRow>
           </TableHeader>
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-sm">
-            {tours.map((t) => (
-              <TableRow key={`${t.tourId.optionId}`} className="hover:bg-gray-50 dark:hover:bg-white/[0.05]">
-                <TableCell className="px-5 py-2">
-                  <div className="text-xs">
-                    <TourId tourId={t.tourId} /> <span className="ml-2">{t.name.experienceName}</span>
-                  </div>
-                  <div className="font-medium text-gray-800 dark:text-white/90">{t.name.optionName}</div>
-                </TableCell>
-                <TableCell className="px-5 py-2">{t.groupSize}</TableCell>
-                <TableCell className="px-5 py-2">{renderOccurrences(t.tourOccurrences)}</TableCell>
-              </TableRow>
-            ))}
+            {status === "succeeded" &&
+              tours &&
+              tours.map((t) => (
+                <TableRow key={`${t.tourId.optionId}`} className="hover:bg-gray-50 dark:hover:bg-white/[0.05]">
+                  <TableCell className="px-5 py-2">
+                    <div className="text-xs">
+                      <TourId tourId={t.tourId} /> <span className="ml-2">{t.name.experienceName}</span>
+                    </div>
+                    <div className="font-medium text-gray-800 dark:text-white/90">{t.name.optionName}</div>
+                  </TableCell>
+                  <TableCell className="px-5 py-2">{t.groupSize}</TableCell>
+                  <TableCell className="px-5 py-2">{renderOccurrences(t.tourOccurrences)}</TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </div>

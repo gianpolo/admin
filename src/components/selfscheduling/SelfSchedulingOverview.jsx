@@ -7,7 +7,6 @@ import DateRange from "../common/DateRange";
 export default function SelfSchedulingOverview({ selfscheduling, onAction, actionLoading = false }) {
   const { configuration: config, selfSchedulingId: id } = selfscheduling || {};
   const { toursPeriod, schedulingWindow, configurationId: configId } = config || {};
-  console.log(selfscheduling);
   const getDaysLeft = (date) => {
     const today = new Date();
     const target = new Date(date);

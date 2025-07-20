@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ComponentCard from "../common/ComponentCard";
 import { useDispatch } from "react-redux";
 import { activateSnapshot, createSnapshot, processSnapshot } from "../../store/snapshotsSlice.js";
@@ -9,7 +9,8 @@ import SnapshotList from "./list/SnapshotList.jsx";
 
 export default function SnapshotsContainer({ snapshotList, activeSnapshotId, snapshotStatus, selfSchedulingId }) {
   const dispatch = useDispatch();
-
+  debugger;
+  const [selectedSnapshot, setSelectedSnasphot] = useState(activeSnapshotId || null);
   const handleAddSnapshot = async (label) => {
     if (!selfSchedulingId) return;
     const result = await dispatch(createSnapshot({ selfSchedulingId, label }));
@@ -17,7 +18,7 @@ export default function SnapshotsContainer({ snapshotList, activeSnapshotId, sna
       dispatch(fetchSelfschedulingDetails(selfSchedulingId));
     }
   };
-  const handleActivateSnapshot = async (snapshotId) => { 
+  const handleActivateSnapshot = async (snapshotId) => {
     if (!selfSchedulingId) return;
     const result = await dispatch(activateSnapshot({ selfSchedulingId, snapshotId }));
     if (activateSnapshot.fulfilled.match(result)) {
@@ -55,6 +56,8 @@ export default function SnapshotsContainer({ snapshotList, activeSnapshotId, sna
             loading={snapshotStatus === "loading"}
             snapshots={snapshotList}
             activeSnapshotId={activeSnapshotId}
+            selectedSnapshot={selectedSnapshot}
+            onSnapshotSelected={(id) => setSelectedSnasphot(id)}
             onAddSnapshot={handleAddSnapshot}
             onActivateSnapshot={handleActivateSnapshot}
             onGenerateSlots={handleGenerateSlots}

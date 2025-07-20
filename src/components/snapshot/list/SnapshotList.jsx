@@ -10,34 +10,41 @@ import Label from "../../form/Label.jsx";
 import DateTime from "../../common/DateTime.jsx";
 export default function SnapshotList({
   snapshots,
+  selectedSnapshot,
   activeSnapshotId,
   onAddSnapshot,
   canAddSnapshot,
   loading,
   onActivateSnapshot,
-  onGenerateSlots,
   onGenerateItems,
+  onSnapshotSelected,
 }) {
   const [tabsData, setTabsData] = useState(null);
   const [snapshotLabel, setSnapshotLabel] = useState("Generated from Dashboard");
-  const [currentTabIndex, setCurrentTabIndex] = useState(0);
-  //const { details, status } = useSelector((state) => state.snapshots);
+  var elementPos = snapshots
+    .map(function (x) {
+      return x.snapshotId;
+    })
+    .indexOf(selectedSnapshot);
+  const [currentTabIndex, setCurrentTabIndex] = useState(elementPos || 0);
   useEffect(() => {
     if (!snapshots?.length) return;
-    console.log("SnapshotList useEffect - snapshots:", snapshots);
     const tabs = snapshots.map((s) => {
-      const isActive = s.snapshotId === activeSnapshotId;
       const { snapshotDate, label, createdAt } = s;
+      const isActive = s.snapshotId === activeSnapshotId;
       return {
         isActive,
         label: (
           <div className="flex flex-row w-full justify-between items-center">
             <div className="flex-auto text-left">
-              <div className="text-sm">{snapshotDate}</div>
-              <div className="text-xs">{label}</div>
-              <div className="text-xs">
+              <div className="text-theme-sm mb-2">
+                <DateTime date={snapshotDate} />
+                <span className="ml-1">- {label}</span>
+              </div>
+              <div className="text-theme-xs">
                 <DateTime date={createdAt} />
               </div>
+              <div className="text-theme-xs">{s.snapshotId}</div>
             </div>
             {isActive && (
               <div className="text-right text-lg">
@@ -50,17 +57,16 @@ export default function SnapshotList({
           <SnapshotDetails
             loading={loading}
             onActivateSnapshot={() => onActivateSnapshot(s.snapshotId)}
-            onGenerateSlots={() => onGenerateSlots(s.snapshotId)}
             onGenerateItems={() => onGenerateItems(s.snapshotId)}
             isActive={isActive}
-            snapshotId={s.snapshotId}
+            snapshotId={selectedSnapshot}
           />
         ),
       };
     });
-    console.log("SnapshotList useEffect - tabsData:", tabs);
+    console.log("here");
     setTabsData(tabs);
-  }, [snapshots, activeSnapshotId, loading, currentTabIndex]);
+  }, [activeSnapshotId, loading]);
 
   const addOn = (
     <>
@@ -96,7 +102,7 @@ export default function SnapshotList({
           currentTabIndex={currentTabIndex}
           tabsData={tabsData}
           addOn={addOn}
-          onChangeTab={(idx) => setCurrentTabIndex(idx)}
+          onChangeTab={onSnapshotSelected}
         ></VerticalTabs>
       )}
     </>

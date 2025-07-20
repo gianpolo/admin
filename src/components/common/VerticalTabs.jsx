@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 export default function VerticalTabs({ tabsData, addOn, onChangeTab, currentTabIndex }) {
   return (
     <div className="flex flex-col gap-6 sm:flex-row sm:gap-8 rounded-xl">
-      <div className="sm:w-[300px] rounded-xl p-6 dark:bg-white/[0.03]">
+      <div className="sm:w-[400px] rounded-xl p-6 dark:bg-white/[0.03]">
         {addOn && <div className="pb-6 mb-6 border-b border-gray-700">{addOn}</div>}
         <nav className="flex flex-auto sm:flex-col sm:space-y-2 overflow-y-auto">
           {tabsData.map((tab, idx) => (

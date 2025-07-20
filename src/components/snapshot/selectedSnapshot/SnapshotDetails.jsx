@@ -1,70 +1,51 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchSnapshotDetails } from "../../../store/snapshotsSlice.js";
 import SnapshotOverview from "./SnapshotOverview.jsx";
 import Spinner from "../../ui/spinner/Spinner.jsx";
 import ComponentCard from "../../common/ComponentCard.jsx";
 import TourSnapshots from "./tabs/TourSnapshots.jsx";
 import ForecastSnapshots from "./tabs/ForecastSnapshots.jsx";
-import ItemsSnapshots from "./tabs/ItemsSnapshots.jsx";
+import SelfSchedulingItems from "./tabs/SelfSchedulingItems.jsx";
 import SnapshotDetailsTitle from "./SnapshotDetailsTitle.jsx";
 import Tabs from "../../common/Tabs.jsx";
 
-export default function SnapshotDetails({
-  snapshotId,
-  isActive,
-  loading,
-  onActivateSnapshot,
-  onGenerateSlots,
-  onGenerateItems,
-}) {
-  const dispatch = useDispatch();
+export default function SnapshotDetails({ snapshotId, isActive, loading, onActivateSnapshot, onGenerateItems }) {
   const [tabs, setTabs] = useState(null);
   const { details, status } = useSelector((state) => state.snapshots);
-  const snapshotData = details ? details[snapshotId] : null;
+  const snapshot = details ? details[snapshotId] : null;
+  const { tours, snapshotSummary } = snapshot;
+  const { snapshotDate } = snapshotSummary;
 
   useEffect(() => {
-    if (snapshotId) {
-      dispatch(fetchSnapshotDetails(snapshotId));
-    }
-  }, [snapshotId, dispatch]);
-
-  useEffect(() => {
-    if (!snapshotData) return;
-    const { tours, items } = snapshotData;
     const tabs = [
       {
         label: "Tours",
-        content: <TourSnapshots tours={tours} />,
+        content: <TourSnapshots snapshotId={snapshotId} />,
       },
-      {
-        label: "Forecasting",
-        content: <ForecastSnapshots tours={tours} />,
-      },
-      {
-        label: "Items",
-        content: <ItemsSnapshots items={items || []} />,
-      },
-      {
-        label: "Guides",
-        content: <span>Guides</span>,
-      },
-      {
-        label: "Allocations",
-        content: <span>Allocations</span>,
-      },
+      // {
+      //   label: "Forecasting",
+      //   content: <ForecastSnapshots tours={tours} />,
+      // },
+      // {
+      //   label: "Items",
+      //   content: <SelfSchedulingItems snapshotId={snapshotId} />,
+      // },
+      // {
+      //   label: "Guides",
+      //   content: <span>Guides</span>,
+      // },
+      // {
+      //   label: "Allocations",
+      //   content: <span>Allocations</span>,
+      // },
     ];
+    console.log("snapshotid changed")
     setTabs(tabs);
-  }, [snapshotData]);
+  }, [snapshotId]);
 
   if (loading && status === "loading" && !snapshotData) {
     return <Spinner fullscreen />;
   }
-
-  if (!snapshotData) return null;
-
-  const { snapshotSummary } = snapshotData;
-  const { snapshotDate } = snapshotSummary;
 
   return (
     <>
@@ -76,7 +57,6 @@ export default function SnapshotDetails({
             createdAt={snapshotSummary.createdAt}
             canGenerateSlots={true}
             onActivateSnapshot={onActivateSnapshot}
-            onGenerateSlots={onGenerateSlots}
             onGenerateItems={onGenerateItems}
           />
         }

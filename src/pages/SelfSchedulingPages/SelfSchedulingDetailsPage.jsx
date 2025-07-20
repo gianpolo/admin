@@ -85,7 +85,7 @@ export default function SelfSchedulingDetailsPage() {
                 </svg>
               </Link>
             </li>
-            <li className="text-sm text-gray-800 dark:text-white/90">Configuration Details</li>
+            <li className="text-sm text-gray-800 dark:text-white/90">SelfScheduling Details</li>
           </ol>
         </nav>
       </div>

@@ -134,17 +134,6 @@ const selfschedulingDetailsSlice = createSlice({
         state.slotsStatus = "failed";
         state.slotsError = action.payload;
       })
-      // .addCase(createSnapshot.pending, (state) => {
-      //   state.snapshotStatus = "loading";
-      //   state.snapshotError = "";
-      // })
-      // .addCase(createSnapshot.fulfilled, (state) => {
-      //   state.snapshotStatus = "succeeded";
-      // })
-      // .addCase(createSnapshot.rejected, (state, action) => {
-      //   state.snapshotStatus = "failed";
-      //   state.snapshotError = action.payload;
-      // })
       .addCase(activateSnapshot.pending, (state) => {
         state.snapshotStatus = "loading";
         state.snapshotError = "";
@@ -159,26 +148,5 @@ const selfschedulingDetailsSlice = createSlice({
       .addCase(performSelfschedulingAction.fulfilled, (state, { payload }) => {
         state.config = payload;
       }),
-  // .addCase(fetchSnapshotDetails.pending, (state, { meta }) => {
-  //   state.snapshotsDetails[meta.arg] = {
-  //     loading: true,
-  //     loaded: false,
-  //     data: state.snapshotsDetails[meta.arg]?.data,
-  //   };
-  // })
-  // .addCase(fetchSnapshotDetails.fulfilled, (state, { payload }) => {
-  //   state.snapshotsDetails[payload.snapshotId] = {
-  //     loading: false,
-  //     loaded: true,
-  //     data: payload.data,
-  //   };
-  // })
-  // .addCase(fetchSnapshotDetails.rejected, (state, { meta }) => {
-  //   state.snapshotsDetails[meta.arg] = {
-  //     loading: false,
-  //     loaded: false,
-  //     data: undefined,
-  //   };
-  // }),
 });
 export default selfschedulingDetailsSlice.reducer;

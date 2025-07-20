@@ -1,7 +1,7 @@
 import ComponentCard from "../../common/ComponentCard";
 import CopyableText from "../../common/CopyableText";
 import DateTime from "../../common/DateTime";
-export default function SnapshotOverview({ snapshotSummary, isActive, onActivateSnapshot }) {
+export default function SnapshotOverview({ snapshotSummary, isActive }) {
   const title = (
     <div className="flex relative items-center">
       <div className="flex-1 h-[32px]">{snapshotSummary.label}</div>
