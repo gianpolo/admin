@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import Button from "../../ui/button/Button.jsx";
 import VerticalTabs from "../../common/VerticalTabs.jsx";
 import { CheckCircleIcon, PlusIcon } from "../../../icons/index.js";
@@ -21,12 +20,18 @@ export default function SnapshotList({
 }) {
   const [tabsData, setTabsData] = useState(null);
   const [snapshotLabel, setSnapshotLabel] = useState("Generated from Dashboard");
-  var elementPos = snapshots
-    .map(function (x) {
-      return x.snapshotId;
-    })
-    .indexOf(selectedSnapshot);
-  const [currentTabIndex, setCurrentTabIndex] = useState(elementPos || 0);
+  const getIndexFromId = (id) =>
+    snapshots
+      .map((x) => x.snapshotId)
+      .indexOf(id);
+  const [currentTabIndex, setCurrentTabIndex] = useState(
+    getIndexFromId(selectedSnapshot) || 0
+  );
+
+  useEffect(() => {
+    const pos = getIndexFromId(selectedSnapshot);
+    if (pos !== -1) setCurrentTabIndex(pos);
+  }, [selectedSnapshot, snapshots]);
   useEffect(() => {
     if (!snapshots?.length) return;
     const tabs = snapshots.map((s) => {
@@ -59,13 +64,13 @@ export default function SnapshotList({
             onActivateSnapshot={() => onActivateSnapshot(s.snapshotId)}
             onGenerateItems={() => onGenerateItems(s.snapshotId)}
             isActive={isActive}
-            snapshotId={selectedSnapshot}
+            snapshotId={s.snapshotId}
           />
         ),
       };
     });
     setTabsData(tabs);
-  }, [activeSnapshotId, loading]);
+  }, [snapshots, activeSnapshotId, loading]);
 
   const addOn = (
     <>
@@ -94,6 +99,11 @@ export default function SnapshotList({
       </div>
     </>
   );
+  const handleChangeTab = (idx) => {
+    setCurrentTabIndex(idx);
+    onSnapshotSelected(snapshots[idx].snapshotId);
+  };
+
   return (
     <>
       {tabsData && !loading && (
@@ -101,7 +111,7 @@ export default function SnapshotList({
           currentTabIndex={currentTabIndex}
           tabsData={tabsData}
           addOn={addOn}
-          onChangeTab={onSnapshotSelected}
+          onChangeTab={handleChangeTab}
         ></VerticalTabs>
       )}
     </>

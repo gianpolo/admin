@@ -1,10 +1,19 @@
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableCellHeader } from "../../../ui/table/index";
 import DateRange from "../../../common/DateRange";
 import TourId from "../../../common/TourId";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { fetchTourSnapshots } from "../../../../store/snapshotsSlice.js";
 export default function TourSnapshots({ snapshotId }) {
+  const dispatch = useDispatch();
   const { details, status } = useSelector((state) => state.snapshots);
   const tours = details[snapshotId] ? details[snapshotId].tours : null;
+
+  useEffect(() => {
+    if (snapshotId && !tours && status !== "loading") {
+      dispatch(fetchTourSnapshots(snapshotId));
+    }
+  }, [dispatch, snapshotId, tours, status]);
   const renderOccurrences = (occurrences) => {
     return occurrences.map((o) => {
       return (
