@@ -22,22 +22,22 @@ export default function SnapshotDetails({ snapshotId, isActive, loading, onActiv
         label: "Tours",
         content: <TourSnapshots snapshotId={snapshotId} />,
       },
-      // {
-      //   label: "Forecasting",
-      //   content: <ForecastSnapshots tours={tours} />,
-      // },
-      // {
-      //   label: "Items",
-      //   content: <SelfSchedulingItems snapshotId={snapshotId} />,
-      // },
-      // {
-      //   label: "Guides",
-      //   content: <span>Guides</span>,
-      // },
-      // {
-      //   label: "Allocations",
-      //   content: <span>Allocations</span>,
-      // },
+      {
+        label: "Forecasting",
+        content: <ForecastSnapshots tours={tours} />,
+      },
+      {
+        label: "Items",
+        content: <SelfSchedulingItems snapshotId={snapshotId} />,
+      },
+      {
+        label: "Guides",
+        content: <span>Guides</span>,
+      },
+      {
+        label: "Allocations",
+        content: <span>Allocations</span>,
+      },
     ];
     setTabs(tabs);
   }, [snapshotId]);
