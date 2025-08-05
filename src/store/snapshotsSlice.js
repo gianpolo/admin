@@ -109,7 +109,7 @@ export const fetchAudienceSnapshots = createAsyncThunk(
     console.log(`${backend_url}/snapshots/${snapshotId}/audience`, res);
     return { snapshotId, audience: res };
   }
-); 
+);
 export const fetchAllocationsSnapshots = createAsyncThunk(
   "snapshots/fetchAllocationsSnapshots",
   async (snapshotId, { rejectWithValue }) => {
@@ -147,13 +147,13 @@ const snapshotsSlice = createSlice({
   name: "snapshots",
   initialState: {
     list: [],
-    details: null,
+    details: {},
     status: "idle",
     error: null,
   },
   reducers: {},
   extraReducers: (builder) => {
-    builder 
+    builder
       .addCase(createSnapshot.pending, (state) => {
         state.status = "loading";
         state.error = null;

@@ -2,19 +2,23 @@ import { useState, useEffect } from "react";
 import ComponentCard from "../common/ComponentCard";
 import { useDispatch } from "react-redux";
 import { activateSnapshot, createSnapshot, processSnapshot, publishSnapshot } from "../../store/snapshotsSlice.js";
-import { generateSlots } from "../../store/slotsSlice.js";
 import { fetchSchedulingPlanDetails } from "../../store/planDetailsSlice.js";
 import EmptySnapshotWidget from "./EmptySnapshotWidget.jsx";
 import SnapshotList from "./list/SnapshotList.jsx";
 
-export default function SnapshotsContainer({ snapshotList, activeSnapshotId, snapshotStatus, schedulingPlanId }) {
+export default function SnapshotsContainer({ snapshotList, activeSnapshotId }) {
   const dispatch = useDispatch();
-  const [selectedSnapshot, setSelectedSnasphot] = useState(activeSnapshotId || null);
-  // Keep selected snapshot in sync with active snapshot id
+  const { details } = useSelector((state) => state.snapshots);
+  const [selectedSnapshotId, setSelectedSnapshotId] = useState(
+    activeSnapshotId || (snapshotList && snapshotList.length > 0 ? snapshotList[0].snapshotId : null)
+  );
+
   useEffect(() => {
-    console.log("SnapshotsContainer effect setSelectedSnasphot");
-    setSelectedSnasphot(activeSnapshotId || null);
-  }, [activeSnapshotId]);
+    if (!selectedSnapshotId) return;
+    dispatch(fetchSnapshotMeta(selectedSnapshotId));
+    dispatch(fetchExperiencesSnapshots(selectedSnapshotId));
+  }, [selectedSnapshotId, dispatch]);
+
 
   const handleAddSnapshot = async (label) => {
     if (!schedulingPlanId) return;

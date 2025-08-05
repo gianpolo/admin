@@ -8,7 +8,7 @@ import { fetchSchedulingPlanDetails, performSelfschedulingAction } from "../../s
 import SchedulingSessionOverview from "../../components/scheduling/SchedulingSessionOverview.jsx";
 import Spinner from "../../components/ui/spinner/Spinner.jsx";
 import SimulationWidget from "../../components/scheduling/SimulationWidget.jsx";
-import SnapshotsContainer from "../../components/snapshot/SnapshotsContainer.jsx";
+import SnapshotContainer from "../../components/snapshotv2/SnapshotContainer.jsx";
 
 export default function SchedulingDetailsPage() {
   const { id } = useParams();
@@ -17,7 +17,7 @@ export default function SchedulingDetailsPage() {
 
   const { isSimulationRunning } = useSelector((state) => state.schedulingPlans);
   const planDetails = useSelector((state) => state.planDetails);
-  const { status, error, schedulingPlan } = planDetails;
+  const { status: detailStatus, error, schedulingPlan } = planDetails;
   const [actionLoading, setActionLoading] = useState(false);
 
   const snapshots = useSelector((state) => state.snapshots);
@@ -42,7 +42,7 @@ export default function SchedulingDetailsPage() {
       dispatch(startSimulation({ id }));
     }
   };
- 
+
   return (
     <>
       <PageMeta title="SelfScheduling Details" description="Scheduling information" />
@@ -114,12 +114,10 @@ export default function SchedulingDetailsPage() {
       <div className="grid grid-cols-12 gap-6 mt-6">
         <div className="col-span-12">
           <div className="">
-            {status === "succeeded" && snapshots && (
-              <SnapshotsContainer
+            {detailStatus === "succeeded" && snapshots && (
+              <SnapshotContainer
                 activeSnapshotId={schedulingPlan.activeSnapshotId}
-                snapshotStatus={snapshots.status}
-                snapshotList={snapshots.list}
-                schedulingPlanId={schedulingPlan.schedulingPlanId}
+                snapshotList={schedulingPlan.snapshots}
               />
             )}
           </div>

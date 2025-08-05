@@ -8,6 +8,7 @@ import ExperiencesSnapshots from "./tabs/ExperiencesSnapshots.jsx";
 import ForecastsSnapshots from "./tabs/ForecastsSnapshots.jsx";
 import AudienceSnapshots from "./tabs/AudienceSnapshots.jsx";
 import AllocationsSnapshots from "./tabs/AllocationsSnapshots.jsx";
+import ReactJsonView from "@microlink/react-json-view";
 import {
   fetchSnapshotMeta,
   fetchExperiencesSnapshots,
@@ -25,17 +26,18 @@ export default function SnapshotContainer({ snapshotList, activeSnapshotId }) {
 
   useEffect(() => {
     if (!selectedSnapshotId) return;
+    console.log("here");
     dispatch(fetchSnapshotMeta(selectedSnapshotId));
     dispatch(fetchExperiencesSnapshots(selectedSnapshotId));
   }, [selectedSnapshotId, dispatch]);
 
   const snapshotDetail = selectedSnapshotId && details[selectedSnapshotId] ? details[selectedSnapshotId] : null;
   const summary = snapshotDetail ? snapshotDetail.summary.data : null;
-
+  const experiences = snapshotDetail ? snapshotDetail.experiences.data : null;
   const tabs = [
     {
       label: "Experiences",
-      content: <ExperiencesSnapshots snapshotId={selectedSnapshotId} />,
+      content: <>{experiences && <ReactJsonView src={experiences.data || {}} name={null} collapsed={2} />}</>,
       onTabActive: () => dispatch(fetchExperiencesSnapshots(selectedSnapshotId)),
     },
     {
@@ -56,23 +58,36 @@ export default function SnapshotContainer({ snapshotList, activeSnapshotId }) {
   ];
 
   return (
-    <ComponentCard title="Snapshots">
-      {snapshotList && snapshotList.length > 0 && (
-        <SnapshotList
-          snapshotList={snapshotList}
-          activeSnapshotId={activeSnapshotId}
-          selectedSnapshotId={selectedSnapshotId}
-          onSnapshotSelected={(id) => {
-            setSelectedSnapshotId(id);
-          }}
-        />
-      )}
-      {summary && (
-        <>
-          <SnapshotDetails summary={summary} isActive={selectedSnapshotId === activeSnapshotId} />
-          <Tabs tabsData={tabs} activeTab={0} key={selectedSnapshotId} />
-        </>
-      )}
+    <ComponentCard
+      title={
+        <div className="flex items-center">
+          <div className="flex flex-auto">Nbo and legacy data Snapshots</div>
+        </div>
+      }
+    >
+      {snapshotList &&
+        (snapshotList.length === 0 ? (
+          <EmptySnapshotWidget onAddSnapshot={handleAddSnapshot} />
+        ) : ( 
+          <>
+            {snapshotList && snapshotList.length > 0 && (
+              <SnapshotList
+                snapshotList={snapshotList}
+                activeSnapshotId={activeSnapshotId}
+                selectedSnapshotId={selectedSnapshotId}
+                onSnapshotSelected={(id) => {
+                  setSelectedSnapshotId(id);
+                }}
+              />
+            )}
+            {summary && (
+              <>
+                <SnapshotDetails summary={summary} isActive={selectedSnapshotId === activeSnapshotId} />
+                <Tabs tabsData={tabs} activeTab={0} key={selectedSnapshotId} />
+              </>
+            )}
+          </>
+        ))}
     </ComponentCard>
   );
 }
