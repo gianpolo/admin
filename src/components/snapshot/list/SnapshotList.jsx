@@ -14,19 +14,14 @@ export default function SnapshotList({
   onAddSnapshot,
   canAddSnapshot,
   loading,
-  onActivateSnapshot,
-  onGenerateItems,
+  onActivateSnapshot, 
   onSnapshotSelected,
+  onPublishSnapshot,
 }) {
   const [tabsData, setTabsData] = useState(null);
   const [snapshotLabel, setSnapshotLabel] = useState("Generated from Dashboard");
-  const getIndexFromId = (id) =>
-    snapshots
-      .map((x) => x.snapshotId)
-      .indexOf(id);
-  const [currentTabIndex, setCurrentTabIndex] = useState(
-    getIndexFromId(selectedSnapshot) || 0
-  );
+  const getIndexFromId = (id) => snapshots.map((x) => x.snapshotId).indexOf(id);
+  const [currentTabIndex, setCurrentTabIndex] = useState(getIndexFromId(selectedSnapshot) || 0);
 
   useEffect(() => {
     const pos = getIndexFromId(selectedSnapshot);
@@ -62,9 +57,11 @@ export default function SnapshotList({
           <SnapshotDetails
             loading={loading}
             onActivateSnapshot={() => onActivateSnapshot(s.snapshotId)}
-            onGenerateItems={() => onGenerateItems(s.snapshotId)}
             isActive={isActive}
             snapshotId={s.snapshotId}
+            onPublishSnapshot={() => {
+              onPublishSnapshot(s.snapshotId);
+            }}
           />
         ),
       };

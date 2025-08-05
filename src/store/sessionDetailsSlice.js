@@ -3,16 +3,16 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 const getToken = () => localStorage.getItem("token") || "";
 const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
 
-export const fetchSelfschedulingDetails = createAsyncThunk(
-  "selfschedulingDetails/fetchSelfschedulingDetails",
+export const fetchSchedulingSessionDetails = createAsyncThunk(
+  "sessionDetails/fetchSchedulingSessionDetails",
   async (id, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${backend_url}/selfschedulings/${id}`, {
+      const res = await fetch(`${backend_url}/schedulingplans/${id}`, {
         headers: { Authorization: `Bearer ${getToken()}` },
       });
-      if (!res.ok) throw new Error("Failed to fetch selfscheduling");
-      const { selfScheduling, snapshot } = await res.json();
-      return { selfscheduling: selfScheduling, snapshot };
+      if (!res.ok) throw new Error("Failed to fetch schedulingPlan");
+      const { schedulingPlan, snapshot } = await res.json();
+      return { schedulingPlan: schedulingPlan, snapshot: snapshot || null };
     } catch (err) {
       return rejectWithValue(err.message);
     }
@@ -20,10 +20,10 @@ export const fetchSelfschedulingDetails = createAsyncThunk(
 );
 
 export const performSelfschedulingAction = createAsyncThunk(
-  "selfschedulingDetails/performSelfschedulingAction",
+  "sessionDetails/performSelfschedulingAction",
   async ({ id, action }, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${backend_url}/selfschedulings/${id}/${action}`, {
+      const res = await fetch(`${backend_url}/schedulingplans/${id}/${action}`, {
         method: "POST",
         headers: { Authorization: `Bearer ${getToken()}` },
       });
@@ -36,10 +36,10 @@ export const performSelfschedulingAction = createAsyncThunk(
 );
 
 export const generateSlots = createAsyncThunk(
-  "selfschedulingDetails/generateSlots",
-  async (selfSchedulingId, { rejectWithValue }) => {
+  "sessionDetails/generateSlots",
+  async (schedulingPlanId, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${backend_url}/snapshots/slots/${selfSchedulingId}`, {
+      const res = await fetch(`${backend_url}/snapshots/slots/${schedulingPlanId}`, {
         method: "POST",
         headers: { Authorization: `Bearer ${getToken()}` },
       });
@@ -54,34 +54,11 @@ export const generateSlots = createAsyncThunk(
   }
 );
 
-// export const createSnapshot = createAsyncThunk(
-//   "selfschedulingDetails/createSnapshot",
-//   async (payload, { rejectWithValue }) => {
-//     try {
-//       const res = await fetch(`${backend_url}/snapshots`, {
-//         method: "POST",
-//         headers: {
-//           Authorization: `Bearer ${getToken()}`,
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify(payload),
-//       });
-//       if (!res.ok) {
-//         const text = await res.text();
-//         throw new Error(text || "Failed to create snapshot");
-//       }
-//       return true;
-//     } catch (err) {
-//       return rejectWithValue(err.message);
-//     }
-//   }
-// );
-
 export const activateSnapshot = createAsyncThunk(
-  "selfschedulingDetails/activateSnapshot",
+  "sessionDetails/activateSnapshot",
   async (payload, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${backend_url}/selfschedulings/${payload.selfSchedulingId}/active-snapshot`, {
+      const res = await fetch(`${backend_url}/schedulingplans/${payload.schedulingPlanId}/active-snapshot`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${getToken()}`,
@@ -100,25 +77,25 @@ export const activateSnapshot = createAsyncThunk(
   }
 );
 
-const selfschedulingDetailsSlice = createSlice({
-  name: "selfschedulingDetails",
+const sessionDetailsSlice = createSlice({
+  name: "sessionDetails",
   initialState: {
-    selfscheduling: null,
+    schedulingPlan: null,
     status: "idle",
     error: "",
   },
   reducers: {},
   extraReducers: (builder) =>
     builder
-      .addCase(fetchSelfschedulingDetails.pending, (state) => {
+      .addCase(fetchSchedulingSessionDetails.pending, (state) => {
         state.status = "loading";
         state.error = "";
       })
-      .addCase(fetchSelfschedulingDetails.fulfilled, (state, { payload }) => {
+      .addCase(fetchSchedulingSessionDetails.fulfilled, (state, { payload }) => {
         state.status = "succeeded";
-        state.selfscheduling = payload.selfscheduling;
+        state.schedulingPlan = payload.schedulingPlan;
       })
-      .addCase(fetchSelfschedulingDetails.rejected, (state, action) => {
+      .addCase(fetchSchedulingSessionDetails.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })
@@ -149,4 +126,4 @@ const selfschedulingDetailsSlice = createSlice({
         state.config = payload;
       }),
 });
-export default selfschedulingDetailsSlice.reducer;
+export default sessionDetailsSlice.reducer;

@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router";
-import PageBreadcrumb from "../../components/common/PageBreadCrumb";
-import PageMeta from "../../components/common/PageMeta";
+import PageBreadcrumb from "../../components/common/PageBreadCrumb.jsx";
+import PageMeta from "../../components/common/PageMeta.jsx";
 import {
-  fetchSelfSchedulings,
+  fetchSchedulingPlans,
   openConfiguration,
   closeConfiguration,
   deleteConfiguration,
-} from "../../store/selfschedulingsSlice.js";
-import Spinner from "../../components/ui/spinner/Spinner";
+} from "../../store/schedulingSessionsSlice.js";
+import Spinner from "../../components/ui/spinner/Spinner.jsx";
 import { useModal } from "../../hooks/useModal.js";
-import ConfirmationModal from "../../components/common/ConfirmationModal";
-import SelfSchedulingList from "../../components/selfscheduling/SelfSchedulingList";
+import ConfirmationModal from "../../components/common/ConfirmationModal.jsx";
+import SchedulingSessionList from "../../components/scheduling/SchedulingSessionList.jsx";
 
-export default function SelfSchedulingListPage() {
+export default function SchedulingSessionListPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
@@ -22,9 +22,9 @@ export default function SelfSchedulingListPage() {
   const { isOpen: isDeleteOpen, openModal: openDeleteModal, closeModal: closeDeleteModal } = useModal();
   const [deleteId, setDeleteId] = useState(null);
 
-  const { list, status, error, actionStatus } = useSelector((state) => state.selfschedulings);
+  const { list, status, error, actionStatus } = useSelector((state) => state.schedulingPlan);
 
-  const handleItemClick = (id) => navigate(`/self-schedulings/${id}`);
+  const handleItemClick = (id) => navigate(`/scheduling-plans/${id}`);
   const handleOpenClick = (id) => {
     dispatch(openConfiguration({ id: id }));
   };
@@ -45,16 +45,16 @@ export default function SelfSchedulingListPage() {
   };
 
   useEffect(() => {
-    dispatch(fetchSelfSchedulings({ pageSize: 10, pageNumber: 1, cityId: 1 }));
+    dispatch(fetchSchedulingPlans({ pageSize: 10, pageNumber: 1, cityId: 1 }));
   }, [dispatch]);
 
   return (
     <>
       <PageMeta title="Self Schedulings" description="List of Self Schedulings" />
-      <PageBreadcrumb pageTitle="Self Schedulings" />
+      <PageBreadcrumb pageTitle="Scheduling Plans" />
       <div className="mb-4">
         <a
-          href="/self-schedulings/new"
+          href="/scheduling-plans/new"
           className="inline-flex items-center rounded-lg bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600"
         >
           Add New
@@ -68,7 +68,7 @@ export default function SelfSchedulingListPage() {
       ) : (
         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
           <div className="max-w-full">
-            <SelfSchedulingList
+            <SchedulingSessionList
               list={list}
               actionStatus={actionStatus}
               highlightId={highlightId}

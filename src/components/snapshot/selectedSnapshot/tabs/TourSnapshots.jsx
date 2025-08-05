@@ -4,16 +4,15 @@ import TourId from "../../../common/TourId";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { fetchTourSnapshots } from "../../../../store/snapshotsSlice.js";
+
 export default function TourSnapshots({ snapshotId }) {
   const dispatch = useDispatch();
-  const { details, status } = useSelector((state) => state.snapshots);
+  const { details } = useSelector((state) => state.snapshots);
   const tours = details[snapshotId] ? details[snapshotId].tours : null;
-
+  const { status, data } = tours;
   useEffect(() => {
-    if (snapshotId && !tours && status !== "loading") {
-      dispatch(fetchTourSnapshots(snapshotId));
-    }
-  }, [dispatch, snapshotId, tours, status]);
+    dispatch(fetchTourSnapshots(snapshotId));
+  }, []);
   const renderOccurrences = (occurrences) => {
     return occurrences.map((o) => {
       return (
@@ -46,8 +45,8 @@ export default function TourSnapshots({ snapshotId }) {
           </TableHeader>
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-sm">
             {status === "succeeded" &&
-              tours &&
-              tours.map((t) => (
+              data &&
+              data.map((t) => (
                 <TableRow key={`${t.tourId.optionId}`} className="hover:bg-gray-50 dark:hover:bg-white/[0.05]">
                   <TableCell className="px-5 py-2">
                     <div className="text-xs">

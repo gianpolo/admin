@@ -1,41 +1,41 @@
 import { useEffect, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import PageMeta from "../../components/common/PageMeta";
+import PageMeta from "../../components/common/PageMeta.jsx";
 import { ChevronLeftIcon } from "../../icons/index.js";
-import { startSimulation, stopSimulation } from "../../store/selfschedulingsSlice.js";
-import { fetchSelfschedulingDetails, performSelfschedulingAction } from "../../store/selfschedulingDetailsSlice.js";
-import SelfSchedulingOverview from "../../components/selfscheduling/SelfSchedulingOverview";
-import Spinner from "../../components/ui/spinner/Spinner";
-import SimulationWidget from "../../components/selfscheduling/SimulationWidget";
-import SnapshotsContainer from "../../components/snapshot/SnapshotsContainer";
+import { startSimulation, stopSimulation } from "../../store/schedulingSessionsSlice.js";
+import { fetchSchedulingSessionDetails, performSelfschedulingAction } from "../../store/sessionDetailsSlice.js";
+import SchedulingSessionOverview from "../../components/scheduling/SchedulingSessionOverview";
+import Spinner from "../../components/ui/spinner/Spinner.jsx";
+import SimulationWidget from "../../components/scheduling/SimulationWidget.jsx";
+import SnapshotsContainer from "../../components/snapshot/SnapshotsContainer.jsx";
 
-export default function SelfSchedulingDetailsPage() {
+export default function SchedulingSessionDetailsPage() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { isSimulationRunning } = useSelector((state) => state.selfschedulings);
-  const selfschedulingState = useSelector((state) => state.selfschedulingDetails);
-  const { status, error, selfscheduling } = selfschedulingState;
+  const { isSimulationRunning } = useSelector((state) => state.schedulingPlan);
+  const selfschedulingState = useSelector((state) => state.sessionDetails);
+  const { status, error, schedulingPlan } = selfschedulingState;
   const [actionLoading, setActionLoading] = useState(false);
 
   const snapshots = useSelector((state) => state.snapshots);
   useEffect(() => {
-    dispatch(fetchSelfschedulingDetails(id));
+    dispatch(fetchSchedulingSessionDetails(id));
   }, [dispatch, id]);
 
   const handleAction = async (action) => {
     setActionLoading(true);
     const result = await dispatch(performSelfschedulingAction({ id, action }));
     if (performSelfschedulingAction.fulfilled.match(result)) {
-      dispatch(fetchSelfschedulingDetails(id));
+      dispatch(fetchSchedulingSessionDetails(id));
     }
     setActionLoading(false);
   };
 
   const handleSimulation = () => {
-    if (!selfscheduling) return;
+    if (!schedulingPlan) return;
     if (isSimulationRunning) {
       dispatch(stopSimulation({ id }));
     } else {
@@ -48,19 +48,19 @@ export default function SelfSchedulingDetailsPage() {
   };
   return (
     <>
-      <PageMeta title="SelfScheduling Details" description="SelfScheduling information" />
+      <PageMeta title="SelfScheduling Details" description="Scheduling information" />
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <button
             onClick={(event) => {
               event.stopPropagation();
-              navigate("/self-schedulings");
+              navigate("/scheduling-plans");
             }}
             className="text-gray-400 text-2xl flex mr-10 hover:text-gray-800"
           >
             <ChevronLeftIcon className="inline-block" />
           </button>
-          <h2 className="text-xl font-semibold text-gray-800 dark:text-white/90">SelfScheduling Details</h2>
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white/90">Scheduling Plan</h2>
         </div>
         <nav>
           <ol className="flex items-center gap-1.5">
@@ -85,7 +85,7 @@ export default function SelfSchedulingDetailsPage() {
                 </svg>
               </Link>
             </li>
-            <li className="text-sm text-gray-800 dark:text-white/90">SelfScheduling Details</li>
+            <li className="text-sm text-gray-800 dark:text-white/90">Scheduling Details</li>
           </ol>
         </nav>
       </div>
@@ -97,8 +97,8 @@ export default function SelfSchedulingDetailsPage() {
         status === "succeeded" && (
           <div className="grid grid-cols-12 gap-6 mt-6">
             <div className="col-span-8">
-              <SelfSchedulingOverview
-                selfscheduling={selfscheduling}
+              <SchedulingSessionOverview
+                schedulingPlan={schedulingPlan}
                 onAction={handleAction}
                 actionLoading={actionLoading}
               />
@@ -107,31 +107,22 @@ export default function SelfSchedulingDetailsPage() {
               <SimulationWidget
                 isSimulationRunning={isSimulationRunning}
                 handleSimulation={handleSimulation}
-                disabled={!selfscheduling.isRunning}
+                disabled={!schedulingPlan.isRunning}
               />
             </div>
           </div>
         )
       )}
 
-      <div className="grid grid-cols-12 gap-6 mt-6">
-        {/* <div className="mt-6 col-span-12">
-          <Timeline />
-        </div> */}
-        {/* <div className="col-span-5 "> 
-          <Timeline />
-        </div>
-        <div className="col-span-5 ">
-           <NotificationsWidget notifications={notifications} logs={logs} history={history} />  
-        </div> */}
+      <div className="grid grid-cols-12 gap-6 mt-6"> 
         <div className="col-span-12">
           <div className="">
             {status === "succeeded" && snapshots && (
               <SnapshotsContainer
-                activeSnapshotId={selfscheduling.activeSnapshotId}
+                activeSnapshotId={schedulingPlan.activeSnapshotId}
                 snapshotStatus={snapshots.status}
                 snapshotList={snapshots.list}
-                selfSchedulingId={selfscheduling.selfSchedulingId}
+                schedulingPlanId={schedulingPlan.schedulingPlanId}
               />
             )}
           </div>

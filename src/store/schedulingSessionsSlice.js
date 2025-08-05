@@ -1,46 +1,38 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-export const fetchSelfSchedulings = createAsyncThunk(
-  "selfschedulings/fetchSelfSchedulings",
-  async (
-    { pageSize = 10, pageNumber = 1, cityId } = {},
-    { rejectWithValue }
-  ) => {
+export const fetchSchedulingPlans = createAsyncThunk(
+  "schedulingPlan/fetchSchedulingPlans",
+  async ({ pageSize = 10, pageNumber = 1, cityId } = {}, { rejectWithValue }) => {
     try {
       const params = new URLSearchParams();
       if (pageSize) params.append("pageSize", pageSize);
       if (pageNumber) params.append("pageNumber", pageNumber);
       if (cityId !== undefined) params.append("cityId", cityId);
       const token = getToken();
-      const backend_url =
-        import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
-      const response = await fetch(
-        `${backend_url}/selfschedulings?${params.toString()}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+      const response = await fetch(`${backend_url}/schedulingplans?${params.toString()}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       if (!response.ok) {
-        throw new Error("Failed to fetch selfschedulings");
+        throw new Error("Failed to fetch scheduling plans");
       }
       return await response.json();
     } catch (err) {
-      console.error("Error fetching selfschedulings:", err);
+      console.error("Error fetching schedulingPlan:", err);
       return rejectWithValue(err.message);
     }
   }
 );
 
 export const openConfiguration = createAsyncThunk(
-  "selfschedulings/openConfiguration",
+  "schedulingPlan/openConfiguration",
   async ({ id }, { rejectWithValue }) => {
     try {
       const token = getToken();
-      const backend_url =
-        import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
-      const url = `${backend_url}/selfschedulings/${id}/open`;
+      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+      const url = `${backend_url}/schedulingplans/${id}/open`;
       const res = await fetch(url, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
@@ -56,13 +48,12 @@ export const openConfiguration = createAsyncThunk(
 );
 
 export const closeConfiguration = createAsyncThunk(
-  "selfschedulings/closeConfiguration",
+  "schedulingPlan/closeConfiguration",
   async ({ id }, { rejectWithValue }) => {
     try {
       const token = getToken();
-      const backend_url =
-        import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
-      const url = `${backend_url}/selfschedulings/${id}/close`;
+      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+      const url = `${backend_url}/schedulingplans/${id}/close`;
 
       const res = await fetch(url, {
         method: "POST",
@@ -79,13 +70,12 @@ export const closeConfiguration = createAsyncThunk(
 );
 
 export const deleteConfiguration = createAsyncThunk(
-  "selfschedulings/deleteConfiguration",
+  "schedulingPlan/deleteConfiguration",
   async ({ id }, { rejectWithValue }) => {
     try {
       const token = getToken();
-      const backend_url =
-        import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
-      const url = `${backend_url}/selfschedulings/${id}`;
+      const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
+      const url = `${backend_url}/schedulingplans/${id}`;
       const res = await fetch(url, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
@@ -101,7 +91,7 @@ export const deleteConfiguration = createAsyncThunk(
 );
 
 export const checkSimulation = createAsyncThunk(
-  "selfschedulings/checkSimulation",
+  "schedulingPlan/checkSimulation",
   async ({ id }, { rejectWithValue }) => {
     try {
       const res = await fetch(`http://localhost:5009/virtualguides/${id}`);
@@ -117,15 +107,12 @@ export const checkSimulation = createAsyncThunk(
 );
 
 export const startSimulation = createAsyncThunk(
-  "selfschedulings/startSimulation",
+  "schedulingPlan/startSimulation",
   async ({ id }, { rejectWithValue }) => {
     try {
-      const res = await fetch(
-        `http://localhost:5009/virtualguides/${id}/start`,
-        {
-          method: "POST",
-        }
-      );
+      const res = await fetch(`http://localhost:5009/virtualguides/${id}/start`, {
+        method: "POST",
+      });
 
       if (!res.ok) {
         throw new Error("Failed to start simulation");
@@ -137,28 +124,22 @@ export const startSimulation = createAsyncThunk(
   }
 );
 
-export const stopSimulation = createAsyncThunk(
-  "selfschedulings/stopSimulation",
-  async ({ id }, { rejectWithValue }) => {
-    try {
-      const res = await fetch(
-        `http://localhost:5009/virtualguides/${id}/stop`,
-        {
-          method: "POST",
-        }
-      );
+export const stopSimulation = createAsyncThunk("schedulingPlan/stopSimulation", async ({ id }, { rejectWithValue }) => {
+  try {
+    const res = await fetch(`http://localhost:5009/virtualguides/${id}/stop`, {
+      method: "POST",
+    });
 
-      if (!res.ok) {
-        throw new Error("Failed to stop simulation");
-      }
-      return true;
-    } catch (err) {
-      return rejectWithValue(err.message);
+    if (!res.ok) {
+      throw new Error("Failed to stop simulation");
     }
+    return true;
+  } catch (err) {
+    return rejectWithValue(err.message);
   }
-);
+});
 
-const selfschedulingsSlice = createSlice({
+const schedulingSessionsSlice = createSlice({
   name: "configurations",
   initialState: {
     list: [],
@@ -172,15 +153,15 @@ const selfschedulingsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchSelfSchedulings.pending, (state) => {
+      .addCase(fetchSchedulingPlans.pending, (state) => {
         state.status = "loading";
         state.error = null;
       })
-      .addCase(fetchSelfSchedulings.fulfilled, (state, action) => {
+      .addCase(fetchSchedulingPlans.fulfilled, (state, action) => {
         state.status = "succeeded";
         state.list = action.payload || [];
       })
-      .addCase(fetchSelfSchedulings.rejected, (state, action) => {
+      .addCase(fetchSchedulingPlans.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })
@@ -248,4 +229,4 @@ const selfschedulingsSlice = createSlice({
   },
 });
 const getToken = () => localStorage.getItem("token") || "";
-export default selfschedulingsSlice.reducer;
+export default schedulingSessionsSlice.reducer;

@@ -1,8 +1,8 @@
 import { Table, TableBody, TableCell, TableHeader, TableRow, TableCellHeader } from "../ui/table/index";
 import { PlayIcon, StopIconCircle, TrashBinIcon } from "../../icons/index.js";
-import Spinner from "../ui/spinner/Spinner";
-import Badge from "../ui/badge/Badge";
-export default function SelfSchedulingList({
+import Spinner from "../ui/spinner/Spinner.jsx";
+import Badge from "../ui/badge/Badge.jsx";
+export default function SchedulingSessionList({
   list,
   actionStatus,
   highlightId,
@@ -19,7 +19,7 @@ export default function SelfSchedulingList({
         <button
           onClick={(event) => {
             event.stopPropagation();
-            onClose(ss.selfSchedulingId);
+            onClose(ss.schedulingPladnId);
           }}
           className="text-red-500 text-lg hover:text-2xl"
         >
@@ -60,13 +60,13 @@ export default function SelfSchedulingList({
           const loading = actionStatus[ss.id] === "loading";
           return (
             <TableRow
-              key={ss.selfSchedulingId}
+              key={ss.schedulingPlanId}
               className={`cursor-pointer ${ss.id === highlightId ? "bg-blue-50 dark:bg-blue-900/10" : ""} ${
                 ss.isRunning ? " dark:bg-brand-500/12" : ""
               } hover:dark:bg-white/[0.04]`}
               handleClick={(event) => {
                 event.stopPropagation();
-                onItemSelection(ss.selfSchedulingId);
+                onItemSelection(ss.schedulingPlanId);
               }}
             >
               <TableCell>{loading ? <Spinner /> : renderAction(ss)}</TableCell>
@@ -74,7 +74,7 @@ export default function SelfSchedulingList({
                 <div className="leading-snug">
                   <div className="dark:text-white font-medium truncate flex items-center gap-1">
                     {ss.description}
-                    {highlightId === ss.selfSchedulingId && (
+                    {highlightId === ss.schedulingPlanId && (
                       <Badge variant="light" color="info">
                         NEW
                       </Badge>

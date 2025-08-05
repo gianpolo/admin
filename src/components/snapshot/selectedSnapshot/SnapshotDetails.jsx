@@ -9,13 +9,18 @@ import SelfSchedulingItems from "./tabs/SelfSchedulingItems.jsx";
 import SnapshotDetailsTitle from "./SnapshotDetailsTitle.jsx";
 import Tabs from "../../common/Tabs.jsx";
 
-export default function SnapshotDetails({ snapshotId, isActive, loading, onActivateSnapshot, onGenerateItems }) {
+export default function SnapshotDetails({
+  snapshotId,
+  isActive,
+  loading,
+  onActivateSnapshot,
+  onPublishSnapshot,
+}) {
   const [tabs, setTabs] = useState(null);
   const { details, status } = useSelector((state) => state.snapshots);
   const snapshot = details ? details[snapshotId] : null;
-  const { tours, snapshotSummary } = snapshot;
-  const { snapshotDate } = snapshotSummary;
-
+  const { summary } = snapshot;
+  const { snapshotDate, createdAt } = summary.data;
   useEffect(() => {
     const tabs = [
       {
@@ -24,11 +29,7 @@ export default function SnapshotDetails({ snapshotId, isActive, loading, onActiv
       },
       {
         label: "Forecasting",
-        content: <ForecastSnapshots tours={tours} />,
-      },
-      {
-        label: "Items",
-        content: <SelfSchedulingItems snapshotId={snapshotId} />,
+        content: <ForecastSnapshots snapshotId={snapshotId} />,
       },
       {
         label: "Guides",
@@ -53,14 +54,14 @@ export default function SnapshotDetails({ snapshotId, isActive, loading, onActiv
           <SnapshotDetailsTitle
             snapshotDate={snapshotDate}
             isActive={isActive}
-            createdAt={snapshotSummary.createdAt}
+            createdAt={createdAt}
             canGenerateSlots={true}
             onActivateSnapshot={onActivateSnapshot}
-            onGenerateItems={onGenerateItems}
+            onPublishSnapshot={onPublishSnapshot}
           />
         }
       >
-        <SnapshotOverview isActive={isActive} snapshotSummary={snapshotSummary}></SnapshotOverview>
+        <SnapshotOverview isActive={isActive} summary={summary.data}></SnapshotOverview>
         {tabs && <Tabs tabsData={tabs} className="mt-4"></Tabs>}
       </ComponentCard>
     </>

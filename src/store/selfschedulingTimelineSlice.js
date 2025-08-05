@@ -2,9 +2,9 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 export const fetchTimelineEvents = createAsyncThunk(
   "selfSchedulingTimeline/fetchTimelineEvents",
-  async (selfSchedulingId, { rejectWithValue }) => {
+  async (schedulingPlanId, { rejectWithValue }) => {
     try {
-      const res = await fetch(`/api/selfschedulings/${selfSchedulingId}/events`);
+      const res = await fetch(`/api/selfschedulings/${schedulingPlanId}/events`);
       if (!res.ok) {
         const text = await res.text();
         throw new Error(text || "Failed to fetch timeline events");

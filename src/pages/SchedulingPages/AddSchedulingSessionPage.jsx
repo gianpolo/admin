@@ -5,34 +5,36 @@ import {
   fetchCities,
   fetchExperiences,
   fetchGuides,
-  createSelfScheduling as createSelfSchedulingThunk,
-} from "../../store/selfschedulingFormSlice.js";
-import PageBreadcrumb from "../../components/common/PageBreadCrumb";
-import PageMeta from "../../components/common/PageMeta";
-import Button from "../../components/ui/button/Button";
-import Spinner from "../../components/ui/spinner/Spinner";
-import ComponentCard from "../../components/common/ComponentCard";
-import AddSelfSchedulingForm from "../../components/selfscheduling/AddSelfSchedulingForm";
+  createSchedulingSession,
+} from "../../store/schedulingSessionFormSlice.js";
+import PageBreadcrumb from "../../components/common/PageBreadCrumb.jsx";
+import PageMeta from "../../components/common/PageMeta.jsx";
+import Button from "../../components/ui/button/Button.jsx";
+import Spinner from "../../components/ui/spinner/Spinner.jsx";
+import ComponentCard from "../../components/common/ComponentCard.jsx";
+import AddSchedulingSessionForm from "../../components/scheduling/AddSchedulingSessionForm";
 const testConf = {
   cityId: 1,
   description: "test",
   schedulingWindow: {
-    startDate: new Date("2025-08-01"),
-    endDate: new Date("2025-08-06"),
+    startDate: new Date("2025-10-01"),
+    endDate: new Date("2025-10-06"),
   },
   toursPeriod: {
-    startDate: new Date("2025-09-01"),
-    endDate: new Date("2025-09-16"),
+    startDate: new Date("2025-11-08"),
+    endDate: new Date("2025-11-25"),
   },
   selectedExperienceIds: [11],
   selectedGuideIds: [3436, 1654, 5738],
 };
 
-export default function AddSelfSchedulingPage() {
+export default function AddSchedulingSessionPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loadingTemplate, setLoadingTemplate] = useState(false);
-  const { cities, experiences, guides, createStatus, createError } = useSelector((state) => state.selfschedulingForm);
+  const { cities, experiences, guides, createStatus, createError } = useSelector(
+    (state) => state.schedulingSessionForm
+  );
 
   const [cityId, setCityId] = useState("");
   const [description, setDescription] = useState("");
@@ -156,11 +158,11 @@ export default function AddSelfSchedulingPage() {
       experienceIds: selectedExperienceIds.map((id) => parseInt(id)),
       guideIds: selectedGuideIds.map((id) => parseInt(id)),
     };
-    const res = await dispatch(createSelfSchedulingThunk(payload));
-    if (createSelfSchedulingThunk.fulfilled.match(res)) {
+    const res = await dispatch(createSchedulingSession(payload));
+    if (createSchedulingSession.fulfilled.match(res)) {
       const newId = res.payload && res.payload.value ? res.payload.value : undefined;
       if (newId !== undefined) {
-        navigate(`/self-schedulings/${newId}`);
+        navigate(`/scheduling-plans/${newId}`);
       }
       return;
     } else if (res.payload) {
@@ -203,7 +205,7 @@ export default function AddSelfSchedulingPage() {
             </div>
           }
         >
-          <AddSelfSchedulingForm
+          <AddSchedulingSessionForm
             cityId={cityId}
             cities={cities}
             setCityId={setCityId}

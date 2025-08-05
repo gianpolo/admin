@@ -4,9 +4,8 @@ import Spinner from "../ui/spinner/Spinner";
 import CopyableText from "../common/CopyableText";
 import DateRange from "../common/DateRange";
 
-export default function SelfSchedulingOverview({ selfscheduling, onAction, actionLoading = false }) {
-  const { configuration: config, selfSchedulingId: id } = selfscheduling || {};
-  const { toursPeriod, schedulingWindow, configurationId: configId } = config || {};
+export default function SchedulingSessionOverview({ schedulingPlan, onAction, actionLoading = false }) {
+  const { schedulingSubject, schedulingWindow, schedulingPlanId, schedulingAudience } = schedulingPlan || {};
   const getDaysLeft = (date) => {
     const today = new Date();
     const target = new Date(date);
@@ -24,19 +23,19 @@ export default function SelfSchedulingOverview({ selfscheduling, onAction, actio
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2 lg:gap-7 2xl:gap-x-32">
-          <CopyableText text={id}>
+          <CopyableText text={schedulingPlanId}>
             <div>
-              <div className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">SelfScheduling ID</div>
+              <div className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Session ID</div>
               <div className="text-xs font-medium text-gray-800 dark:text-white/90">
-                <div>{id}</div>
+                <div>{schedulingPlanId}</div>
               </div>
             </div>
           </CopyableText>
-          <CopyableText text={configId}>
+          <CopyableText text={schedulingPlanId}>
             <div>
-              <div className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Configuration ID</div>
+              <div className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">ID</div>
               <div className="text-xs font-medium text-gray-800 dark:text-white/90">
-                <div>{configId}</div>
+                <div>{schedulingPlanId}</div>
               </div>
             </div>
           </CopyableText>
@@ -44,15 +43,19 @@ export default function SelfSchedulingOverview({ selfscheduling, onAction, actio
           <div>
             <div className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Tours Period</div>
             <div className="text-sm font-medium text-gray-800 dark:text-white/90">
-              <DateRange from={toursPeriod.start} to={toursPeriod.end} includeDaysCount />
+              <DateRange
+                from={schedulingSubject.toursPeriod.start}
+                to={schedulingSubject.toursPeriod.end}
+                includeDaysCount
+              />
             </div>
           </div>
           <div>
             <div className="flex items-center mb-2">
               <div className=" text-xs leading-normal text-gray-500 dark:text-gray-400 mr-5">Scheduling Window</div>
               <div>
-                <Badge variant="light" size="sm" color={selfscheduling.isRunning ? "success" : "info"}>
-                  {selfscheduling.isRunning ? "Running" : getDaysLeft(schedulingWindow.start) + " days left"}
+                <Badge variant="light" size="sm" color={schedulingPlan.isRunning ? "success" : "info"}>
+                  {schedulingPlan.isRunning ? "Running" : getDaysLeft(schedulingWindow.start) + " days left"}
                 </Badge>
               </div>
             </div>
@@ -67,7 +70,7 @@ export default function SelfSchedulingOverview({ selfscheduling, onAction, actio
               <div className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Experiences Count</div>
               <div className="text-sm font-medium text-gray-800 dark:text-white/90">
                 <Badge variant="solid" size="sm">
-                  {config.subject.experienceIds?.length || 0}
+                  {schedulingSubject.experienceIds?.length || 0}
                 </Badge>
               </div>
             </div>
@@ -75,7 +78,7 @@ export default function SelfSchedulingOverview({ selfscheduling, onAction, actio
               <div className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Guides Count</div>
               <div className="text-sm font-medium text-gray-800 dark:text-white/90">
                 <Badge variant="solid" size="sm">
-                  {config.audience.guideIds?.length || 0}
+                  {schedulingAudience.guideIds?.length || 0}
                 </Badge>
               </div>
             </div>
@@ -83,7 +86,7 @@ export default function SelfSchedulingOverview({ selfscheduling, onAction, actio
               <div className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Snapshots Count</div>
               <div className="text-sm font-medium text-gray-800 dark:text-white/90">
                 <Badge variant="solid" size="sm">
-                  {selfscheduling.snapshots?.length}
+                  {schedulingPlan.snapshots?.length}
                 </Badge>
               </div>
             </div>
@@ -91,7 +94,7 @@ export default function SelfSchedulingOverview({ selfscheduling, onAction, actio
           <div>
             <div className="mb-2 text-xs leading-normal text-gray-500 dark:text-gray-400">Description</div>
             <div className="text-sm font-normal text-gray-800 dark:text-white/90">
-              {selfscheduling.description || "No description provided."}
+              {schedulingPlan.description || "No description provided."}
             </div>
           </div>
         </div>

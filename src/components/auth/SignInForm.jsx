@@ -18,7 +18,7 @@ export default function SignInForm() {
     e.preventDefault();
     try {
       await auth.signIn(username, password);
-      navigate("/self-schedulings");
+      navigate("/scheduling-plans");
     } catch (err) {
       console.error(err);
     }

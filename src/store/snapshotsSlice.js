@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchSelfschedulingDetails } from "./selfschedulingDetailsSlice";
+import { fetchSchedulingSessionDetails } from "./sessionDetailsSlice";
 const getToken = () => localStorage.getItem("token") || "";
 const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
 
@@ -22,7 +22,7 @@ export const createSnapshot = createAsyncThunk("snapshots/createSnapshot", async
 
 export const activateSnapshot = createAsyncThunk("snapshots/activateSnapshot", async (payload, { rejectWithValue }) => {
   try {
-    const res = await fetch(`${backend_url}/selfschedulings/${payload.selfSchedulingId}/active-snapshot`, {
+    const res = await fetch(`${backend_url}/schedulingplans/${payload.schedulingPlanId}/active-snapshot`, {
       method: "POST",
       headers: { Authorization: `Bearer ${getToken()}`, "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -56,23 +56,43 @@ export const processSnapshot = createAsyncThunk(
     }
   }
 );
-
-export const fetchItems = createAsyncThunk("snapshots/fetchItems", async (snapshotId, { rejectWithValue }) => {
-  try {
-    const res = await fetch(`${backend_url}/items/${snapshotId}`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${getToken()}` },
-    });
-    if (!res.ok) {
-      const text = await res.text();
-      throw new Error(text || "Failed to process snapshot");
+export const publishSnapshot = createAsyncThunk(
+  "snapshots/publishSnapshot",
+  async (snapshotId, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`${backend_url}/snapshots/${snapshotId}/publish-tourinstances`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Failed to activate snapshot");
+      }
+      return true;
+    } catch (err) {
+      return rejectWithValue(err.message);
     }
-    const data = await res.json();
-    return { snapshotId, items: data };
-  } catch (err) {
-    return rejectWithValue(err.message);
   }
-});
+);
+export const fetchSnapshotItems = createAsyncThunk(
+  "snapshots/fetchSnapshotItems",
+  async (snapshotId, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`${backend_url}/items/${snapshotId}`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Failed to process snapshot");
+      }
+      const data = await res.json();
+      return { snapshotId, items: data };
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
 
 export const fetchTourSnapshots = createAsyncThunk(
   "snapshots/fetchTourSnapshots",
@@ -93,6 +113,32 @@ export const fetchTourSnapshots = createAsyncThunk(
     }
   }
 );
+
+export const fetchGuideSnapshots = createAsyncThunk(
+  "snapshots/fetchTourSnapshots",
+  async (snapshotId, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`${backend_url}/snapshots/${snapshotId}/guides`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${getToken()}` },
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || "Failed to process snapshot");
+      }
+      const data = await res.json();
+      return { snapshotId, guides: data };
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+const createDetailState = () => ({
+  summary: { data: null, status: "idle", error: null },
+  tours: { data: null, status: "idle", error: null },
+  items: { data: null, status: "idle", error: null },
+});
+
 const snapshotsSlice = createSlice({
   name: "snapshots",
   initialState: {
@@ -104,20 +150,24 @@ const snapshotsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchSelfschedulingDetails.pending, (state) => {
+      .addCase(fetchSchedulingSessionDetails.pending, (state, action) => {
         state.status = "loading";
-        state.error = "";
+        state.error = null;
         state.list = [];
       })
-      .addCase(fetchSelfschedulingDetails.fulfilled, (state, { payload }) => {
+      .addCase(fetchSchedulingSessionDetails.fulfilled, (state, { payload }) => {
+        state.list = payload.schedulingPlan.snapshots;
         state.status = "succeeded";
-        state.list = payload.selfscheduling.snapshots || [];
-        const id = payload.snapshot?.snapshotSummary?.snapshotId;
-        if (id) {
-          state.details[id] = payload.snapshot;
+
+        if (!payload.snapshot) return;
+        const { snapshotId } = payload.snapshot;
+        if (!state.details[snapshotId]) state.details[snapshotId] = createDetailState();
+        if (snapshotId) {
+          state.details[snapshotId].summary.status = "succeeded";
+          state.details[snapshotId].summary.data = payload.snapshot;
         }
       })
-      .addCase(fetchSelfschedulingDetails.rejected, (state, action) => {
+      .addCase(fetchSchedulingSessionDetails.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })
@@ -158,33 +208,43 @@ const snapshotsSlice = createSlice({
       .addCase(processSnapshot.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
+      });
+    // --- Tours ---
+    builder
+      .addCase(fetchTourSnapshots.pending, (state, action) => {
+        const id = action.meta.arg;
+        if (!state.details[id]) state.details[id] = createDetailState();
+        state.details[id].items.status = "loading";
+        state.details[id].tours.error = null;
       })
-      .addCase(fetchTourSnapshots.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(fetchTourSnapshots.fulfilled, (state, { payload }) => {
-        state.status = "succeeded";
-        state.details[payload.snapshotId].tours = payload.tours;
+      .addCase(fetchTourSnapshots.fulfilled, (state, action) => {
+        const { snapshotId, tours } = action.payload;
+        state.details[snapshotId].tours.status = "succeeded";
+        state.details[snapshotId].tours.data = tours;
       })
       .addCase(fetchTourSnapshots.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
+        const id = action.meta.arg;
+        state.details[id].tours.status = "failed";
+        state.details[id].tours.error = action.error.message;
+      });
+
+    // --- Items ---
+    builder
+      .addCase(fetchSnapshotItems.pending, (state, action) => {
+        const id = action.meta.arg;
+        if (!state.details[id]) state.details[id] = createDetailState();
+        state.details[id].items.status = "loading";
+        state.details[id].items.error = null;
       })
-      .addCase(fetchItems.pending, (state) => {
-        state.status = "loading";
+      .addCase(fetchSnapshotItems.fulfilled, (state, action) => {
+        const { snapshotId, items } = action.payload;
+        state.details[snapshotId].items.status = "succeeded";
+        state.details[snapshotId].items.data = items;
       })
-      .addCase(fetchItems.fulfilled, (state, { payload }) => {
-        state.status = "succeeded";
-        if (payload && payload.snapshotId) {
-          if (!state.details[payload.snapshotId]) {
-            state.details[payload.snapshotId] = {};
-          }
-          state.details[payload.snapshotId].items = payload.items;
-        }
-      })
-      .addCase(fetchItems.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
+      .addCase(fetchSnapshotItems.rejected, (state, action) => {
+        const id = action.meta.arg;
+        state.details[id].items.status = "failed";
+        state.details[id].items.error = action.error.message;
       });
   },
 });

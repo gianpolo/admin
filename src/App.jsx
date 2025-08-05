@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router";
 import NotFound from "./pages/OtherPage/NotFound";
-import SelfSchedulingListPage from "./pages/SelfSchedulingPages/SelfSchedulingListPage";
-import AddSelfSchedulingPage from "./pages/SelfSchedulingPages/AddSelfSchedulingPage";
-import SelfSchedulingDetailsPage from "./pages/SelfSchedulingPages/SelfSchedulingDetailsPage";
+import SchedulingSessionListPage from "./pages/SchedulingPages/SchedulingSessionListPage";
+import AddSchedulingSessionPage from "./pages/SchedulingPages/AddSchedulingSessionPage";
+import SchedulingSessionDetailsPage from "./pages/SchedulingPages/SchedulingSessionDetailsPage";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
@@ -23,9 +23,9 @@ export default function App() {
             }
           >
             <Route index path="/" element={<Home />} />
-            <Route path="/self-schedulings" element={<SelfSchedulingListPage />} />
-            <Route path="/self-schedulings/new" element={<AddSelfSchedulingPage />} />
-            <Route path="/self-schedulings/:id" element={<SelfSchedulingDetailsPage />} />
+            <Route path="/scheduling-plans" element={<SchedulingSessionListPage />} />
+            <Route path="/scheduling-plans/new" element={<AddSchedulingSessionPage />} />
+            <Route path="/scheduling-plans/:id" element={<SchedulingSessionDetailsPage />} />
           </Route>
           <Route path="/signin" element={<SignIn />} />
           {/* Fallback Route */}

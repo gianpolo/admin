@@ -1,17 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
-import selfschedulingsReducer from "./selfschedulingsSlice.js";
+import schedulingSessionReducer from "./schedulingSessionsSlice.js";
 import authReducer from "./authSlice.js";
-import selfschedulingDetailsReducer from "./selfschedulingDetailsSlice.js";
-import selfschedulingFormReducer from "./selfschedulingFormSlice.js";
+import sessionDetailsReducer from "./sessionDetailsSlice.js";
+import schedulingSessionFormReducer from "./schedulingSessionFormSlice.js";
 import snapshotsReducer from "./snapshotsSlice.js";
 import notificationsReducer from "./notificationsSlice.js";
 import slotReducer from "./slotsSlice.js";
 const store = configureStore({
   reducer: {
     auth: authReducer,
-    selfschedulings: selfschedulingsReducer,
-    selfschedulingDetails: selfschedulingDetailsReducer,
-    selfschedulingForm: selfschedulingFormReducer,
+    schedulingPlan: schedulingSessionReducer,
+    sessionDetails: sessionDetailsReducer,
+    schedulingSessionForm: schedulingSessionFormReducer,
     snapshots: snapshotsReducer,
     notifications: notificationsReducer,
     slots: slotReducer,

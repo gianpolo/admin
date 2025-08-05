@@ -1,54 +1,47 @@
 import { useState, useEffect } from "react";
 import ComponentCard from "../common/ComponentCard";
 import { useDispatch } from "react-redux";
-import { activateSnapshot, createSnapshot, processSnapshot } from "../../store/snapshotsSlice.js";
+import { activateSnapshot, createSnapshot, processSnapshot, publishSnapshot } from "../../store/snapshotsSlice.js";
 import { generateSlots } from "../../store/slotsSlice.js";
-import { fetchSelfschedulingDetails } from "../../store/selfschedulingDetailsSlice.js";
+import { fetchSchedulingSessionDetails } from "../../store/sessionDetailsSlice.js";
 import EmptySnapshotWidget from "./EmptySnapshotWidget.jsx";
 import SnapshotList from "./list/SnapshotList.jsx";
 
-export default function SnapshotsContainer({ snapshotList, activeSnapshotId, snapshotStatus, selfSchedulingId }) {
+export default function SnapshotsContainer({ snapshotList, activeSnapshotId, snapshotStatus, schedulingPlanId }) {
   const dispatch = useDispatch();
   const [selectedSnapshot, setSelectedSnasphot] = useState(activeSnapshotId || null);
-
   // Keep selected snapshot in sync with active snapshot id
   useEffect(() => {
     setSelectedSnasphot(activeSnapshotId || null);
   }, [activeSnapshotId]);
 
   const handleAddSnapshot = async (label) => {
-    if (!selfSchedulingId) return;
-    const result = await dispatch(createSnapshot({ selfSchedulingId, label }));
+    if (!schedulingPlanId) return;
+    const result = await dispatch(createSnapshot({ schedulingPlanId, label }));
     if (createSnapshot.fulfilled.match(result)) {
-      dispatch(fetchSelfschedulingDetails(selfSchedulingId));
+      dispatch(fetchSchedulingSessionDetails(schedulingPlanId));
     }
   };
   const handleActivateSnapshot = async (snapshotId) => {
-    if (!selfSchedulingId) return;
-    const result = await dispatch(activateSnapshot({ selfSchedulingId, snapshotId }));
+    if (!schedulingPlanId) return;
+    const result = await dispatch(activateSnapshot({ schedulingPlanId, snapshotId }));
     if (activateSnapshot.fulfilled.match(result)) {
-      dispatch(fetchSelfschedulingDetails(selfSchedulingId));
+      dispatch(fetchSchedulingSessionDetails(schedulingPlanId));
     }
   };
-  const handleGenerateSlots = async (snapshotId) => {
+
+  const handlePublishSnapshot = async (snapshotId) => {
     if (!snapshotId) return;
-    const result = await dispatch(generateSlots(snapshotId));
-    if (generateSlots.fulfilled.match(result)) {
-      dispatch(fetchSelfschedulingDetails(selfSchedulingId));
-    }
-  };
-  const handleGenerateItems = async (snapshotId) => {
-    if (!snapshotId) return;
-    const result = await dispatch(processSnapshot(snapshotId));
+    const result = await dispatch(publishSnapshot(snapshotId));
     if (processSnapshot.fulfilled.match(result)) {
-      dispatch(fetchSelfschedulingDetails(selfSchedulingId));
+      dispatch(fetchSchedulingSessionDetails(schedulingPlanId));
     }
   };
   return (
     <ComponentCard
       title={
         <div className="flex items-center">
-          <div className="flex flex-auto">Forecasting and Tours Snapshots</div>
+          <div className="flex flex-auto">Nbo and legacy data Snapshots</div>
         </div>
       }
     >
@@ -64,9 +57,8 @@ export default function SnapshotsContainer({ snapshotList, activeSnapshotId, sna
             onSnapshotSelected={(id) => setSelectedSnasphot(id)}
             onAddSnapshot={handleAddSnapshot}
             onActivateSnapshot={handleActivateSnapshot}
-            onGenerateSlots={handleGenerateSlots}
-            onGenerateItems={handleGenerateItems}
             canAddSnapshot={snapshotStatus !== "loading"}
+            onPublishSnapshot={handlePublishSnapshot}
           />
         ))}
     </ComponentCard>

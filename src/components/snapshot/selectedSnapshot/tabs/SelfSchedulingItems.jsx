@@ -1,21 +1,19 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableCellHeader } from "../../../ui/table/index";
-import { fetchItems } from "../../../../store/snapshotsSlice";
+import { fetchSnapshotItems } from "../../../../store/snapshotsSlice";
 import TourId from "../../../common/TourId";
 import Spinner from "../../../ui/spinner/Spinner";
 import Badge from "../../../ui/badge/Badge";
 import { PencilIcon } from "../../../../icons";
 export default function SelfSchedulingItems({ snapshotId }) {
   const dispatch = useDispatch();
-  const { details, status } = useSelector((state) => state.snapshots);
+  const { details } = useSelector((state) => state.snapshots);
   const items = details[snapshotId] ? details[snapshotId].items : null;
-  console.log(items);
+  const { status, data } = items;
   useEffect(() => {
-    if (snapshotId && !items && status !== "loading") {
-      dispatch(fetchItems(snapshotId));
-    }
-  }, [dispatch, snapshotId, items, status]);
+    if (data === null) dispatch(fetchSnapshotItems(snapshotId));
+  }, []);
   const statusColors = {
     0: { color: "warning", label: "Unknown" },
     1: { color: "success", label: "Confirmed" },
@@ -51,23 +49,25 @@ export default function SelfSchedulingItems({ snapshotId }) {
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-sm">
-              {items.map((i) => (
-                <TableRow key={i.id} className="hover:bg-gray-50 dark:hover:bg-white/[0.05]">
-                  <TableCell className="px-5 py-2">
-                    <div className="text-xs">
-                      <TourId tourId={i.tourId} /> <span className="ml-2">{i.name.experienceName}</span>
-                    </div>
-                    <div className="font-medium text-gray-800 dark:text-white/90">{i.name.optionName}</div>
-                  </TableCell>
-                  <TableCell className="px-5 py-2">{i.tourDate}</TableCell>
-                  <TableCell className="px-5 py-2">{i.tourTime}</TableCell>
-                  <TableCell className="px-5 py-2">{renderStatus(i.dayCategory)}</TableCell>
-                  <TableCell className="px-5 py-2">{i.initialSlotsAvailability || "-"}</TableCell>
-                  <TableCell className="px-5 py-2">
-                    <PencilIcon />
-                  </TableCell>
-                </TableRow>
-              ))}
+              {status === "succeeded" &&
+                data &&
+                data.map((i) => (
+                  <TableRow key={i.id} className="hover:bg-gray-50 dark:hover:bg-white/[0.05]">
+                    <TableCell className="px-5 py-2">
+                      <div className="text-xs">
+                        <TourId tourId={i.tourId} /> <span className="ml-2">{i.name.experienceName}</span>
+                      </div>
+                      <div className="font-medium text-gray-800 dark:text-white/90">{i.name.optionName}</div>
+                    </TableCell>
+                    <TableCell className="px-5 py-2">{i.tourDate}</TableCell>
+                    <TableCell className="px-5 py-2">{i.tourTime}</TableCell>
+                    <TableCell className="px-5 py-2">{renderStatus(i.dayCategory)}</TableCell>
+                    <TableCell className="px-5 py-2">{i.initialSlotsAvailability || "-"}</TableCell>
+                    <TableCell className="px-5 py-2">
+                      <PencilIcon />
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         ) : (

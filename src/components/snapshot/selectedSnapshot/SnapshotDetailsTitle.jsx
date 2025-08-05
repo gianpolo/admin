@@ -1,6 +1,11 @@
 import DateTime from "../../common/DateTime";
 import MoreMenu from "../../common/MoreMenu";
-export default function SnapshotDetailsTitle({ snapshotDate, isActive, onActivateSnapshot, onGenerateItems }) {
+export default function SnapshotDetailsTitle({
+  snapshotDate,
+  isActive,
+  onActivateSnapshot,
+  onPublishSnapshot,
+}) {
   return (
     <div className="flex justify-between">
       <div>
@@ -12,7 +17,7 @@ export default function SnapshotDetailsTitle({ snapshotDate, isActive, onActivat
       <MoreMenu
         menuItems={[
           { label: "Activate", action: onActivateSnapshot, disabled: !isActive },
-          { label: "Generate Items", action: onGenerateItems },
+          { label: "Publish", action: onPublishSnapshot },
         ]}
       />
     </div>

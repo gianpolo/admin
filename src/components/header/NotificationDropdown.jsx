@@ -68,7 +68,7 @@ export default function NotificationDropdown() {
             <li key={idx}>
               <DropdownItem
                 tag="a"
-                to={`/self-schedulings/${n.ConfigurationId}`}
+                to={`/scheduling-plans/${n.ConfigurationId}`}
                 onItemClick={closeDropdown}
                 className="flex flex-col gap-1 rounded-lg border-b border-gray-100 p-3 hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-white/5"
               >

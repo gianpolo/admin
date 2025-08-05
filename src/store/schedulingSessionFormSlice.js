@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 const getToken = () => localStorage.getItem("token") || "";
 const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
 
-export const fetchCities = createAsyncThunk("selfschedulingForm/fetchCities", async (_, { rejectWithValue }) => {
+export const fetchCities = createAsyncThunk("schedulingSessionForm/fetchCities", async (_, { rejectWithValue }) => {
   try {
     const res = await fetch(`${backend_url}/cities`, {
       headers: { Authorization: `Bearer ${getToken()}` },
@@ -16,7 +16,7 @@ export const fetchCities = createAsyncThunk("selfschedulingForm/fetchCities", as
 });
 
 export const fetchExperiences = createAsyncThunk(
-  "selfschedulingForm/fetchExperiences",
+  "schedulingSessionForm/fetchExperiences",
   async ({ cityName }, { rejectWithValue }) => {
     try {
       const res = await fetch(
@@ -33,7 +33,7 @@ export const fetchExperiences = createAsyncThunk(
 );
 
 export const fetchGuides = createAsyncThunk(
-  "selfschedulingForm/fetchGuides",
+  "schedulingSessionForm/fetchGuides",
   async ({ cityId, experienceIds = [], allocationPeriod, pageSize = 20, pageNumber = 1 }, { rejectWithValue }) => {
     try {
       const params = new URLSearchParams();
@@ -57,11 +57,11 @@ export const fetchGuides = createAsyncThunk(
   }
 );
 
-export const createSelfScheduling = createAsyncThunk(
-  "selfschedulingForm/createSelfScheduling",
+export const createSchedulingSession = createAsyncThunk(
+  "schedulingSessionForm/createSchedulingSession",
   async (payload, { rejectWithValue }) => {
     try {
-      const res = await fetch(`${backend_url}/selfschedulings`, {
+      const res = await fetch(`${backend_url}/schedulingplans`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${getToken()}`,
@@ -71,7 +71,7 @@ export const createSelfScheduling = createAsyncThunk(
       });
       const text = await res.text();
       if (!res.ok) {
-        throw new Error(text || "Failed to create configuration");
+        throw new Error(text || "Failed to create scheduling session");
       }
       try {
         return text ? JSON.parse(text) : true;
@@ -84,8 +84,8 @@ export const createSelfScheduling = createAsyncThunk(
   }
 );
 
-const selfschedulingFormSlice = createSlice({
-  name: "selfschedulingForm",
+const schedulingSessionFormSlice = createSlice({
+  name: "schedulingSessionForm",
   initialState: {
     cities: null,
     experiences: null,
@@ -107,18 +107,18 @@ const selfschedulingFormSlice = createSlice({
       .addCase(fetchGuides.fulfilled, (state, action) => {
         state.guides = action.payload;
       })
-      .addCase(createSelfScheduling.pending, (state) => {
+      .addCase(createSchedulingSession.pending, (state) => {
         state.createStatus = "loading";
         state.createError = "";
       })
-      .addCase(createSelfScheduling.fulfilled, (state) => {
+      .addCase(createSchedulingSession.fulfilled, (state) => {
         state.createStatus = "succeeded";
       })
-      .addCase(createSelfScheduling.rejected, (state, action) => {
+      .addCase(createSchedulingSession.rejected, (state, action) => {
         state.createStatus = "failed";
         state.createError = action.payload;
       });
   },
 });
 
-export default selfschedulingFormSlice.reducer;
+export default schedulingSessionFormSlice.reducer;

@@ -1,18 +1,18 @@
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableCellHeader } from "../../../ui/table/index";
-import { useSelector, useDispatch } from "react-redux";
 import DateRange from "../../../common/DateRange";
 import TourId from "../../../common/TourId";
+import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
-import { fetchTourSnapshots } from "../../../../store/snapshotsSlice.js";
-export default function TourSnapshots({ snapshotId }) {
+import { fetchGuideSnapshots } from "../../../../store/snapshotsSlice.js";
+
+export default function GuideSnapshots({ snapshotId }) {
   const dispatch = useDispatch();
   const { details } = useSelector((state) => state.snapshots);
-  const tours = details[snapshotId] ? details[snapshotId].tours : null;
-  const { status, data } = tours;
+  const tours = details[snapshotId] ? details[snapshotId].guides : null;
+  const { status, data } = guides;
   useEffect(() => {
-    if (data === null) dispatch(fetchTourSnapshots(snapshotId));
+    dispatch(fetchGuideSnapshots(snapshotId));
   }, []);
-
   const renderOccurrences = (occurrences) => {
     return occurrences.map((o) => {
       return (
@@ -22,7 +22,6 @@ export default function TourSnapshots({ snapshotId }) {
       );
     });
   };
-
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
@@ -30,12 +29,12 @@ export default function TourSnapshots({ snapshotId }) {
           <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
             <TableRow>
               <TableCellHeader>
-                <div className="flex flex-col items-start">
+                <div className="flex flex-col items-start ">
                   <div>[ExpId-OptId] - Experience</div>
                   <div>Option</div>
                 </div>
               </TableCellHeader>
-              <TableCellHeader>Forecast Value</TableCellHeader>
+              <TableCellHeader>Group Size</TableCellHeader>
               <TableCellHeader>
                 <div className="flex flex-col items-start">
                   <div>Occurrences overlapping SelfScheduling Tours Period </div>
@@ -47,22 +46,18 @@ export default function TourSnapshots({ snapshotId }) {
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-sm">
             {status === "succeeded" &&
               data &&
-              data.map(
-                (t) =>
-                  t.forecastSnapshots &&
-                  t.forecastSnapshots.map((f) => (
-                    <TableRow key={`${t.tourId.optionId}`} className="hover:bg-gray-50 dark:hover:bg-white/[0.05]">
-                      <TableCell className="px-5 py-2">
-                        <div className="text-xs">
-                          <TourId tourId={t.tourId} /> <span className="ml-2">{t.name.experienceName}</span>
-                        </div>
-                        <div className="font-medium text-gray-800 dark:text-white/90">{t.name.optionName}</div>
-                      </TableCell>
-                      <TableCell className="px-5 py-2">{f.value}</TableCell>
-                      <TableCell className="px-5 py-2">{renderOccurrences(f.occurrences)}</TableCell>
-                    </TableRow>
-                  ))
-              )}
+              data.map((t) => (
+                <TableRow key={`${t.tourId.optionId}`} className="hover:bg-gray-50 dark:hover:bg-white/[0.05]">
+                  <TableCell className="px-5 py-2">
+                    <div className="text-xs">
+                      <TourId tourId={t.tourId} /> <span className="ml-2">{t.name.experienceName}</span>
+                    </div>
+                    <div className="font-medium text-gray-800 dark:text-white/90">{t.name.optionName}</div>
+                  </TableCell>
+                  <TableCell className="px-5 py-2">{t.groupSize}</TableCell>
+                  <TableCell className="px-5 py-2">{renderOccurrences(t.tourOccurrences)}</TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </div>
