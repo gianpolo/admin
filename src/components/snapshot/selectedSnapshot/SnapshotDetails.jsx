@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import ReactJson from "react-json-view";
+import ReactJson from "@microlink/react-json-view";
 import ComponentCard from "../../../components/common/ComponentCard.jsx";
 import SnapshotDetailsTitle from "./SnapshotDetailsTitle";
 import SnapshotOverview from "./SnapshotOverview.jsx";
@@ -10,24 +10,20 @@ import {
   fetchForecastsSnapshots,
   fetchAudienceSnapshots,
   fetchAllocationsSnapshots,
+  fetchSnapshotMeta,
 } from "../../../store/snapshotsSlice.js";
 
 import Spinner from "../../ui/spinner/Spinner.jsx";
-export default function SnapshotDetails({ snapshotId, isActive, loading, onActivateSnapshot, onPublishSnapshot }) {
+export default function SnapshotDetails({ snapshotId, isActive, onActivateSnapshot, onPublishSnapshot }) {
   const dispatch = useDispatch();
   const [tabs, setTabs] = useState(null);
   const [activeTab, setActiveTab] = useState(0);
-  const { details, status } = useSelector((state) => state.snapshots);
-  if (loading && status === "loading" && !snapshot) {
-    return <Spinner fullscreen />;
-  }
-
-  const snapshot = details ? details[snapshotId] : null;
-  const { summary, experiences, forecasts, audience, allocations } = snapshot;
-  useEffect(() => {
+  useEffect(() => { 
     setActiveTab(0);
+    dispatch(fetchSnapshotMeta(snapshotId));
     dispatch(fetchExperiencesSnapshots(snapshotId));
   }, []);
+
   useEffect(() => {
     const tabs = [
       {
@@ -74,6 +70,7 @@ export default function SnapshotDetails({ snapshotId, isActive, loading, onActiv
     setTabs(tabs);
   }, [snapshotId, snapshot]);
 
+  const { summary, experiences, forecasts, audience, allocations } = snapshot;
   return (
     <>
       <ComponentCard

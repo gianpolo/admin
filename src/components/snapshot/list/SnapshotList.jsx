@@ -8,7 +8,7 @@ import InputField from "../../form/input/InputField.jsx";
 import Label from "../../form/Label.jsx";
 import DateTime from "../../common/DateTime.jsx";
 export default function SnapshotList({
-  snapshots,
+  snapshotList,
   selectedSnapshot,
   activeSnapshotId,
   onAddSnapshot,
@@ -20,26 +20,26 @@ export default function SnapshotList({
 }) {
   const [tabsData, setTabsData] = useState(null);
   const [snapshotLabel, setSnapshotLabel] = useState("Generated from Dashboard");
-  const getIndexFromId = (id) => snapshots.findIndex((x) => x.snapshotId === id);
+  
+  const getIndexFromId = (id) => snapshotList.findIndex((x) => x.snapshotId === id);
+  
   const [currentTabIndex, setCurrentTabIndex] = useState(() => {
     const pos = getIndexFromId(selectedSnapshot);
     return pos === -1 ? 0 : pos;
   });
-
+  
+    const { details, status } = useSelector((state) => state.snapshots); 
+    const snapshot = details && details[snapshotId] ? details[snapshotId] : null; 
   useEffect(() => {
-    console.log("SnapshotList effect");
     const pos = getIndexFromId(selectedSnapshot);
     setCurrentTabIndex(pos === -1 ? 0 : pos);
-  }, [selectedSnapshot, snapshots]);
+  }, [selectedSnapshot, snapshotList]);
 
   useEffect(() => {
-    console.log("loading:", loading);
-
-    if (!snapshots?.length) return;
+    if (!snapshotList?.length) return;
     const tabs = snapshots.map((s) => {
       const { snapshotDate, label, createdAt } = s;
       const isActive = s.snapshotId === activeSnapshotId;
-      console.log(s.snapshotId);
       return {
         isActive,
         label: (
@@ -66,7 +66,7 @@ export default function SnapshotList({
             loading={loading}
             onActivateSnapshot={() => onActivateSnapshot(s.snapshotId)}
             isActive={isActive}
-            snapshotId={s.snapshotId}
+            snapshot={currentSnapshot}
             onPublishSnapshot={() => {
               onPublishSnapshot(s.snapshotId);
             }}
@@ -75,7 +75,7 @@ export default function SnapshotList({
       };
     });
     setTabsData(tabs);
-  }, [snapshots, activeSnapshotId, loading]);
+  }, [snapshotList, activeSnapshotId, loading]);
 
   const addOn = (
     <>

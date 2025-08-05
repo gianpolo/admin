@@ -74,6 +74,15 @@ export const publishSnapshot = createAsyncThunk(
     }
   }
 );
+export const fetchSnapshotMeta = createAsyncThunk(
+  "snapshots/fetchSnapshotMeta",
+  async (snapshotId, { rejectWithValue }) => {
+    const url = `${backend_url}/snapshots/${snapshotId}`;
+    const res = await fetchSnapshot(url, rejectWithValue);
+    console.log(`${backend_url}/snapshots/${snapshotId}`, res);
+    return { snapshotId, summary: res };
+  }
+);
 export const fetchExperiencesSnapshots = createAsyncThunk(
   "snapshots/fetchExperiencesSnapshots",
   async (snapshotId, { rejectWithValue }) => {
@@ -100,8 +109,7 @@ export const fetchAudienceSnapshots = createAsyncThunk(
     console.log(`${backend_url}/snapshots/${snapshotId}/audience`, res);
     return { snapshotId, audience: res };
   }
-);
-
+); 
 export const fetchAllocationsSnapshots = createAsyncThunk(
   "snapshots/fetchAllocationsSnapshots",
   async (snapshotId, { rejectWithValue }) => {
@@ -139,34 +147,13 @@ const snapshotsSlice = createSlice({
   name: "snapshots",
   initialState: {
     list: [],
-    details: {},
+    details: null,
     status: "idle",
     error: null,
   },
   reducers: {},
   extraReducers: (builder) => {
-    builder
-      .addCase(fetchSchedulingPlanDetails.pending, (state, action) => {
-        state.status = "loading";
-        state.error = null;
-        state.list = [];
-      })
-      .addCase(fetchSchedulingPlanDetails.fulfilled, (state, { payload }) => {
-        state.list = payload.schedulingPlan.snapshots;
-        state.status = "succeeded";
-
-        if (!payload.snapshot) return;
-        const { snapshotId } = payload.snapshot;
-        if (!state.details[snapshotId]) state.details[snapshotId] = createDetailState();
-        if (snapshotId) {
-          state.details[snapshotId].summary.status = "succeeded";
-          state.details[snapshotId].summary.data = payload.snapshot;
-        }
-      })
-      .addCase(fetchSchedulingPlanDetails.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload;
-      })
+    builder 
       .addCase(createSnapshot.pending, (state) => {
         state.status = "loading";
         state.error = null;
@@ -205,22 +192,39 @@ const snapshotsSlice = createSlice({
         state.status = "failed";
         state.error = action.payload;
       });
+    builder
+      .addCase(fetchSnapshotMeta.pending, (state, action) => {
+        const id = action.meta.arg;
+        if (!state.details[id]) state.details[id] = createDetailState();
+        state.details[id].status = "loading";
+        state.details[id].summary.error = null;
+      })
+      .addCase(fetchSnapshotMeta.fulfilled, (state, action) => {
+        const { snapshotId, summary } = action.payload;
+        state.details[snapshotId].status = "succeeded";
+        state.details[snapshotId].summary.data = summary;
+      })
+      .addCase(fetchSnapshotMeta.rejected, (state, action) => {
+        const id = action.meta.arg;
+        state.details[id].status = "failed";
+        state.details[id].summary.error = action.error.message;
+      });
     // --- Experiences ---
     builder
       .addCase(fetchExperiencesSnapshots.pending, (state, action) => {
         const id = action.meta.arg;
         if (!state.details[id]) state.details[id] = createDetailState();
-        state.details[id].experiences.status = "loading";
+        state.details[id].status = "loading";
         state.details[id].experiences.error = null;
       })
       .addCase(fetchExperiencesSnapshots.fulfilled, (state, action) => {
         const { snapshotId, experiences } = action.payload;
-        state.details[snapshotId].experiences.status = "succeeded";
+        state.details[snapshotId].status = "succeeded";
         state.details[snapshotId].experiences.data = experiences;
       })
       .addCase(fetchExperiencesSnapshots.rejected, (state, action) => {
         const id = action.meta.arg;
-        state.details[id].experiences.status = "failed";
+        state.details[id].status = "failed";
         state.details[id].experiences.error = action.error.message;
       });
     //Forecasts

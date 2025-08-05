@@ -52,7 +52,7 @@ export default function SnapshotsContainer({ snapshotList, activeSnapshotId, sna
         ) : (
           <SnapshotList
             loading={snapshotStatus === "loading"}
-            snapshots={snapshotList}
+            snapshotList={snapshotList}
             activeSnapshotId={activeSnapshotId}
             selectedSnapshot={selectedSnapshot}
             onSnapshotSelected={(id) => {
