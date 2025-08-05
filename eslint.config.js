@@ -6,6 +6,7 @@ export default [
   js.configs.recommended,
   {
     files: ["**/*.{js,mjs,cjs,jsx}"],
+    ignores: ["src/components/snapshot/**"],
     languageOptions: {
       globals: globals.browser,
       parserOptions: {

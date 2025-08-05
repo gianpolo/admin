@@ -1,0 +1,115 @@
+import { useState, useEffect } from "react";
+import Button from "../../ui/button/Button.jsx";
+import VerticalTabs from "../../common/VerticalTabs.jsx";
+import { CheckCircleIcon, PlusIcon } from "../../../icons/index.js";
+import SnapshotDetails from "../selectedSnapshot/SnapshotDetails.jsx";
+import Spinner from "../../ui/spinner/Spinner.jsx";
+import InputField from "../../form/input/InputField.jsx";
+import Label from "../../form/Label.jsx";
+import DateTime from "../../common/DateTime.jsx";
+
+export default function SnapshotList({
+  snapshotList,
+  selectedSnapshot,
+  activeSnapshotId,
+  onAddSnapshot,
+  canAddSnapshot,
+  loading,
+  onActivateSnapshot,
+  onSnapshotSelected,
+  onPublishSnapshot,
+}) {
+  const [tabsData, setTabsData] = useState(null);
+  const [snapshotLabel, setSnapshotLabel] = useState("Generated from Dashboard");
+
+  const getIndexFromId = (id) => snapshotList.findIndex((x) => x.snapshotId === id);
+
+  const [currentTabIndex, setCurrentTabIndex] = useState(() => {
+    const pos = getIndexFromId(selectedSnapshot);
+    return pos === -1 ? 0 : pos;
+  });
+
+  useEffect(() => {
+    const pos = getIndexFromId(selectedSnapshot);
+    setCurrentTabIndex(pos === -1 ? 0 : pos);
+  }, [selectedSnapshot, snapshotList]);
+
+  useEffect(() => {
+    if (!snapshotList?.length) return;
+    const tabs = snapshotList.map((s) => {
+      const { snapshotDate, label, createdAt } = s;
+      const isActive = s.snapshotId === activeSnapshotId;
+      return {
+        isActive,
+        label: (
+          <div className="flex flex-row w-full justify-between items-center">
+            <div className="flex-auto text-left">
+              <div className="text-theme-sm mb-2">
+                <DateTime date={snapshotDate} />
+                <span className="ml-1">- {label}</span>
+              </div>
+              <div className="text-theme-xs">
+                <DateTime date={createdAt} />
+              </div>
+              <div className="text-theme-xs">{s.snapshotId}</div>
+            </div>
+            {isActive && (
+              <div className="text-right text-lg">
+                <CheckCircleIcon className="success text-md" />
+              </div>
+            )}
+          </div>
+        ),
+        content: (
+          <SnapshotDetails
+            snapshotId={s.snapshotId}
+            isActive={isActive}
+            onActivateSnapshot={() => onActivateSnapshot(s.snapshotId)}
+            onPublishSnapshot={() => onPublishSnapshot(s.snapshotId)}
+          />
+        ),
+      };
+    });
+    setTabsData(tabs);
+  }, [snapshotList, activeSnapshotId, onActivateSnapshot, onPublishSnapshot]);
+
+  const addOn = (
+    <>
+      <div className="border-b dark:border-gray-800">
+        <div>
+          <Label htmlFor="desc" className="  text-xs leading-normal text-gray-500 dark:text-gray-400">
+            Snapshot Label
+          </Label>
+          <InputField
+            disabled={loading}
+            id="desc"
+            className="text-xs  h-9!"
+            value={snapshotLabel}
+            onChange={(e) => setSnapshotLabel(e.target.value)}
+          />
+        </div>
+        <Button
+          size="sm"
+          className="w-full mt-4"
+          onClick={() => onAddSnapshot(snapshotLabel)}
+          disabled={!canAddSnapshot || loading}
+          startIcon={loading ? <Spinner size="xs" /> : <PlusIcon />}
+        >
+          Take a snapshot now
+        </Button>
+      </div>
+    </>
+  );
+  const handleChangeTab = (idx) => {
+    setCurrentTabIndex(idx);
+    onSnapshotSelected(snapshotList[idx].snapshotId);
+  };
+
+  return (
+    <>
+      {tabsData && !loading && (
+        <VerticalTabs currentTabIndex={currentTabIndex} tabsData={tabsData} addOn={addOn} onChangeTab={handleChangeTab}></VerticalTabs>
+      )}
+    </>
+  );
+}
