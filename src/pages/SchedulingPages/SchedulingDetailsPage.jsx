@@ -5,12 +5,12 @@ import PageMeta from "../../components/common/PageMeta.jsx";
 import { ChevronLeftIcon } from "../../icons/index.js";
 import { startSimulation, stopSimulation } from "../../store/schedulingPlansSlice.js";
 import { fetchSchedulingPlanDetails, performSelfschedulingAction } from "../../store/planDetailsSlice.js";
-import SchedulingSessionOverview from "../../components/scheduling/SchedulingSessionOverview";
+import SchedulingSessionOverview from "../../components/scheduling/SchedulingSessionOverview.jsx";
 import Spinner from "../../components/ui/spinner/Spinner.jsx";
 import SimulationWidget from "../../components/scheduling/SimulationWidget.jsx";
 import SnapshotsContainer from "../../components/snapshot/SnapshotsContainer.jsx";
 
-export default function SchedulingSessionDetailsPage() {
+export default function SchedulingDetailsPage() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -42,10 +42,7 @@ export default function SchedulingSessionDetailsPage() {
       dispatch(startSimulation({ id }));
     }
   };
-
-  const handleItemClick = (id) => {
-    navigate(`/self-scheduling-items/${id}`);
-  };
+ 
   return (
     <>
       <PageMeta title="SelfScheduling Details" description="Scheduling information" />

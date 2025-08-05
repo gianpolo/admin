@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router";
 import NotFound from "./pages/OtherPage/NotFound";
 import SchedulingSessionListPage from "./pages/SchedulingPages/SchedulingSessionListPage";
 import AddSchedulingSessionPage from "./pages/SchedulingPages/AddSchedulingSessionPage";
-import SchedulingSessionDetailsPage from "./pages/SchedulingPages/SchedulingSessionDetailsPage";
+import SchedulingDetailsPage from "./pages/SchedulingPages/SchedulingDetailsPage";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
@@ -25,7 +25,7 @@ export default function App() {
             <Route index path="/" element={<Home />} />
             <Route path="/scheduling-plans" element={<SchedulingSessionListPage />} />
             <Route path="/scheduling-plans/new" element={<AddSchedulingSessionPage />} />
-            <Route path="/scheduling-plans/:id" element={<SchedulingSessionDetailsPage />} />
+            <Route path="/scheduling-plans/:id" element={<SchedulingDetailsPage />} />
           </Route>
           <Route path="/signin" element={<SignIn />} />
           {/* Fallback Route */}
