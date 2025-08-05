@@ -245,7 +245,7 @@ const snapshotsSlice = createSlice({
     builder
       .addCase(fetchAudienceSnapshots.pending, (state, action) => {
         const snapshotId = action.meta.arg;
-        if (!state.details[snapshotId]) state.details[id] = createDetailState();
+        if (!state.details[snapshotId]) state.details[snapshotId] = createDetailState();
         state.details[snapshotId].audience.status = "loading";
         state.details[snapshotId].audience.error = null;
       })

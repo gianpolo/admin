@@ -20,13 +20,16 @@ export default function SnapshotList({
 }) {
   const [tabsData, setTabsData] = useState(null);
   const [snapshotLabel, setSnapshotLabel] = useState("Generated from Dashboard");
-  const getIndexFromId = (id) => snapshots.map((x) => x.snapshotId).indexOf(id);
-  const [currentTabIndex, setCurrentTabIndex] = useState(getIndexFromId(selectedSnapshot) || 0);
+  const getIndexFromId = (id) => snapshots.findIndex((x) => x.snapshotId === id);
+  const [currentTabIndex, setCurrentTabIndex] = useState(() => {
+    const pos = getIndexFromId(selectedSnapshot);
+    return pos === -1 ? 0 : pos;
+  });
 
   useEffect(() => {
     console.log("SnapshotList effect");
     const pos = getIndexFromId(selectedSnapshot);
-    if (pos !== -1) setCurrentTabIndex(pos);
+    setCurrentTabIndex(pos === -1 ? 0 : pos);
   }, [selectedSnapshot, snapshots]);
 
   useEffect(() => {
