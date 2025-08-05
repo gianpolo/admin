@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 export const fetchSchedulingPlans = createAsyncThunk(
-  "schedulingPlan/fetchSchedulingPlans",
+  "schedulingPlans/fetchSchedulingPlans",
   async ({ pageSize = 10, pageNumber = 1, cityId } = {}, { rejectWithValue }) => {
     try {
       const params = new URLSearchParams();
@@ -27,7 +27,7 @@ export const fetchSchedulingPlans = createAsyncThunk(
 );
 
 export const openConfiguration = createAsyncThunk(
-  "schedulingPlan/openConfiguration",
+  "schedulingPlans/openConfiguration",
   async ({ id }, { rejectWithValue }) => {
     try {
       const token = getToken();
@@ -48,7 +48,7 @@ export const openConfiguration = createAsyncThunk(
 );
 
 export const closeConfiguration = createAsyncThunk(
-  "schedulingPlan/closeConfiguration",
+  "schedulingPlans/closeConfiguration",
   async ({ id }, { rejectWithValue }) => {
     try {
       const token = getToken();
@@ -70,7 +70,7 @@ export const closeConfiguration = createAsyncThunk(
 );
 
 export const deleteConfiguration = createAsyncThunk(
-  "schedulingPlan/deleteConfiguration",
+  "schedulingPlans/deleteConfiguration",
   async ({ id }, { rejectWithValue }) => {
     try {
       const token = getToken();
@@ -91,7 +91,7 @@ export const deleteConfiguration = createAsyncThunk(
 );
 
 export const checkSimulation = createAsyncThunk(
-  "schedulingPlan/checkSimulation",
+  "schedulingPlans/checkSimulation",
   async ({ id }, { rejectWithValue }) => {
     try {
       const res = await fetch(`http://localhost:5009/virtualguides/${id}`);
@@ -107,7 +107,7 @@ export const checkSimulation = createAsyncThunk(
 );
 
 export const startSimulation = createAsyncThunk(
-  "schedulingPlan/startSimulation",
+  "schedulingPlans/startSimulation",
   async ({ id }, { rejectWithValue }) => {
     try {
       const res = await fetch(`http://localhost:5009/virtualguides/${id}/start`, {
@@ -124,22 +124,25 @@ export const startSimulation = createAsyncThunk(
   }
 );
 
-export const stopSimulation = createAsyncThunk("schedulingPlan/stopSimulation", async ({ id }, { rejectWithValue }) => {
-  try {
-    const res = await fetch(`http://localhost:5009/virtualguides/${id}/stop`, {
-      method: "POST",
-    });
+export const stopSimulation = createAsyncThunk(
+  "schedulingPlans/stopSimulation",
+  async ({ id }, { rejectWithValue }) => {
+    try {
+      const res = await fetch(`http://localhost:5009/virtualguides/${id}/stop`, {
+        method: "POST",
+      });
 
-    if (!res.ok) {
-      throw new Error("Failed to stop simulation");
+      if (!res.ok) {
+        throw new Error("Failed to stop simulation");
+      }
+      return true;
+    } catch (err) {
+      return rejectWithValue(err.message);
     }
-    return true;
-  } catch (err) {
-    return rejectWithValue(err.message);
   }
-});
+);
 
-const schedulingSessionsSlice = createSlice({
+const schedulingPlansSlice = createSlice({
   name: "configurations",
   initialState: {
     list: [],
@@ -229,4 +232,4 @@ const schedulingSessionsSlice = createSlice({
   },
 });
 const getToken = () => localStorage.getItem("token") || "";
-export default schedulingSessionsSlice.reducer;
+export default schedulingPlansSlice.reducer;

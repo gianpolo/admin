@@ -14,7 +14,7 @@ export default function SnapshotList({
   onAddSnapshot,
   canAddSnapshot,
   loading,
-  onActivateSnapshot, 
+  onActivateSnapshot,
   onSnapshotSelected,
   onPublishSnapshot,
 }) {
@@ -24,14 +24,19 @@ export default function SnapshotList({
   const [currentTabIndex, setCurrentTabIndex] = useState(getIndexFromId(selectedSnapshot) || 0);
 
   useEffect(() => {
+    console.log("SnapshotList effect");
     const pos = getIndexFromId(selectedSnapshot);
     if (pos !== -1) setCurrentTabIndex(pos);
   }, [selectedSnapshot, snapshots]);
+
   useEffect(() => {
+    console.log("loading:", loading);
+
     if (!snapshots?.length) return;
     const tabs = snapshots.map((s) => {
       const { snapshotDate, label, createdAt } = s;
       const isActive = s.snapshotId === activeSnapshotId;
+      console.log(s.snapshotId);
       return {
         isActive,
         label: (
@@ -97,6 +102,7 @@ export default function SnapshotList({
     </>
   );
   const handleChangeTab = (idx) => {
+    console.log("SnapshotList handleChangeTab");
     setCurrentTabIndex(idx);
     onSnapshotSelected(snapshots[idx].snapshotId);
   };

@@ -3,8 +3,8 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 const getToken = () => localStorage.getItem("token") || "";
 const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
 
-export const fetchSchedulingSessionDetails = createAsyncThunk(
-  "sessionDetails/fetchSchedulingSessionDetails",
+export const fetchSchedulingPlanDetails = createAsyncThunk(
+  "sessionDetails/fetchSchedulingPlanDetails",
   async (id, { rejectWithValue }) => {
     try {
       const res = await fetch(`${backend_url}/schedulingplans/${id}`, {
@@ -35,25 +35,6 @@ export const performSelfschedulingAction = createAsyncThunk(
   }
 );
 
-export const generateSlots = createAsyncThunk(
-  "sessionDetails/generateSlots",
-  async (schedulingPlanId, { rejectWithValue }) => {
-    try {
-      const res = await fetch(`${backend_url}/snapshots/slots/${schedulingPlanId}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${getToken()}` },
-      });
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || "Failed to generate slots");
-      }
-      return true;
-    } catch (err) {
-      return rejectWithValue(err.message);
-    }
-  }
-);
-
 export const activateSnapshot = createAsyncThunk(
   "sessionDetails/activateSnapshot",
   async (payload, { rejectWithValue }) => {
@@ -77,8 +58,8 @@ export const activateSnapshot = createAsyncThunk(
   }
 );
 
-const sessionDetailsSlice = createSlice({
-  name: "sessionDetails",
+const planDetailsSlice = createSlice({
+  name: "planDetails",
   initialState: {
     schedulingPlan: null,
     status: "idle",
@@ -87,29 +68,17 @@ const sessionDetailsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) =>
     builder
-      .addCase(fetchSchedulingSessionDetails.pending, (state) => {
+      .addCase(fetchSchedulingPlanDetails.pending, (state) => {
         state.status = "loading";
         state.error = "";
       })
-      .addCase(fetchSchedulingSessionDetails.fulfilled, (state, { payload }) => {
+      .addCase(fetchSchedulingPlanDetails.fulfilled, (state, { payload }) => {
         state.status = "succeeded";
         state.schedulingPlan = payload.schedulingPlan;
       })
-      .addCase(fetchSchedulingSessionDetails.rejected, (state, action) => {
+      .addCase(fetchSchedulingPlanDetails.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
-      })
-
-      .addCase(generateSlots.pending, (state) => {
-        state.slotsStatus = "loading";
-        state.slotsError = "";
-      })
-      .addCase(generateSlots.fulfilled, (state) => {
-        state.slotsStatus = "succeeded";
-      })
-      .addCase(generateSlots.rejected, (state, action) => {
-        state.slotsStatus = "failed";
-        state.slotsError = action.payload;
       })
       .addCase(activateSnapshot.pending, (state) => {
         state.snapshotStatus = "loading";
@@ -126,4 +95,4 @@ const sessionDetailsSlice = createSlice({
         state.config = payload;
       }),
 });
-export default sessionDetailsSlice.reducer;
+export default planDetailsSlice.reducer;

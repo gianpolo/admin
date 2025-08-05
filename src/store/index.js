@@ -1,17 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
-import schedulingSessionReducer from "./schedulingSessionsSlice.js";
+import schedulingPlansReducer from "./schedulingPlansSlice.js";
 import authReducer from "./authSlice.js";
-import sessionDetailsReducer from "./sessionDetailsSlice.js";
-import schedulingSessionFormReducer from "./schedulingSessionFormSlice.js";
+import planDetailsReducer from "./planDetailsSlice.js";
+import schedulingPlanFormReducer from "./schedulingPlanFormSlice.js";
 import snapshotsReducer from "./snapshotsSlice.js";
 import notificationsReducer from "./notificationsSlice.js";
 import slotReducer from "./slotsSlice.js";
 const store = configureStore({
   reducer: {
     auth: authReducer,
-    schedulingPlan: schedulingSessionReducer,
-    sessionDetails: sessionDetailsReducer,
-    schedulingSessionForm: schedulingSessionFormReducer,
+    schedulingPlans: schedulingPlansReducer,
+    planDetails: planDetailsReducer,
+    schedulingPlanForm: schedulingPlanFormReducer,
     snapshots: snapshotsReducer,
     notifications: notificationsReducer,
     slots: slotReducer,

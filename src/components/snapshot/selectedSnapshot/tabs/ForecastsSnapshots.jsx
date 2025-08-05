@@ -1,16 +1,17 @@
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableCellHeader } from "../../../ui/table/index";
 import { useSelector, useDispatch } from "react-redux";
-import DateRange from "../../../common/DateRange";
-import TourId from "../../../common/TourId";
+import DateRange from "../../../common/DateRange.jsx";
+import TourId from "../../../common/TourId.jsx";
 import { useEffect } from "react";
-import { fetchTourSnapshots } from "../../../../store/snapshotsSlice.js";
-export default function TourSnapshots({ snapshotId }) {
+import { fetchForecastsSnapshots } from "../../../../store/snapshotsSlice.js";
+import ReactJson from "react-json-view";
+export default function ForecastsSnapshots({ snapshotId }) {
   const dispatch = useDispatch();
   const { details } = useSelector((state) => state.snapshots);
-  const tours = details[snapshotId] ? details[snapshotId].tours : null;
-  const { status, data } = tours;
+  const forecasts = details[snapshotId] ? details[snapshotId].forecasts : null;
+  const { status, data } = forecasts;
   useEffect(() => {
-    if (data === null) dispatch(fetchTourSnapshots(snapshotId));
+    if (data === null) dispatch(fetchForecastsSnapshots(snapshotId));
   }, []);
 
   const renderOccurrences = (occurrences) => {
@@ -26,7 +27,8 @@ export default function TourSnapshots({ snapshotId }) {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
-        <Table>
+        <ReactJson src={data || {}} name={null} collapsed={2} />,
+        {/* <Table>
           <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
             <TableRow>
               <TableCellHeader>
@@ -64,7 +66,7 @@ export default function TourSnapshots({ snapshotId }) {
                   ))
               )}
           </TableBody>
-        </Table>
+        </Table> */}
       </div>
     </div>
   );

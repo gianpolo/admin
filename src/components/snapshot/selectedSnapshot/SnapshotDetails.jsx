@@ -1,60 +1,87 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import ReactJson from "react-json-view";
+import ComponentCard from "../../../components/common/ComponentCard.jsx";
+import SnapshotDetailsTitle from "./SnapshotDetailsTitle";
 import SnapshotOverview from "./SnapshotOverview.jsx";
+import Tabs from "../../../components/common/Tabs.jsx";
+import {
+  fetchExperiencesSnapshots,
+  fetchForecastsSnapshots,
+  fetchAudienceSnapshots,
+  fetchAllocationsSnapshots,
+} from "../../../store/snapshotsSlice.js";
+
 import Spinner from "../../ui/spinner/Spinner.jsx";
-import ComponentCard from "../../common/ComponentCard.jsx";
-import TourSnapshots from "./tabs/TourSnapshots.jsx";
-import ForecastSnapshots from "./tabs/ForecastSnapshots.jsx";
-import SelfSchedulingItems from "./tabs/SelfSchedulingItems.jsx";
-import SnapshotDetailsTitle from "./SnapshotDetailsTitle.jsx";
-import Tabs from "../../common/Tabs.jsx";
-
-export default function SnapshotDetails({
-  snapshotId,
-  isActive,
-  loading,
-  onActivateSnapshot,
-  onPublishSnapshot,
-}) {
+export default function SnapshotDetails({ snapshotId, isActive, loading, onActivateSnapshot, onPublishSnapshot }) {
+  const dispatch = useDispatch();
   const [tabs, setTabs] = useState(null);
+  const [activeTab, setActiveTab] = useState(0);
   const { details, status } = useSelector((state) => state.snapshots);
-  const snapshot = details ? details[snapshotId] : null;
-  const { summary } = snapshot;
-  const { snapshotDate, createdAt } = summary.data;
-  useEffect(() => {
-    const tabs = [
-      {
-        label: "Tours",
-        content: <TourSnapshots snapshotId={snapshotId} />,
-      },
-      {
-        label: "Forecasting",
-        content: <ForecastSnapshots snapshotId={snapshotId} />,
-      },
-      {
-        label: "Guides",
-        content: <span>Guides</span>,
-      },
-      {
-        label: "Allocations",
-        content: <span>Allocations</span>,
-      },
-    ];
-    setTabs(tabs);
-  }, [snapshotId]);
-
   if (loading && status === "loading" && !snapshot) {
     return <Spinner fullscreen />;
   }
+
+  const snapshot = details ? details[snapshotId] : null;
+  const { summary, experiences, forecasts, audience, allocations } = snapshot;
+  useEffect(() => {
+    setActiveTab(0);
+    dispatch(fetchExperiencesSnapshots(snapshotId));
+  }, []);
+  useEffect(() => {
+    const tabs = [
+      {
+        label: "Experiences",
+        content: <ReactJson src={experiences.data || {}} name={null} collapsed={2} />,
+        onTabActive: () => {
+          console.log("Experiences tab active");
+          dispatch(fetchExperiencesSnapshots(snapshotId));
+        },
+      },
+      {
+        label: "Forecasting",
+        content: <ReactJson src={forecasts.data || {}} name={null} collapsed={2} />,
+        onTabActive: (idx) => {
+          console.log("Forecasting tab active");
+          dispatch(fetchForecastsSnapshots(snapshotId));
+        },
+      },
+      {
+        label: "Audience",
+        content: <ReactJson src={audience.data || {}} name={null} collapsed={2} />,
+        onTabActive: (idx) => {
+          console.log("Audicence tab active");
+          dispatch(fetchAudienceSnapshots(snapshotId));
+        },
+      },
+      {
+        label: "Allocations",
+        content: (
+          <div>
+            {allocations.status === "loading" ? (
+              <Spinner />
+            ) : (
+              <ReactJson src={allocations.data || {}} name={null} collapsed={2} />
+            )}
+          </div>
+        ),
+        onTabActive: (idx) => {
+          console.log("Allocations tab active");
+          dispatch(fetchAllocationsSnapshots(snapshotId));
+        },
+      },
+    ];
+    setTabs(tabs);
+  }, [snapshotId, snapshot]);
 
   return (
     <>
       <ComponentCard
         title={
           <SnapshotDetailsTitle
-            snapshotDate={snapshotDate}
+            snapshotDate={summary.data.snapshotDate}
             isActive={isActive}
-            createdAt={createdAt}
+            createdAt={summary.data.createdAt}
             canGenerateSlots={true}
             onActivateSnapshot={onActivateSnapshot}
             onPublishSnapshot={onPublishSnapshot}
@@ -62,7 +89,7 @@ export default function SnapshotDetails({
         }
       >
         <SnapshotOverview isActive={isActive} summary={summary.data}></SnapshotOverview>
-        {tabs && <Tabs tabsData={tabs} className="mt-4"></Tabs>}
+        {tabs && <Tabs tabsData={tabs} className="mt-4" activeTab={activeTab}></Tabs>}
       </ComponentCard>
     </>
   );

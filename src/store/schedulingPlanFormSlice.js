@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 const getToken = () => localStorage.getItem("token") || "";
 const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
 
-export const fetchCities = createAsyncThunk("schedulingSessionForm/fetchCities", async (_, { rejectWithValue }) => {
+export const fetchCities = createAsyncThunk("schedulingPlanForm/fetchCities", async (_, { rejectWithValue }) => {
   try {
     const res = await fetch(`${backend_url}/cities`, {
       headers: { Authorization: `Bearer ${getToken()}` },
@@ -16,7 +16,7 @@ export const fetchCities = createAsyncThunk("schedulingSessionForm/fetchCities",
 });
 
 export const fetchExperiences = createAsyncThunk(
-  "schedulingSessionForm/fetchExperiences",
+  "schedulingPlanForm/fetchExperiences",
   async ({ cityName }, { rejectWithValue }) => {
     try {
       const res = await fetch(
@@ -33,7 +33,7 @@ export const fetchExperiences = createAsyncThunk(
 );
 
 export const fetchGuides = createAsyncThunk(
-  "schedulingSessionForm/fetchGuides",
+  "schedulingPlanForm/fetchGuides",
   async ({ cityId, experienceIds = [], allocationPeriod, pageSize = 20, pageNumber = 1 }, { rejectWithValue }) => {
     try {
       const params = new URLSearchParams();
@@ -58,7 +58,7 @@ export const fetchGuides = createAsyncThunk(
 );
 
 export const createSchedulingSession = createAsyncThunk(
-  "schedulingSessionForm/createSchedulingSession",
+  "schedulingPlanForm/createSchedulingSession",
   async (payload, { rejectWithValue }) => {
     try {
       const res = await fetch(`${backend_url}/schedulingplans`, {
@@ -84,8 +84,8 @@ export const createSchedulingSession = createAsyncThunk(
   }
 );
 
-const schedulingSessionFormSlice = createSlice({
-  name: "schedulingSessionForm",
+const schedulingPlanFormSlice = createSlice({
+  name: "schedulingPlanForm",
   initialState: {
     cities: null,
     experiences: null,
@@ -121,4 +121,4 @@ const schedulingSessionFormSlice = createSlice({
   },
 });
 
-export default schedulingSessionFormSlice.reducer;
+export default schedulingPlanFormSlice.reducer;

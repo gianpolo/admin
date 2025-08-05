@@ -3,8 +3,8 @@ import { Link, useParams, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import PageMeta from "../../components/common/PageMeta.jsx";
 import { ChevronLeftIcon } from "../../icons/index.js";
-import { startSimulation, stopSimulation } from "../../store/schedulingSessionsSlice.js";
-import { fetchSchedulingSessionDetails, performSelfschedulingAction } from "../../store/sessionDetailsSlice.js";
+import { startSimulation, stopSimulation } from "../../store/schedulingPlansSlice.js";
+import { fetchSchedulingPlanDetails, performSelfschedulingAction } from "../../store/planDetailsSlice.js";
 import SchedulingSessionOverview from "../../components/scheduling/SchedulingSessionOverview";
 import Spinner from "../../components/ui/spinner/Spinner.jsx";
 import SimulationWidget from "../../components/scheduling/SimulationWidget.jsx";
@@ -15,21 +15,21 @@ export default function SchedulingSessionDetailsPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { isSimulationRunning } = useSelector((state) => state.schedulingPlan);
-  const selfschedulingState = useSelector((state) => state.sessionDetails);
-  const { status, error, schedulingPlan } = selfschedulingState;
+  const { isSimulationRunning } = useSelector((state) => state.schedulingPlans);
+  const planDetails = useSelector((state) => state.planDetails);
+  const { status, error, schedulingPlan } = planDetails;
   const [actionLoading, setActionLoading] = useState(false);
 
   const snapshots = useSelector((state) => state.snapshots);
   useEffect(() => {
-    dispatch(fetchSchedulingSessionDetails(id));
+    dispatch(fetchSchedulingPlanDetails(id));
   }, [dispatch, id]);
 
   const handleAction = async (action) => {
     setActionLoading(true);
     const result = await dispatch(performSelfschedulingAction({ id, action }));
     if (performSelfschedulingAction.fulfilled.match(result)) {
-      dispatch(fetchSchedulingSessionDetails(id));
+      dispatch(fetchSchedulingPlanDetails(id));
     }
     setActionLoading(false);
   };
@@ -114,7 +114,7 @@ export default function SchedulingSessionDetailsPage() {
         )
       )}
 
-      <div className="grid grid-cols-12 gap-6 mt-6"> 
+      <div className="grid grid-cols-12 gap-6 mt-6">
         <div className="col-span-12">
           <div className="">
             {status === "succeeded" && snapshots && (

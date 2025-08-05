@@ -6,7 +6,7 @@ import {
   fetchExperiences,
   fetchGuides,
   createSchedulingSession,
-} from "../../store/schedulingSessionFormSlice.js";
+} from "../../store/schedulingPlanFormSlice.js";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb.jsx";
 import PageMeta from "../../components/common/PageMeta.jsx";
 import Button from "../../components/ui/button/Button.jsx";
@@ -32,9 +32,7 @@ export default function AddSchedulingSessionPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loadingTemplate, setLoadingTemplate] = useState(false);
-  const { cities, experiences, guides, createStatus, createError } = useSelector(
-    (state) => state.schedulingSessionForm
-  );
+  const { cities, experiences, guides, createStatus, createError } = useSelector((state) => state.schedulingPlanForm);
 
   const [cityId, setCityId] = useState("");
   const [description, setDescription] = useState("");

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Table, TableHeader, TableBody, TableRow, TableCell, TableCellHeader } from "../../../ui/table/index";
-import { fetchSnapshotItems } from "../../../../store/snapshotsSlice";
+import { fetchExperiencesSnapshots } from "../../../../store/snapshotsSlice";
 import TourId from "../../../common/TourId";
 import Spinner from "../../../ui/spinner/Spinner";
 import Badge from "../../../ui/badge/Badge";
@@ -12,7 +12,7 @@ export default function SelfSchedulingItems({ snapshotId }) {
   const items = details[snapshotId] ? details[snapshotId].items : null;
   const { status, data } = items;
   useEffect(() => {
-    if (data === null) dispatch(fetchSnapshotItems(snapshotId));
+    if (data === null) dispatch(fetchExperiencesSnapshots(snapshotId));
   }, []);
   const statusColors = {
     0: { color: "warning", label: "Unknown" },

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchSchedulingSessionDetails } from "./sessionDetailsSlice";
+import { fetchSchedulingPlanDetails } from "./planDetailsSlice";
 const getToken = () => localStorage.getItem("token") || "";
 const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
 
@@ -74,69 +74,65 @@ export const publishSnapshot = createAsyncThunk(
     }
   }
 );
-export const fetchSnapshotItems = createAsyncThunk(
-  "snapshots/fetchSnapshotItems",
+export const fetchExperiencesSnapshots = createAsyncThunk(
+  "snapshots/fetchExperiencesSnapshots",
   async (snapshotId, { rejectWithValue }) => {
-    try {
-      const res = await fetch(`${backend_url}/items/${snapshotId}`, {
-        method: "GET",
-        headers: { Authorization: `Bearer ${getToken()}` },
-      });
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || "Failed to process snapshot");
-      }
-      const data = await res.json();
-      return { snapshotId, items: data };
-    } catch (err) {
-      return rejectWithValue(err.message);
-    }
+    const url = `${backend_url}/snapshots/${snapshotId}/tours`;
+    const res = await fetchSnapshot(url, rejectWithValue);
+    console.log(`${backend_url}/snapshots/${snapshotId}/tours`, res);
+    return { snapshotId, experiences: res };
+  }
+);
+export const fetchForecastsSnapshots = createAsyncThunk(
+  "snapshots/fetchForecastsSnapshots",
+  async (snapshotId, { rejectWithValue }) => {
+    const url = `${backend_url}/snapshots/${snapshotId}/forecasts`;
+    const res = await fetchSnapshot(url, rejectWithValue);
+    console.log(`${backend_url}/snapshots/${snapshotId}/forecasts`, res);
+    return { snapshotId, forecasts: res };
+  }
+);
+export const fetchAudienceSnapshots = createAsyncThunk(
+  "snapshots/fetchAudienceSnapshots",
+  async (snapshotId, { rejectWithValue }) => {
+    const url = `${backend_url}/snapshots/${snapshotId}/audience`;
+    const res = await fetchSnapshot(url, rejectWithValue);
+    console.log(`${backend_url}/snapshots/${snapshotId}/audience`, res);
+    return { snapshotId, audience: res };
   }
 );
 
-export const fetchTourSnapshots = createAsyncThunk(
-  "snapshots/fetchTourSnapshots",
+export const fetchAllocationsSnapshots = createAsyncThunk(
+  "snapshots/fetchAllocationsSnapshots",
   async (snapshotId, { rejectWithValue }) => {
-    try {
-      const res = await fetch(`${backend_url}/snapshots/${snapshotId}/tours`, {
-        method: "GET",
-        headers: { Authorization: `Bearer ${getToken()}` },
-      });
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || "Failed to process snapshot");
-      }
-      const data = await res.json();
-      return { snapshotId, tours: data };
-    } catch (err) {
-      return rejectWithValue(err.message);
-    }
+    const url = `${backend_url}/snapshots/${snapshotId}/allocations`;
+    const res = await fetchSnapshot(url, rejectWithValue);
+    console.log(`${backend_url}/snapshots/${snapshotId}/allocations`, res);
+    return { snapshotId, allocations: res };
   }
 );
 
-export const fetchGuideSnapshots = createAsyncThunk(
-  "snapshots/fetchTourSnapshots",
-  async (snapshotId, { rejectWithValue }) => {
-    try {
-      const res = await fetch(`${backend_url}/snapshots/${snapshotId}/guides`, {
-        method: "GET",
-        headers: { Authorization: `Bearer ${getToken()}` },
-      });
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || "Failed to process snapshot");
-      }
-      const data = await res.json();
-      return { snapshotId, guides: data };
-    } catch (err) {
-      return rejectWithValue(err.message);
+const fetchSnapshot = async (url, rejectWithValue) => {
+  try {
+    const res = await fetch(url, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${getToken()}` },
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      throw new Error(text || "Failed to process snapshot");
     }
+    return await res.json();
+  } catch (err) {
+    return rejectWithValue(err.message);
   }
-);
+};
 const createDetailState = () => ({
   summary: { data: null, status: "idle", error: null },
-  tours: { data: null, status: "idle", error: null },
-  items: { data: null, status: "idle", error: null },
+  experiences: { data: null, status: "idle", error: null },
+  forecasts: { data: null, status: "idle", error: null },
+  audience: { data: null, status: "idle", error: null },
+  allocations: { data: null, status: "idle", error: null },
 });
 
 const snapshotsSlice = createSlice({
@@ -150,12 +146,12 @@ const snapshotsSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchSchedulingSessionDetails.pending, (state, action) => {
+      .addCase(fetchSchedulingPlanDetails.pending, (state, action) => {
         state.status = "loading";
         state.error = null;
         state.list = [];
       })
-      .addCase(fetchSchedulingSessionDetails.fulfilled, (state, { payload }) => {
+      .addCase(fetchSchedulingPlanDetails.fulfilled, (state, { payload }) => {
         state.list = payload.schedulingPlan.snapshots;
         state.status = "succeeded";
 
@@ -167,7 +163,7 @@ const snapshotsSlice = createSlice({
           state.details[snapshotId].summary.data = payload.snapshot;
         }
       })
-      .addCase(fetchSchedulingSessionDetails.rejected, (state, action) => {
+      .addCase(fetchSchedulingPlanDetails.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.payload;
       })
@@ -209,42 +205,77 @@ const snapshotsSlice = createSlice({
         state.status = "failed";
         state.error = action.payload;
       });
-    // --- Tours ---
+    // --- Experiences ---
     builder
-      .addCase(fetchTourSnapshots.pending, (state, action) => {
+      .addCase(fetchExperiencesSnapshots.pending, (state, action) => {
         const id = action.meta.arg;
         if (!state.details[id]) state.details[id] = createDetailState();
-        state.details[id].items.status = "loading";
-        state.details[id].tours.error = null;
+        state.details[id].experiences.status = "loading";
+        state.details[id].experiences.error = null;
       })
-      .addCase(fetchTourSnapshots.fulfilled, (state, action) => {
-        const { snapshotId, tours } = action.payload;
-        state.details[snapshotId].tours.status = "succeeded";
-        state.details[snapshotId].tours.data = tours;
+      .addCase(fetchExperiencesSnapshots.fulfilled, (state, action) => {
+        const { snapshotId, experiences } = action.payload;
+        state.details[snapshotId].experiences.status = "succeeded";
+        state.details[snapshotId].experiences.data = experiences;
       })
-      .addCase(fetchTourSnapshots.rejected, (state, action) => {
+      .addCase(fetchExperiencesSnapshots.rejected, (state, action) => {
         const id = action.meta.arg;
-        state.details[id].tours.status = "failed";
-        state.details[id].tours.error = action.error.message;
+        state.details[id].experiences.status = "failed";
+        state.details[id].experiences.error = action.error.message;
       });
-
-    // --- Items ---
+    //Forecasts
     builder
-      .addCase(fetchSnapshotItems.pending, (state, action) => {
+      .addCase(fetchForecastsSnapshots.pending, (state, action) => {
         const id = action.meta.arg;
         if (!state.details[id]) state.details[id] = createDetailState();
-        state.details[id].items.status = "loading";
-        state.details[id].items.error = null;
+        state.details[id].forecasts.status = "loading";
+        state.details[id].forecasts.error = null;
       })
-      .addCase(fetchSnapshotItems.fulfilled, (state, action) => {
-        const { snapshotId, items } = action.payload;
-        state.details[snapshotId].items.status = "succeeded";
-        state.details[snapshotId].items.data = items;
+      .addCase(fetchForecastsSnapshots.fulfilled, (state, action) => {
+        const { snapshotId, forecasts } = action.payload;
+        state.details[snapshotId].forecasts.status = "succeeded";
+        state.details[snapshotId].forecasts.data = forecasts;
       })
-      .addCase(fetchSnapshotItems.rejected, (state, action) => {
+      .addCase(fetchForecastsSnapshots.rejected, (state, action) => {
+        const snapshotId = action.meta.arg;
+        state.details[snapshotId].forecasts.status = "failed";
+        state.details[snapshotId].forecasts.error = action.error.message;
+      });
+    //Audience
+    builder
+      .addCase(fetchAudienceSnapshots.pending, (state, action) => {
+        const snapshotId = action.meta.arg;
+        if (!state.details[snapshotId]) state.details[id] = createDetailState();
+        state.details[snapshotId].audience.status = "loading";
+        state.details[snapshotId].audience.error = null;
+      })
+      .addCase(fetchAudienceSnapshots.fulfilled, (state, action) => {
+        const { snapshotId, audience } = action.payload;
+        state.details[snapshotId].audience.status = "succeeded";
+        state.details[snapshotId].audience.data = audience;
+      })
+      .addCase(fetchAudienceSnapshots.rejected, (state, action) => {
         const id = action.meta.arg;
-        state.details[id].items.status = "failed";
-        state.details[id].items.error = action.error.message;
+        state.details[id].audience.status = "failed";
+        state.details[id].audience.error = action.error.message;
+      });
+    // --- Allocations ---
+    builder
+      .addCase(fetchAllocationsSnapshots.pending, (state, action) => {
+        const id = action.meta.arg;
+        if (!state.details[id]) state.details[id] = createDetailState();
+        state.details[id].allocations.status = "loading";
+        state.details[id].allocations.error = null;
+      })
+      .addCase(fetchAllocationsSnapshots.fulfilled, (state, action) => {
+        const { snapshotId, allocations } = action.payload;
+        state.details[snapshotId].allocations.status = "succeeded";
+        state.details[snapshotId].allocations.data = allocations;
+      })
+      .addCase(fetchAllocationsSnapshots.rejected, (state, action) => {
+        const id = action.meta.arg;
+        state.details[id].allocations.status = "failed";
+        state.details[id].allocations.error = action.error.message;
       });
   },
 });

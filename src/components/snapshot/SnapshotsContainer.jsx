@@ -3,7 +3,7 @@ import ComponentCard from "../common/ComponentCard";
 import { useDispatch } from "react-redux";
 import { activateSnapshot, createSnapshot, processSnapshot, publishSnapshot } from "../../store/snapshotsSlice.js";
 import { generateSlots } from "../../store/slotsSlice.js";
-import { fetchSchedulingSessionDetails } from "../../store/sessionDetailsSlice.js";
+import { fetchSchedulingPlanDetails } from "../../store/planDetailsSlice.js";
 import EmptySnapshotWidget from "./EmptySnapshotWidget.jsx";
 import SnapshotList from "./list/SnapshotList.jsx";
 
@@ -12,6 +12,7 @@ export default function SnapshotsContainer({ snapshotList, activeSnapshotId, sna
   const [selectedSnapshot, setSelectedSnasphot] = useState(activeSnapshotId || null);
   // Keep selected snapshot in sync with active snapshot id
   useEffect(() => {
+    console.log("SnapshotsContainer effect setSelectedSnasphot");
     setSelectedSnasphot(activeSnapshotId || null);
   }, [activeSnapshotId]);
 
@@ -19,14 +20,14 @@ export default function SnapshotsContainer({ snapshotList, activeSnapshotId, sna
     if (!schedulingPlanId) return;
     const result = await dispatch(createSnapshot({ schedulingPlanId, label }));
     if (createSnapshot.fulfilled.match(result)) {
-      dispatch(fetchSchedulingSessionDetails(schedulingPlanId));
+      dispatch(fetchSchedulingPlanDetails(schedulingPlanId));
     }
   };
   const handleActivateSnapshot = async (snapshotId) => {
     if (!schedulingPlanId) return;
     const result = await dispatch(activateSnapshot({ schedulingPlanId, snapshotId }));
     if (activateSnapshot.fulfilled.match(result)) {
-      dispatch(fetchSchedulingSessionDetails(schedulingPlanId));
+      dispatch(fetchSchedulingPlanDetails(schedulingPlanId));
     }
   };
 
@@ -34,7 +35,7 @@ export default function SnapshotsContainer({ snapshotList, activeSnapshotId, sna
     if (!snapshotId) return;
     const result = await dispatch(publishSnapshot(snapshotId));
     if (processSnapshot.fulfilled.match(result)) {
-      dispatch(fetchSchedulingSessionDetails(schedulingPlanId));
+      dispatch(fetchSchedulingPlanDetails(schedulingPlanId));
     }
   };
   return (
@@ -54,7 +55,10 @@ export default function SnapshotsContainer({ snapshotList, activeSnapshotId, sna
             snapshots={snapshotList}
             activeSnapshotId={activeSnapshotId}
             selectedSnapshot={selectedSnapshot}
-            onSnapshotSelected={(id) => setSelectedSnasphot(id)}
+            onSnapshotSelected={(id) => {
+              console.log("onSnapshotSelecte");
+              setSelectedSnasphot(id);
+            }}
             onAddSnapshot={handleAddSnapshot}
             onActivateSnapshot={handleActivateSnapshot}
             canAddSnapshot={snapshotStatus !== "loading"}

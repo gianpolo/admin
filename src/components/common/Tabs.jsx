@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-export default function Tabs({ tabsData }) {
-  const [activeTabIndex, setActiveTabIndex] = useState(0);
+export default function Tabs({ tabsData, activeTab }) {
+  const [activeTabIndex, setActiveTabIndex] = useState(activeTab);
 
   return (
     <div className="rounded-xl">
@@ -16,7 +16,10 @@ export default function Tabs({ tabsData }) {
                   : "bg-transparent text-gray-500 border-transparent hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
               }`}
               // Change the active tab on click.
-              onClick={() => setActiveTabIndex(idx)}
+              onClick={() => {
+                setActiveTabIndex(idx);
+                tab.onTabActive(idx);
+              }}
             >
               {tab.label}
             </button>
@@ -25,9 +28,7 @@ export default function Tabs({ tabsData }) {
       </nav>
       {/* Show active tab content. */}
       <div className="pt-4 dark:border-gray-800">
-        <div className="text-sm text-gray-500 dark:text-gray-400">
-          {tabsData[activeTabIndex].content}
-        </div>
+        <div className="text-sm text-gray-500 dark:text-gray-400">{tabsData[activeTabIndex].content}</div>
       </div>
     </div>
   );

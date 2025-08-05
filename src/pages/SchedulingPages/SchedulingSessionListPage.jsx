@@ -8,7 +8,7 @@ import {
   openConfiguration,
   closeConfiguration,
   deleteConfiguration,
-} from "../../store/schedulingSessionsSlice.js";
+} from "../../store/schedulingPlansSlice.js";
 import Spinner from "../../components/ui/spinner/Spinner.jsx";
 import { useModal } from "../../hooks/useModal.js";
 import ConfirmationModal from "../../components/common/ConfirmationModal.jsx";
@@ -22,7 +22,7 @@ export default function SchedulingSessionListPage() {
   const { isOpen: isDeleteOpen, openModal: openDeleteModal, closeModal: closeDeleteModal } = useModal();
   const [deleteId, setDeleteId] = useState(null);
 
-  const { list, status, error, actionStatus } = useSelector((state) => state.schedulingPlan);
+  const { list, status, error, actionStatus } = useSelector((state) => state.schedulingPlans);
 
   const handleItemClick = (id) => navigate(`/scheduling-plans/${id}`);
   const handleOpenClick = (id) => {
