@@ -8,8 +8,8 @@ import { fetchSchedulingPlanDetails, performSelfschedulingAction } from "../../s
 import SchedulingSessionOverview from "../../components/scheduling/SchedulingSessionOverview.jsx";
 import Spinner from "../../components/ui/spinner/Spinner.jsx";
 import SimulationWidget from "../../components/scheduling/SimulationWidget.jsx";
-import SnapshotContainer from "../../components/snapshotv2/SnapshotContainer.jsx";
-
+import SnapshotContainer from "../../components/snapshot/SnapshotContainer.jsx";
+import { createSnapshot } from "../../store/snapshotsSlice.js";
 export default function SchedulingDetailsPage() {
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -17,7 +17,7 @@ export default function SchedulingDetailsPage() {
 
   const { isSimulationRunning } = useSelector((state) => state.schedulingPlans);
   const planDetails = useSelector((state) => state.planDetails);
-  const { status: detailStatus, error, schedulingPlan } = planDetails;
+  const { status, error, schedulingPlan } = planDetails;
   const [actionLoading, setActionLoading] = useState(false);
 
   const snapshots = useSelector((state) => state.snapshots);
@@ -42,7 +42,13 @@ export default function SchedulingDetailsPage() {
       dispatch(startSimulation({ id }));
     }
   };
-
+  const handleAddSnapshot = async (label) => {
+    if (!id) return;
+    const result = await dispatch(createSnapshot({ schedulingPlanId: id, label }));
+    if (createSnapshot.fulfilled.match(result)) {
+      dispatch(fetchSchedulingPlanDetails(id));
+    }
+  };
   return (
     <>
       <PageMeta title="SelfScheduling Details" description="Scheduling information" />
@@ -114,10 +120,11 @@ export default function SchedulingDetailsPage() {
       <div className="grid grid-cols-12 gap-6 mt-6">
         <div className="col-span-12">
           <div className="">
-            {detailStatus === "succeeded" && snapshots && (
+            {status === "succeeded" && snapshots && (
               <SnapshotContainer
                 activeSnapshotId={schedulingPlan.activeSnapshotId}
                 snapshotList={schedulingPlan.snapshots}
+                handleAddSnapshot={handleAddSnapshot}
               />
             )}
           </div>

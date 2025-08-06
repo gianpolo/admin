@@ -1,5 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchSchedulingPlanDetails } from "./planDetailsSlice";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"; 
 const getToken = () => localStorage.getItem("token") || "";
 const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
 

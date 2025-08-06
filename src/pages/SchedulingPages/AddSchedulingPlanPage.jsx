@@ -12,7 +12,7 @@ import PageMeta from "../../components/common/PageMeta.jsx";
 import Button from "../../components/ui/button/Button.jsx";
 import Spinner from "../../components/ui/spinner/Spinner.jsx";
 import ComponentCard from "../../components/common/ComponentCard.jsx";
-import AddSchedulingSessionForm from "../../components/scheduling/AddSchedulingSessionForm";
+import AddSchedulingSessionForm from "../../components/scheduling/AddSchedulingSessionForm.jsx";
 const testConf = {
   cityId: 1,
   description: "test",
@@ -28,7 +28,7 @@ const testConf = {
   selectedGuideIds: [3436, 1654, 5738],
 };
 
-export default function AddSchedulingSessionPage() {
+export default function AddSchedulingPlanPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [loadingTemplate, setLoadingTemplate] = useState(false);
@@ -182,8 +182,8 @@ export default function AddSchedulingSessionPage() {
 
   return (
     <>
-      <PageMeta title="Add Self Scheduling Configuration" description="Create new configuration" />
-      <PageBreadcrumb pageTitle="Add new Self Scheduling" />
+      <PageMeta title="Add Scheduling Plan" description="Create new configuration" />
+      <PageBreadcrumb pageTitle="Add new Scheduling Plan" />
       {error && <p className="text-red-500 mb-3">{error}</p>}
       {createError && <p className="text-red-500 mb-3">{createError}</p>}
       {!cities ? (

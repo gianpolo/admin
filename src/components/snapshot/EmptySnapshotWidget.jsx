@@ -4,6 +4,7 @@ import Form from "../form/Form.jsx";
 import Button from "../ui/button/Button.jsx";
 import { PlusIcon } from "../../icons/index.js";
 import Spinner from "../ui/spinner/Spinner.jsx";
+
 export default function EmptySnapshotWidget({ loading, onAddSnapshot }) {
   const [snapshotLabel, setSnapshotLabel] = useState("Generated from Dashboard");
   return (
