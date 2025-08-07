@@ -25,9 +25,9 @@ export default function MoreMenu({ menuItems }) {
             <MoreDotIcon className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 size-6" />
           </button>
           <Dropdown isOpen={isOpen} onClose={closeDropdown} className="w-40 p-2">
-            {menuItems.map((item) => (
+            {menuItems.map((item,idx) => (
               <DropdownItem
-                key={item.action}
+                key={idx}
                 onItemClick={() => item.action()}
                 className={`flex w-full font-normal text-left text-gray-500 rounded-lg hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300 ${
                   item.disabled ? "opacity-50 cursor-not-allowed" : ""

@@ -12,7 +12,7 @@ import PageMeta from "../../components/common/PageMeta.jsx";
 import Button from "../../components/ui/button/Button.jsx";
 import Spinner from "../../components/ui/spinner/Spinner.jsx";
 import ComponentCard from "../../components/common/ComponentCard.jsx";
-import AddSchedulingSessionForm from "../../components/scheduling/AddSchedulingSessionForm.jsx";
+import AddSchedulingPlanForm from "../../components/scheduling/AddSchedulingPlanForm.jsx";
 const testConf = {
   cityId: 1,
   description: "test",
@@ -24,8 +24,8 @@ const testConf = {
     startDate: new Date("2025-11-08"),
     endDate: new Date("2025-11-25"),
   },
-  selectedExperienceIds: [11],
-  selectedGuideIds: [3436, 1654, 5738],
+  selectedExperienceIds: [11, 15, 34],
+  selectedGuideIds: [2736, 3436, 1654, 5738, 2085, 4896, 5923, 5158, 1690],
 };
 
 export default function AddSchedulingPlanPage() {
@@ -203,7 +203,7 @@ export default function AddSchedulingPlanPage() {
             </div>
           }
         >
-          <AddSchedulingSessionForm
+          <AddSchedulingPlanForm
             cityId={cityId}
             cities={cities}
             setCityId={setCityId}

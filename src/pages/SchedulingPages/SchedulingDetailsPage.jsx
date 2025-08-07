@@ -5,7 +5,8 @@ import PageMeta from "../../components/common/PageMeta.jsx";
 import { ChevronLeftIcon } from "../../icons/index.js";
 import { startSimulation, stopSimulation } from "../../store/schedulingPlansSlice.js";
 import { fetchSchedulingPlanDetails, performSelfschedulingAction } from "../../store/planDetailsSlice.js";
-import SchedulingSessionOverview from "../../components/scheduling/SchedulingSessionOverview.jsx";
+import { activateSnapshot } from "../../store/snapshotsSlice.js";
+import SchedulingOverview from "../../components/scheduling/SchedulingOverview.jsx";
 import Spinner from "../../components/ui/spinner/Spinner.jsx";
 import SimulationWidget from "../../components/scheduling/SimulationWidget.jsx";
 import SnapshotContainer from "../../components/snapshot/SnapshotContainer.jsx";
@@ -48,6 +49,9 @@ export default function SchedulingDetailsPage() {
     if (createSnapshot.fulfilled.match(result)) {
       dispatch(fetchSchedulingPlanDetails(id));
     }
+  };
+  const handleActivateSnapshot = (snapshotId) => {
+    dispatch(activateSnapshot({ schedulingPlanId: id, snapshotId: snapshotId }));
   };
   return (
     <>
@@ -100,7 +104,7 @@ export default function SchedulingDetailsPage() {
         status === "succeeded" && (
           <div className="grid grid-cols-12 gap-6 mt-6">
             <div className="col-span-8">
-              <SchedulingSessionOverview
+              <SchedulingOverview
                 schedulingPlan={schedulingPlan}
                 onAction={handleAction}
                 actionLoading={actionLoading}
@@ -124,7 +128,9 @@ export default function SchedulingDetailsPage() {
               <SnapshotContainer
                 activeSnapshotId={schedulingPlan.activeSnapshotId}
                 snapshotList={schedulingPlan.snapshots}
-                handleAddSnapshot={handleAddSnapshot}
+                onAddSnapshot={handleAddSnapshot}
+                onActivateSnapshot={handleActivateSnapshot}
+                canAddSnapshot={!schedulingPlan.openedAt}
               />
             )}
           </div>

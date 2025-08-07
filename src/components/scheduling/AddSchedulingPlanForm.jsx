@@ -6,7 +6,7 @@ import MyDateRangePicker from "../form/DateRangePicker";
 import SelectableListModal from "../common/SelectableListModal";
 import Button from "../ui/button/Button";
 import { TableRow, TableCell, TableCellHeader } from "../ui/table";
-export default function AddSchedulingSessionForm({
+export default function AddSchedulingPlanForm({
   handleSubmit,
   cityId,
   cities,

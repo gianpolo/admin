@@ -1,11 +1,7 @@
-import { useState } from "react";
-
-export default function Tabs({ tabsData, activeTab }) {
-  const [activeTabIndex, setActiveTabIndex] = useState(activeTab);
-
+export default function Tabs({ tabsData, activeTabIndex }) {
   return (
     <div className="rounded-xl">
-      <nav className="-mb-px flex space-x-2 overflow-x-auto">
+      <nav className="-mb-px flex space-x-2  ">
         {tabsData.map((tab, idx) => {
           return (
             <button
@@ -17,7 +13,6 @@ export default function Tabs({ tabsData, activeTab }) {
               }`}
               // Change the active tab on click.
               onClick={() => {
-                setActiveTabIndex(idx);
                 tab.onTabActive(idx);
               }}
             >
@@ -27,7 +22,7 @@ export default function Tabs({ tabsData, activeTab }) {
         })}
       </nav>
       {/* Show active tab content. */}
-      <div className="pt-4 dark:border-gray-800">
+      <div className="pt-4 dark:border-gray-800 ">
         <div className="text-sm text-gray-500 dark:text-gray-400">{tabsData[activeTabIndex].content}</div>
       </div>
     </div>

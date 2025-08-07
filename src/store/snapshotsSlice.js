@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"; 
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 const getToken = () => localStorage.getItem("token") || "";
 const backend_url = import.meta.env.REACT_APP_BACKEND_URL || "http://localhost:5005/api/v1";
 
@@ -78,7 +78,6 @@ export const fetchSnapshotMeta = createAsyncThunk(
   async (snapshotId, { rejectWithValue }) => {
     const url = `${backend_url}/snapshots/${snapshotId}`;
     const res = await fetchSnapshot(url, rejectWithValue);
-    console.log(`${backend_url}/snapshots/${snapshotId}`, res);
     return { snapshotId, summary: res };
   }
 );
@@ -87,7 +86,6 @@ export const fetchExperiencesSnapshots = createAsyncThunk(
   async (snapshotId, { rejectWithValue }) => {
     const url = `${backend_url}/snapshots/${snapshotId}/tours`;
     const res = await fetchSnapshot(url, rejectWithValue);
-    console.log(`${backend_url}/snapshots/${snapshotId}/tours`, res);
     return { snapshotId, experiences: res };
   }
 );
@@ -96,7 +94,6 @@ export const fetchForecastsSnapshots = createAsyncThunk(
   async (snapshotId, { rejectWithValue }) => {
     const url = `${backend_url}/snapshots/${snapshotId}/forecasts`;
     const res = await fetchSnapshot(url, rejectWithValue);
-    console.log(`${backend_url}/snapshots/${snapshotId}/forecasts`, res);
     return { snapshotId, forecasts: res };
   }
 );
@@ -105,7 +102,6 @@ export const fetchAudienceSnapshots = createAsyncThunk(
   async (snapshotId, { rejectWithValue }) => {
     const url = `${backend_url}/snapshots/${snapshotId}/audience`;
     const res = await fetchSnapshot(url, rejectWithValue);
-    console.log(`${backend_url}/snapshots/${snapshotId}/audience`, res);
     return { snapshotId, audience: res };
   }
 );
@@ -114,11 +110,25 @@ export const fetchAllocationsSnapshots = createAsyncThunk(
   async (snapshotId, { rejectWithValue }) => {
     const url = `${backend_url}/snapshots/${snapshotId}/allocations`;
     const res = await fetchSnapshot(url, rejectWithValue);
-    console.log(`${backend_url}/snapshots/${snapshotId}/allocations`, res);
     return { snapshotId, allocations: res };
   }
 );
-
+export const fetchRunningDatesSnapshots = createAsyncThunk(
+  "snapshots/fetchRunningDatesSnapshots",
+  async (snapshotId, { rejectWithValue }) => {
+    const url = `${backend_url}/snapshots/${snapshotId}/runningdates`;
+    const res = await fetchSnapshot(url, rejectWithValue);
+    return { snapshotId, runningdates: res };
+  }
+);
+export const fetchCompatibilityRulesSnapshots = createAsyncThunk(
+  "snapshots/fetchCompatibilityRulesSnapshots",
+  async (snapshotId, { rejectWithValue }) => {
+    const url = `${backend_url}/snapshots/${snapshotId}/compatibilityrules`;
+    const res = await fetchSnapshot(url, rejectWithValue);
+    return { snapshotId, compatibilityrules: res };
+  }
+);
 const fetchSnapshot = async (url, rejectWithValue) => {
   try {
     const res = await fetch(url, {
@@ -140,12 +150,13 @@ const createDetailState = () => ({
   forecasts: { data: null, status: "idle", error: null },
   audience: { data: null, status: "idle", error: null },
   allocations: { data: null, status: "idle", error: null },
+  runningdates: { data: null, status: "idle", error: null },
+  compatibilityrules: { data: null, status: "idle", error: null },
 });
 
 const snapshotsSlice = createSlice({
   name: "snapshots",
   initialState: {
-    list: [],
     details: {},
     status: "idle",
     error: null,
@@ -280,6 +291,40 @@ const snapshotsSlice = createSlice({
         state.details[id].allocations.status = "failed";
         state.details[id].allocations.error = action.error.message;
       });
+    builder
+      .addCase(fetchRunningDatesSnapshots.pending, (state, action) => {
+        const id = action.meta.arg;
+        if (!state.details[id]) state.details[id] = createDetailState();
+        state.details[id].runningdates.status = "loading";
+        state.details[id].runningdates.error = null;
+      })
+      .addCase(fetchRunningDatesSnapshots.fulfilled, (state, action) => {
+        const { snapshotId, runningdates } = action.payload;
+        state.details[snapshotId].runningdates.status = "succeeded";
+        state.details[snapshotId].runningdates.data = runningdates;
+      })
+      .addCase(fetchRunningDatesSnapshots.rejected, (state, action) => {
+        const id = action.meta.arg;
+        state.details[id].runningdates.status = "failed";
+        state.details[id].runningdates.error = action.error.message;
+      });
+      builder
+        .addCase(fetchCompatibilityRulesSnapshots.pending, (state, action) => {
+          const id = action.meta.arg;
+          if (!state.details[id]) state.details[id] = createDetailState();
+          state.details[id].compatibilityrules.status = "loading";
+          state.details[id].compatibilityrules.error = null;
+        })
+        .addCase(fetchCompatibilityRulesSnapshots.fulfilled, (state, action) => {
+          const { snapshotId, compatibilityrules } = action.payload;
+          state.details[snapshotId].compatibilityrules.status = "succeeded";
+          state.details[snapshotId].compatibilityrules.data = compatibilityrules;
+        })
+        .addCase(fetchCompatibilityRulesSnapshots.rejected, (state, action) => {
+          const id = action.meta.arg;
+          state.details[id].compatibilityrules.status = "failed";
+          state.details[id].compatibilityrules.error = action.error.message;
+        });
   },
 });
 
